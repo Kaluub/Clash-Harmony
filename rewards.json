@@ -1,0 +1,52 @@
+{
+    "rewards":{
+        "backgrounds":{
+            "default_background":{
+                "id":"default_background",
+                "name":"Default Background",
+                "img":"default_background.png",
+                "price":0,
+                "shown":false
+            },
+            "light_background":{
+                "id":"light_background",
+                "name":"Light Background",
+                "img":"light_background.png",
+                "price":20,
+                "shown":true
+            }
+        },
+        "frames":{
+            "default_frame":{
+                "id":"default_frame",
+                "name":"Default Frame",
+                "img":"default_frame.png",
+                "price":0,
+                "shown":false
+            },
+            "golden_frame":{
+                "id":"golden_frame",
+                "name":"Golden Frame",
+                "img":"golden_frame.png",
+                "price":0,
+                "shown":false
+            }
+        },
+        "roles":{
+            "826485033501458454":{
+                "id":"826485033501458454",
+                "name":"Point Reward",
+                "price":30,
+                "shown":true
+            }
+        },
+        "services":{
+            "demo_service":{
+                "id":"demo_service",
+                "name":"Demo Service",
+                "price":25,
+                "shown":true
+            }
+        }
+    }
+}
