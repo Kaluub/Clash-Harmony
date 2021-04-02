@@ -19,26 +19,49 @@ client.on('message', async (msg) => {
     if(msg.author.bot) return;
 
     if(!msg.guild){
-        const message = await msg.channel.send(`Warning:\nSending messages here will send them to the staff of the Clash Clan.\nPlease do not abuse this system, you can be blocked from using it.\nPlease confirm that you would wish to send this message to the Clash Clan staff by reacting below.`);
+        let dmEmbed = new Discord.MessageEmbed().setColor('#333333').setTitle('ClashBot Mod Mail system:').setTimestamp();
+        dmEmbed.setDescription(`Warning:
+        Sending messages in DMs will send them to the staff of the Clash Clan.
+        Please do not abuse this system, you can be blocked from using it.\n
+        To confirm this message, press the ✅ reaction.
+        To add a category to your message, press ⏺️ the reaction.
+        To cancel this message, press the ⛔ reaction.`);
+        let category;
+        const message = await msg.channel.send(dmEmbed);
         await message.react('✅');
+        await message.react('⏺️');
+        await message.react('⛔');
 
-        const collector = message.createReactionCollector((reaction, user) => reaction.emoji.name == '✅', {time: 10000});
+        const emojis = ['✅','⏺️','⛔'];
+        const collector = message.createReactionCollector((reaction, user) => emojis.includes(reaction.emoji.name), {time: 10000});
 
         collector.on('collect', async () => {
-            const channel = await client.channels.fetch('826926909077192734');
-            let embed = new Discord.MessageEmbed()
-                .setColor('#333333')
-                .setTitle(`Mod Mail`)
-                .setDescription(`New message from ${msg.author} (${msg.author.tag}):\n\n${msg.content}`)
-                .setTimestamp();
-            channel.send(embed);
-            msg.channel.send(`Your message has been sent to the staff of the Clash Clan.\n**NOTE**: Even if you haven't received a message back, your message will be read!`);
-            return collector.stop('sent');
+            if(reaction.emoji.name == emojis[0]){
+                const channel = await client.channels.fetch('826926909077192734');
+                let embed = new Discord.MessageEmbed()
+                    .setColor('#333333')
+                    .setTitle(`Mod Mail`)
+                    .setDescription(`New message from ${msg.author} (${msg.author.tag}):${category?`Category: ${category}\n`:''}\n\n${msg.content}`)
+                    .setTimestamp();
+                channel.send(embed);
+                msg.channel.send(`Your message has been sent to the staff of the Clash Clan.\n**NOTE**: Even if you haven't received a message back, your message will be read!`);
+                return collector.stop('sent');
+            };
+            if(reaction.emoji.name == emojis[1]){
+                collector.resetTimer({time:100000});
+                const categories = ['Harmony application','Clash application','Question','Issue'];
+                message.channel.send('Please type one of the following categories to add to your message:\n`Harmony application`; `Clash application`; `Question`; `Issue`');
+                let msgCollector = message.channel.createMessageCollector()
+                return;
+            };
+            if(reaction.emoji.name == emojis[2]){
+                return collector.stop('cancelled');
+            };
         });
 
         collector.on('end', async (collected, reason) => {
             console.log(reason)
-            if(reason == 'time'){
+            if(reason == 'time' || reason == 'cancelled'){
                 msg.channel.send('Your message will not be sent to the staff of the Clash Clan.\nIf this was a mistake, resend the message and press the :white_check_mark: reaction.');
                 console.log("\x1b[33m%s\x1b[0m",`[DM] ${msg.author.tag}: ${msg.content}`);
                 return readline.prompt();

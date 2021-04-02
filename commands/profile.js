@@ -17,7 +17,7 @@ module.exports = {
         let userdata = await userdb.get(`${message.guild.id}/${member.id}`);
         if(!userdata){
             await userdb.set(`${message.guild.id}/${member.id}`, new Data('user',{}));
-            userdata = userdb.get(`${message.guild.id}/${member.id}`);
+            userdata = await userdb.get(`${message.guild.id}/${member.id}`);
         };
         let shop = await readJSON('rewards.json');
 
@@ -45,27 +45,24 @@ module.exports = {
 
         // Load images:
         const avatar = await loadImage(member.user.displayAvatarURL({format:'png',size:256}));
-        const avatarBackground = await loadImage('./img/avatar_background.png');
         const background = await loadImage(`./img/backgrounds/${shop.rewards.backgrounds[userdata.card.background].img}`);
         const frame = await loadImage(`./img/frames/${shop.rewards.frames[userdata.card.frame].img}`);
 
-        let colour;
-        if(userdata.card.background == 'default_background') colour = '#FFFFFF';
-        if(userdata.card.background == 'light_background') colour = '#000000';
+        let colour = shop.rewards.backgrounds[userdata.card.background].colour;
 
         ctx.drawImage(background, 0, 0);
 
-        ctx.font = 'lighter 40px "Open Sans"';
+        ctx.font = 'bold 40px "Noto Sans"';
         ctx.fillStyle = member.displayHexColor;
         ctx.fillText(`${member.user.tag}`, 336, 42, 636);
 
         ctx.fillStyle = '#50505099';
-        ctx.fillRect(336, 58, 652, 44); // Status
+        ctx.fillRect(336, 58, 640, 44); // Status
         ctx.fillRect(336, 108, 318, 44); // Points
         ctx.fillRect(658, 108, 318, 44); // Total earned
         ctx.fillRect(336, 158, 552, 140); // Badges
         
-        ctx.font = 'lighter 32px "Open Sans"';
+        ctx.font = '32px "Noto Sans"';
         ctx.fillStyle = colour;
         ctx.fillText(`Points: ${userdata.points}`, 344, 140, 310);
         ctx.fillText(`Total earned: ${userdata.statistics.earned}`, 666, 140, 310);
@@ -78,7 +75,7 @@ module.exports = {
         let bx = 0, by = 0;
         for(const i in badges.badges){
             let badge = badges.badges[i];
-            let renderBadge = await message.member.roles.cache.some(role => badge.roles.includes(role.id));
+            let renderBadge = await member.roles.cache.some(role => badge.roles.includes(role.id));
             if(renderBadge){
                 let badgeImage = await loadImage(`./img/badges/${badge.img}`);
                 ctx.drawImage(badgeImage, 340 + bx, 162 + by);
@@ -93,7 +90,6 @@ module.exports = {
         ctx.arc(175, 175, 130, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(avatarBackground, 47, 47);
         ctx.drawImage(avatar, 47, 47, avatar.width * (256/avatar.width), avatar.height * (256/avatar.height));
         ctx.restore();
 

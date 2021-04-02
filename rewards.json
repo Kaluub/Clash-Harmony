@@ -5,6 +5,7 @@
                 "id":"default_background",
                 "name":"Default Background",
                 "img":"default_background.png",
+                "colour":"#FFFFFF",
                 "price":0,
                 "shown":false
             },
@@ -12,7 +13,48 @@
                 "id":"light_background",
                 "name":"Light Background",
                 "img":"light_background.png",
+                "colour":"#000000",
                 "price":20,
+                "shown":true
+            },
+            "clash_background":{
+                "id":"clash_background",
+                "name":"Clash Background",
+                "img":"clash_background.png",
+                "colour":"#B53BD3",
+                "price":20,
+                "shown":true
+            },
+            "harmony_background":{
+                "id":"harmony_background",
+                "name":"Harmony Background",
+                "img":"harmony_background.png",
+                "colour":"#11DDFF",
+                "price":20,
+                "shown":true
+            },
+            "clash_mascot_background":{
+                "id":"clash_mascot_background",
+                "name":"Clash Mascot Background",
+                "img":"clash_mascot_background.png",
+                "colour":"#EFDFFF",
+                "price":25,
+                "shown":true
+            },
+            "harmony_mascot_background":{
+                "id":"harmony_mascot_background",
+                "name":"Harmony Mascot Background",
+                "img":"harmony_mascot_background.png",
+                "colour":"#11DDFF",
+                "price":25,
+                "shown":true
+            },
+            "pixel_worlds_background":{
+                "id":"pixel_worlds_background",
+                "name":"Pixel Worlds Background",
+                "img":"pixel_worlds_background.png",
+                "colour":"#000000",
+                "price":25,
                 "shown":true
             }
         },
@@ -30,6 +72,27 @@
                 "img":"golden_frame.png",
                 "price":0,
                 "shown":false
+            },
+            "clash_frame":{
+                "id":"clash_frame",
+                "name":"Clash Frame",
+                "img":"clash_frame.png",
+                "price":20,
+                "shown":true
+            },
+            "harmony_frame":{
+                "id":"harmony_frame",
+                "name":"Harmony Frame",
+                "img":"harmony_frame.png",
+                "price":20,
+                "shown":true
+            },
+            "pixel_worlds_frame":{
+                "id":"pixel_worlds_frame",
+                "name":"Pixel Worlds Frame",
+                "img":"pixel_worlds_frame.png",
+                "price":25,
+                "shown":true
             }
         },
         "roles":{
