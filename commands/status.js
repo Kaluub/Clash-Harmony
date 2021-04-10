@@ -5,7 +5,7 @@ module.exports = {
     name:'status',
     aliases:['st'],
     admin:false,
-    desc:'This command is used to set your custom status.',
+    desc:'This command is used to set your custom status displayed on your profile card.',
     usage:'!status [text (60 character limit)]',
     async execute(message,args){
         if(!args[0]) return message.channel.send('Usage: ' + this.usage);

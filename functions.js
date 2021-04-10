@@ -44,6 +44,32 @@ async function updateMembers(guild,clan){
     return embed;
 };
 
+async function guessRewards(rewards,name,all){
+    let possibleRewards = [];
+    for(const i in rewards.rewards.frames){
+        let f = rewards.rewards.frames[i];
+        if(f.name.toLowerCase().includes(name.toLowerCase())){
+            possibleRewards.push(f);
+        };
+    };
+    for(const i in rewards.rewards.backgrounds){
+        let b = rewards.rewards.backgrounds[i];
+        if(b.name.toLowerCase().includes(name.toLowerCase())){
+            possibleRewards.push(b);
+        };
+    };
+    if(all){
+        for(const i in rewards.rewards.roles){
+            let r = rewards.rewards.roles[i];
+            if(r.name.toLowerCase().includes(name.toLowerCase())){
+                possibleRewards.push(r);
+            };
+        };
+    }
+    return possibleRewards;
+};
+
 module.exports = {
-    updateMembers:updateMembers
+    updateMembers:updateMembers,
+    guessRewards:guessRewards
 };

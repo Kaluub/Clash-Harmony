@@ -30,6 +30,41 @@
             "roles":["774083533580140564"],
             "img":"halloween_contender_2020.png"
         },
+        "early_bird":{
+            "id":"early_bird",
+            "roles":["828077072194207834"],
+            "img":"early_bird_badge.png"
+        },
+        "quadruple_zero":{
+            "id":"quadruple_zero",
+            "roles":["828079900354412574"],
+            "img":"quadruple_zero_badge.png"
+        },
+        "triple_zero":{
+            "id":"triple_zero",
+            "roles":["828079903445876776"],
+            "img":"triple_zero_badge.png"
+        },
+        "double_zero":{
+            "id":"double_zero",
+            "roles":["828079907203973140"],
+            "img":"double_zero_badge.png"
+        },
+        "monuple_zero":{
+            "id":"monuple_zero",
+            "roles":["828079344051421184"],
+            "img":"monuple_zero_badge.png"
+        },
+        "palindrome":{
+            "id":"palindrome",
+            "roles":["828081364505985074"],
+            "img":"palindrome_badge.png"
+        },
+        "proactive":{
+            "id":"proactive",
+            "roles":["828078924940312606"],
+            "img":"proactive_badge.png"
+        },
         "clash_coleader":{
             "id":"clash_coleader",
             "roles":["636987868874670100"],

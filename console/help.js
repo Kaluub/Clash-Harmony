@@ -9,7 +9,7 @@ module.exports = {
             msg = `Help menu:\nName: ${command.name}\nUsage: ${command.usage}\nAliases: ${command.aliases.join('; ')}`;
         } else {
             msg = `List of commands:`;
-            for (const [key,cmd] of ex.commands.entries()){
+            for(const [key,cmd] of ex.commands.entries()){
                 if(!cmd) continue;
                 msg = msg + `\n- ${cmd.name}`;
             };

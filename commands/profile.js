@@ -22,7 +22,7 @@ module.exports = {
         let shop = await readJSON('rewards.json');
 
         let msg = `${Math.random() < 0.05?'**TIP**: You can customize your profile card using !custom.\n':''}${Math.random() < 0.05?'**TIP**: You can set a profile status using !status.\n':''}Your profile card:`;
-        // Luck minigame
+        // Luck minigame:
         if(msg.split(/\r\n|\r|\n/).length == 3){
             if(userdata.unlocked.frames.includes('golden_frame')){
                 let luckyPoints = Math.floor(Math.random() * (50 - 20 + 1) + 20);
@@ -53,10 +53,12 @@ module.exports = {
         ctx.drawImage(background, 0, 0);
 
         ctx.font = 'bold 40px "Noto Sans"';
-        ctx.fillStyle = member.displayHexColor;
+        ctx.fillStyle = member.displayHexColor == '#000000' ? '#FFFFFF' : member.displayHexColor;
         ctx.fillText(`${member.user.tag}`, 336, 42, 636);
+        ctx.fillStyle = '#000000';
+        ctx.strokeText(`${member.user.tag}`, 336, 42, 636);
 
-        ctx.fillStyle = '#50505099';
+        ctx.fillStyle = '#505050BB';
         ctx.fillRect(336, 58, 640, 44); // Status
         ctx.fillRect(336, 108, 318, 44); // Points
         ctx.fillRect(658, 108, 318, 44); // Total earned

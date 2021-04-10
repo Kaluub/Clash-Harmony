@@ -15,8 +15,7 @@ module.exports = {
         let message = args.join(' ');
         try{
             await user.send(message);
-        } catch (error) {
-            console.error(error);
+        } catch {
             return console.log("\x1b[32m%s\x1b[0m",`Couldn't send a message to ${user.tag}.`);
         };
         return console.log("\x1b[32m%s\x1b[0m",`Successfully sent your message to ${user.tag}.`);

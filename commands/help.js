@@ -19,7 +19,8 @@ module.exports = {
                 if(!cmd) continue;
                 if(cmd.admin && !admins.includes(message.author.id)) continue;
                 if(cmd.admin && args.includes('-a')) continue;
-                msg.setDescription(msg.description + `\n\n**!${cmd.name}**:\n${cmd.desc}`);
+                if(cmd.hidden) continue;
+                msg.setDescription(msg.description + `\n**!${cmd.name}**:\nDescription: ${cmd.desc}\nUsage: \`${cmd.usage}\``);
             };
             return message.channel.send({embed:msg,split:true});
         };

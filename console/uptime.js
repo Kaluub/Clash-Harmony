@@ -9,6 +9,7 @@ module.exports = {
         totalSeconds %= 3600;
         let minutes = Math.floor(totalSeconds / 60);
         let seconds = Math.floor(totalSeconds % 60);
-        return console.log("\x1b[32m%s\x1b[0m",`Uptime: ${days}d ${hours}h ${minutes}m ${seconds}s`);
+        let date = new Date(Date.now());
+        return console.log("\x1b[32m%s\x1b[0m",`Uptime: ${days}d ${hours}h ${minutes}m ${seconds}s [Time: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}]`);
     }
 };

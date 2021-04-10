@@ -1,4 +1,4 @@
-const functions = require('../functions.js');
+const {updateMembers} = require('../functions.js');
 const {readJSON} = require('../json.js');
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
         const config = await readJSON('config.json');
         const channel = await message.client.channels.fetch(config[args[0] == 'clash' ? 'clashMembersMessageChannel' : 'harmonyMembersMessageChannel']);
         const msg = await channel.messages.fetch(config[args[0] == 'clash' ? 'clashMembersMessage' : 'harmonyMembersMessage']);
-        let embed = await functions.updateMembers(await message.client.guilds.fetch('636986136283185172'),args[0]);
+        let embed = await updateMembers(await message.client.guilds.fetch('636986136283185172'),args[0]);
         await msg.edit({embed:embed});
         return message.channel.send('Updated the member list.');
     }
