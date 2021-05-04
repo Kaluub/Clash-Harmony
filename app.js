@@ -5,6 +5,8 @@ const {readJSON} = require('./json.js');
 const {token} = readJSON('config.json');
 const commands = require('./commands.js');
 
+let maintenance = false;
+
 const client = new Discord.Client({
     messageCacheLifetime:1800,
     messageSweepInterval:300,
@@ -28,6 +30,7 @@ const readline = require('readline').createInterface({
 });
 
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+
 const statuses = [
     {name:'for !help',options:{type:'WATCHING'}},
     {name:'for !tutorial',options:{type:'WATCHING'}},
@@ -35,6 +38,7 @@ const statuses = [
 ];
 let statusNum = 0;
 client.setInterval(function(){
+    if(maintenance) return;
     client.user.setActivity(statuses[statusNum].name,statuses[statusNum].options);
     statusNum += 1;
     if(statusNum >= statuses.length) statusNum = 0;
@@ -51,7 +55,7 @@ client.on('message', async (msg) => {
     const config = await readJSON('config.json');
     if(!msg.guild){ // Modmail
         let userdata = await userdb.get(`636986136283185172/${msg.author.id}`);
-        if(userdata.blocked) return;
+        if(userdata && userdata.blocked) return message.channel.send(`You've previously been blocked from using this system. Please directly DM a staff member to help you out.`);
         let dmEmbed = new Discord.MessageEmbed().setColor('#333333').setTitle('Clash & Harmony Mod Mail system:').setTimestamp();
         dmEmbed.setDescription(`Warning:
         Sending messages in DMs will send them to the staff of the Clash & Harmony Clans.
@@ -74,7 +78,7 @@ client.on('message', async (msg) => {
                 let embed = new Discord.MessageEmbed()
                     .setColor('#333333')
                     .setTitle(`Mod Mail`)
-                    .setDescription(`New message from ${msg.author} (${msg.author.tag}):${category?`\nCategory: ${category}\n`:''}\n\n${msg.content}`)
+                    .setDescription(`New message from ${msg.author} (${msg.author.tag}):${category?`\nCategory: *${category}*`:''}\n\n${msg.content}`)
                     .setTimestamp();
                 channel.send(embed);
                 msg.channel.send(`Your message has been sent to the staff of the Clash & Harmony Clans.\n**NOTE**: Even if you haven't received a message back, your message will be read!`);
@@ -86,10 +90,10 @@ client.on('message', async (msg) => {
                 await rmsg.react('🟦'); await rmsg.react('🟪'); await rmsg.react('❓'); await rmsg.react('❗');
                 const rcol = rmsg.createReactionCollector((reaction, user) => !user.bot && categories.includes(reaction.emoji.name), {time: 10000});
                 rcol.on('collect', (r) => {
-                    if(r.emoji.name == '🟦') rcol.stop('harmony application');
-                    if(r.emoji.name == '🟪') rcol.stop('clash application');
-                    if(r.emoji.name == '❓') rcol.stop('question');
-                    if(r.emoji.name == '❗') rcol.stop('issue');
+                    if(r.emoji.name == '🟦') rcol.stop('Harmony Application');
+                    if(r.emoji.name == '🟪') rcol.stop('Clash Application');
+                    if(r.emoji.name == '❓') rcol.stop('Question');
+                    if(r.emoji.name == '❗') rcol.stop('Issue');
                 });
                 rcol.on('end', (col, reason) => {
                     if(reason == 'time') return message.channel.send('Time expired for adding a category.');
@@ -114,11 +118,13 @@ client.on('message', async (msg) => {
     };
 
     let userdata = await userdb.get(`${msg.guild.id}/${msg.author.id}`);
-    if(!userdata){
+
+    if(!userdata){ // Add new userdata if none found.
         await userdb.set(`${msg.guild.id}/${msg.author.id}`, new Data('user',{}));
         userdata = await userdb.get(`${msg.guild.id}/${msg.author.id}`);
     };
-    if(userdata.version != Data.version){
+
+    if(userdata.version != Data.version){ // Update user data if outdated.
         userdata = await Data.updateData(userdata);
         await userdb.set(`${msg.guild.id}/${msg.author.id}`,userdata);
     };
@@ -128,6 +134,8 @@ client.on('message', async (msg) => {
         const commandName = args.shift().toLowerCase();
         const command = commands.commands.get(commandName) || commands.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if(!command) return;
+        if((maintenance && command.name != 'maintenance'))
+            if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.')
         if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send('This command requires admin permission.');
         userdata.statistics.commandsUsed += 1;
         await userdb.set(`${msg.guild.id}/${msg.author.id}`,userdata);
@@ -143,10 +151,20 @@ client.on('message', async (msg) => {
 readline.on('line', async line => { // Console commands:
     const args = line.split(/ +/);
     const commandName = args.shift().toLowerCase();
+    if(commandName == 'maintenance' || commandName == 'maint'){ // Maintenance. Needs to be in this file.
+        maintenance = !maintenance;
+        if(maintenance){
+            client.user.setPresence({activity:{name:'maintenance on-going', type:'WATCHING'}, status:'idle'});
+        } else {
+            client.user.setPresence({activity:{name:'maintenance over', type:'PLAYING'}, status:'online'});
+        };
+        console.log("\x1b[32m%s\x1b[0m",`Successfully ${maintenance ? 'activated' : 'deactivated'} maintenance mode.`);
+        return readline.prompt();
+    };
     const command = commands.consoleCommands.get(commandName) || commands.consoleCommands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
     if(command){
         try{
-            await command.execute(client,args,{commands:commands.consoleCommands,readline:readline});
+            await command.execute(client,args,{commands:commands.consoleCommands,discordCommands:commands.commands,readline:readline});
         } catch(error){
             console.error(error);
         };

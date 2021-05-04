@@ -1,5 +1,5 @@
 const { MessageEmbed } = require('discord.js');
-const {guessRewards} = require('../functions.js')
+const {guessRewards, economyLog} = require('../functions.js');
 const Keyv = require('keyv');
 const { readJSON } = require('../json');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
@@ -15,6 +15,7 @@ async function buyItem(message,item,category,userdata){
         userdata.points -= item.price;
         userdata.statistics.spent += item.price;
         await userdb.set(`${message.guild.id}/${message.author.id}`,userdata);
+        economyLog(message.guild.id, message.author, item.id);
         return message.channel.send(`You purchased the ${item.name} for ${item.price} points.`);
     } else if(category == 'roles'){
         if(message.guild.id != '636986136283185172') return message.channel.send('This reward can only be claimed in the Clash & Harmony Discord server!');
@@ -24,6 +25,7 @@ async function buyItem(message,item,category,userdata){
         userdata.statistics.spent += item.price;
         await userdb.set(`${message.guild.id}/${message.author.id}`,userdata);
         await message.member.roles.add(item.id,'Delivering purchase reward.');
+        economyLog(message.guild.id, message.author, item.id);
         return message.channel.send(`You purchased the ${item.name} for ${item.price} points.`);
     } else if(category == 'services'){
         if(userdata.points < item.price) return message.channel.send(`You don't have enough points to purchase this reward (${item.price - userdata.points} more needed).`);
@@ -33,6 +35,7 @@ async function buyItem(message,item,category,userdata){
         const LMO = await message.client.users.fetch('186459664974741504');
         const embed = new MessageEmbed().setTimestamp().setTitle('Service requested:').setDescription(`${message.author} (${message.author.tag}):\nThis user has ordered the "${item.name}" service for ${item.price} points.`)
         await LMO.send(embed);
+        economyLog(message.guild.id, message.author, item.id);
         return message.channel.send(`You purchased the ${item.name} for ${item.price} points.`);
     } else {
         return message.channel.send(`There was an error purchasing this item.`);

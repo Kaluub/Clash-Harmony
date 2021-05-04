@@ -1,4 +1,5 @@
 const {MessageEmbed} = require('discord.js');
+const {readFileSync, writeFileSync} = require('fs');
 
 async function updateMembers(guild,clan){
     if(guild.id != '636986136283185172') return;
@@ -69,7 +70,21 @@ async function guessRewards(rewards,name,all){
     return possibleRewards;
 };
 
+function economyLog(guildID, user, reward, points, user2){
+    let time = new Date(Date.now());
+    let str;
+    if(!reward){
+        str = `\n[ECO] [GUILD: ${guildID}] ${user.id} earned ${points} points${user2 ? ` from ${user2.id}` : ``}. Time: ${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+    } else {
+        str = `\n[REWARD] [GUILD: ${guildID}] ${user.id} purchased ${reward.id} for ${reward.price} points. Time: ${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+    };
+    let currentLog = readFileSync(`./data/logs/economy.log`, {encoding:'utf-8'});
+    currentLog += str;
+    writeFileSync(`./data/logs/economy.log`, currentLog, {encoding:'utf-8'});
+};
+
 module.exports = {
     updateMembers:updateMembers,
-    guessRewards:guessRewards
+    guessRewards:guessRewards,
+    economyLog:economyLog
 };

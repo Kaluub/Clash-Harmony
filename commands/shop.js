@@ -26,7 +26,7 @@ module.exports = {
         let collector = msg.createReactionCollector((reaction, user) => !user.bot && user.id == message.author.id && emojis.includes(reaction.emoji.name), {time:300000});
         collector.on('collect', async (reaction,user) => {
             if(reaction.emoji.name == emojis[0]){ // Backgrounds:
-                embed.setDescription('**Backgrounds**:\n');
+                embed.setDescription('**Backgrounds**:');
                 for(const i in shop.rewards.backgrounds){
                     let background = shop.rewards.backgrounds[i];
                     if(!background.shown || !background.name) continue;
@@ -38,7 +38,7 @@ module.exports = {
             };
 
             if(reaction.emoji.name == emojis[1]){ // Frames:
-                embed.setDescription('**Frames**:\n');
+                embed.setDescription('**Frames**:');
                 for(const i in shop.rewards.frames){
                     let frame = shop.rewards.frames[i];
                     if(!frame.shown || !frame.name) continue;
@@ -50,7 +50,7 @@ module.exports = {
             };
 
             if(reaction.emoji.name == emojis[2]){ // Roles:
-                embed.setDescription('**Roles**:\n');
+                embed.setDescription('**Roles**:');
                 for(const i in shop.rewards.roles){
                     let role = shop.rewards.roles[i];
                     if(!role.shown || !role.name) continue;
@@ -76,7 +76,11 @@ module.exports = {
             await msg.edit({embed:embed});
         });
         collector.on('end', async (collected, reason) => {
-            return await msg.reactions.removeAll();
+            try {
+                await msg.reactions.removeAll();
+            } catch {
+                return true;
+            };
         });
     }
 };

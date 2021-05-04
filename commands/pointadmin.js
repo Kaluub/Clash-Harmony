@@ -1,3 +1,4 @@
+const {economyLog} = require(`../functions.js`);
 const Keyv = require('keyv');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
 
@@ -28,6 +29,7 @@ module.exports = {
             userdata.statistics.earned += points;
         };
         await userdb.set(`${message.guild.id}/${user.id}`,userdata);
+        economyLog(message.guild.id, user, null, points, message.author);
         return message.channel.send(args.includes('-s') ? `Successfully set ${user.tag} points to ${points}.` : `Successfully added ${points} points to ${user.tag}.`);
     }
 };

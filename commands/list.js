@@ -5,7 +5,7 @@ const {MessageEmbed} = require('discord.js');
 
 module.exports = {
     name:'list',
-    aliases:['fr'],
+    aliases:['l'],
     admin:false,
     desc:`This is a command for viewing your owned frames and backgrounds.`,
     usage:'!list [frames/backgrounds]',

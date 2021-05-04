@@ -27,6 +27,6 @@ module.exports = {
         } catch {
             return message.channel.send(`Couldn't send a message to this channel/user.`);
         };
-        return message.channel.send(`Send a message to ${channel}.`);
+        return message.channel.send(`Sent a message to ${channel}.`);
     }
 };
