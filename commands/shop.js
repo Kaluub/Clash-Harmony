@@ -33,6 +33,7 @@ module.exports = {
                     if(background.endTime && background.endTime < Date.now()) continue;
                     if(background.startTime && background.startTime > Date.now()) continue;
                     if(userdata.unlocked.backgrounds.includes(background.id)) continue;
+                    if(args.length && !background.name.includes(args.join())) continue;
                     embed.setDescription(embed.description + `\n\n${background.endTime?':regional_indicator_l:: ':''}${background.name} (${background.price} points)`);
                 };
             };
@@ -45,6 +46,7 @@ module.exports = {
                     if(frame.endTime && frame.endTime < Date.now()) continue;
                     if(frame.startTime && frame.startTime > Date.now()) continue;
                     if(userdata.unlocked.frames.includes(frame.id)) continue;
+                    if(args.length && !frame.name.includes(args.join())) continue;
                     embed.setDescription(embed.description + `\n\n${frame.endTime?':regional_indicator_l:: ':''}${frame.name} (${frame.price} points)`);
                 };
             };
@@ -57,6 +59,7 @@ module.exports = {
                     if(role.endTime && role.endTime < Date.now()) continue;
                     if(role.startTime && role.startTime > Date.now()) continue;
                     if(message.member.roles.cache.has(role.id)) continue;
+                    if(args.length && !role.name.includes(args.join())) continue;
                     embed.setDescription(embed.description + `\n\n${role.endTime?':regional_indicator_l:: ':''}${role.name} (${role.price} points)`);
                 };
             };
@@ -71,16 +74,12 @@ module.exports = {
                 };
             };*/
 
-            embed.setDescription(embed.description + '\n\nTo buy a reward, use `!buy [reward name]`.');
+            embed.setDescription(embed.description + `\n\n${args.length ? `Filtered by text: \`${args.join()}\`\n` : ''}To buy a reward, use \`!buy [reward name]\`.`);
             await reaction.users.remove(user);
             await msg.edit({embed:embed});
         });
         collector.on('end', async (collected, reason) => {
-            try {
-                await msg.reactions.removeAll();
-            } catch {
-                return true;
-            };
+            if(!message.deleted) await msg.reactions.removeAll();
         });
     }
 };

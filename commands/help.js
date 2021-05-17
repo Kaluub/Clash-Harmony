@@ -30,6 +30,7 @@ module.exports = {
                 if(!cmd) continue;
                 if(cmd.hidden) continue;
                 if(cmd.admin && (!admins.includes(message.author.id) || args.includes('-a'))) continue;
+                if(cmd.owner && message.author.id !== admins[0]) continue;
                 if(cmd.feature && (!userdata.unlocked.features.includes(cmd.feature) || !admins.includes(message.author.id))) continue;
 
                 if(currentEmbedCommands >= 6){

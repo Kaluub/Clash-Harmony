@@ -26,14 +26,11 @@ module.exports = {
         if(msg.split(/\r\n|\r|\n/).length == 3){
             if(userdata.unlocked.frames.includes('golden_frame')){
                 let luckyPoints = Math.floor(Math.random() * (50 - 20 + 1) + 20);
-                if(luckyPoints == 50){
-                    msg = `**JACKPOT!** You got the jackpot! You earned **${luckyPoints}** points!\nHere's your profile card, lucky man:`;
-                } else {
-                    msg = `**LUCKY!** You got really lucky! You earned ${luckyPoints} points!\nHere's your profile card, by the way:`;
-                };
+                if(luckyPoints == 50) msg = `**JACKPOT!** You got the jackpot! You earned **${luckyPoints}** points!\nHere's your profile card, lucky man:`;
+                else msg = `**LUCKY!** You got really lucky! You earned ${luckyPoints} points!\nHere's your profile card, by the way:`;
                 userdata.points += luckyPoints;
                 userdata.statistics.earned += luckyPoints;
-            }else {
+            } else {
                 msg = `**LUCKY!** You got lucky! You earned the Golden Frame!\nHere's your profile card, by the way:`;
                 userdata.unlocked.frames.push('golden_frame');
             };

@@ -9,14 +9,14 @@ module.exports = {
     desc:'This command is used to add rewards directly to users from the shop.',
     usage:'!add [@user] [reward name]',
     async execute(message,args){
-        if(!args[0] || !args[0]) return message.channel.send('Usage: ' + this.usage);
+        if(!args[0] || !args[1]) return message.channel.send('Usage: ' + this.usage);
         let member = message.mentions.members.first();
         if(!member){
             try {
                 let user = await message.client.users.fetch(args[0]);
-                if(!user) throw 'Invalid user ID';
+                if(!user) return message.channel.send('Invalid user ID.');
                 member = await message.guild.members.fetch(user);
-                if(!member) throw 'Invalid guild member'
+                if(!member) return message.channel.send('Invalid guild member.');
             } catch {
                 return message.channel.send('Usage: ' + this.usage);
             };

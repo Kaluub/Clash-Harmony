@@ -178,3 +178,4 @@ readline.on('line', async line => { // Console commands:
 });
 
 client.login(token);
+require('./interface/interface.js')(client);
