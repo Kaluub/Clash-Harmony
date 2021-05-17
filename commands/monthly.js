@@ -19,10 +19,11 @@ module.exports = {
             let hours = Math.floor(totalSeconds / 3600);
             totalSeconds %= 3600;
             let minutes = Math.floor(totalSeconds / 60);
-            return message.channel.send(`You can't claim your monthly bonus for another ${days}d ${hours}h ${minutes}m.`);
+            return message.channel.send(`You can't claim your monthly bonus for another ${days}d ${hours}h ${minutes}m.\n\nWhen you claim your monthly bonus, there are a few things that influence the output:\nYou always will get 10 free points.\nHarmony & Clash Members get +10 points added on.\nNitro Boosters to this server get +50 points added on.\nYou also can get up to 10 random free points.`);
         };
         userdata.monthlyCooldown = Date.now() + 2592000000;
         if(userdata.unlocked.features.includes('MONTHLY_COOLDOWN_10')) userdata.monthlyCooldown -= 259200000;
+        if(userdata.unlocked.features.includes('DEBUG')) userdata.monthlyCooldown = 1;
         let earnedPoints = 10;
         let msg = `Your monthly reward:\n • **10** base points`
         if(message.member.roles.cache.has('636987578125647923') || message.member.roles.cache.has('813870575453077504')){
@@ -33,7 +34,7 @@ module.exports = {
             earnedPoints += 50;
             msg += `\n • **+50** points for being a Nitro Booster`;
         };
-        if(Math.random() > 0.9){
+        if(Math.random() > 0.4){
             let bonusPoints = Math.floor(Math.random() * (10 - 1 + 1) + 1);
             earnedPoints += bonusPoints;
             msg += `\n • **+${bonusPoints}** bonus random points`;

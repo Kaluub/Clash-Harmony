@@ -42,6 +42,7 @@ module.exports = {
         if(Math.random() <= 0.01 / (collected + 1)){
             if(userdata.unlocked.backgrounds.includes('golden_background')){
                 userdata.points += 1;
+                userdata.statistics.earned += 1;
                 await userdb.set(`${message.guild.id}/${message.author.id}`, userdata);
                 economyLog(message.guild.id, message.author, null, 1);
                 return message.channel.send(`**LUCKY**: ...Too lucky. You earned 1 point.`);

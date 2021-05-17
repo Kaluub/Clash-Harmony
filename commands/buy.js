@@ -8,35 +8,42 @@ async function buyItem(message,item,category,userdata){
     if(!message || !item || !category || !userdata) return message.channel.send('No rewards found.');
     if(item.endTime && item.endTime < Date.now()) return message.channel.send(`This reward is not available right now!`);
     if(item.startTime && item.startTime > Date.now()) return message.channel.send(`This reward is not available right now!`);
+
+    let discount = 0; // Price booster
+    if(userdata.unlocked.features.includes('DISCOUNT_50')) discount += 0.5;
+    else if(userdata.unlocked.features.includes('DISCOUNT_25')) discount += 0.25;
+    else if(userdata.unlocked.features.includes('DISCOUNT_10')) discount += 0.1;
+    if(discount > 1) discount = 1;
+
     if(category == 'frames' || category == 'backgrounds'){
         if(userdata.unlocked[category].includes(item.id)) return message.channel.send('You already have this reward!');
-        if(userdata.points < item.price) return message.channel.send(`You don't have enough points to purchase this reward (${item.price - userdata.points} more needed).`);
+        if(userdata.points < Math.floor(item.price - item.price * discount)) return message.channel.send(`You don't have enough points to purchase this reward (${item.price - userdata.points} more needed).`);
         userdata.unlocked[category].push(item.id);
-        userdata.points -= item.price;
+        userdata.points -= Math.floor(item.price - item.price * discount);
         userdata.statistics.spent += item.price;
         await userdb.set(`${message.guild.id}/${message.author.id}`,userdata);
-        economyLog(message.guild.id, message.author, item.id);
-        return message.channel.send(`You purchased the ${item.name} for ${item.price} points.`);
+        economyLog(message.guild.id, message.author, item);
+        return message.channel.send(`You purchased the ${item.name} for ${Math.floor(item.price - item.price * discount)} points.`);
     } else if(category == 'roles'){
         if(message.guild.id != '636986136283185172') return message.channel.send('This reward can only be claimed in the Clash & Harmony Discord server!');
         if(message.member.roles.cache.has(item.id)) return message.channel.send('You already have this reward!');
-        if(userdata.points < item.price) return message.channel.send(`You don't have enough points to purchase this reward (${item.price - userdata.points} more needed).`);
-        userdata.points -= item.price;
+        if(userdata.points < Math.floor(item.price - item.price * discount)) return message.channel.send(`You don't have enough points to purchase this reward (${item.price - userdata.points} more needed).`);
+        userdata.points -= Math.floor(item.price - item.price * discount);
         userdata.statistics.spent += item.price;
         await userdb.set(`${message.guild.id}/${message.author.id}`,userdata);
         await message.member.roles.add(item.id,'Delivering purchase reward.');
-        economyLog(message.guild.id, message.author, item.id);
-        return message.channel.send(`You purchased the ${item.name} for ${item.price} points.`);
+        economyLog(message.guild.id, message.author, item);
+        return message.channel.send(`You purchased the ${item.name} for ${Math.floor(item.price - item.price * discount)} points.`);
     } else if(category == 'services'){
-        if(userdata.points < item.price) return message.channel.send(`You don't have enough points to purchase this reward (${item.price - userdata.points} more needed).`);
-        userdata.points -= item.price;
+        if(userdata.points < Math.floor(item.price - item.price * discount)) return message.channel.send(`You don't have enough points to purchase this reward (${item.price - userdata.points} more needed).`);
+        userdata.points -= Math.floor(item.price - item.price * discount);
         userdata.statistics.spent += item.price;
         await userdb.set(`${message.guild.id}/${message.author.id}`,userdata);
         const LMO = await message.client.users.fetch('186459664974741504');
         const embed = new MessageEmbed().setTimestamp().setTitle('Service requested:').setDescription(`${message.author} (${message.author.tag}):\nThis user has ordered the "${item.name}" service for ${item.price} points.`)
         await LMO.send(embed);
-        economyLog(message.guild.id, message.author, item.id);
-        return message.channel.send(`You purchased the ${item.name} for ${item.price} points.`);
+        economyLog(message.guild.id, message.author, item);
+        return message.channel.send(`You purchased the ${item.name} for ${Math.floor(item.price - item.price * discount)} points.`);
     } else {
         return message.channel.send(`There was an error purchasing this item.`);
     };
@@ -82,14 +89,14 @@ module.exports = {
             const collector = await msg.createReactionCollector((reaction, user) => user.id == message.author.id && emojis.includes(reaction.emoji.name) || reaction.emoji.name == '⛔', {time:300000});
             collector.on('collect', async (reaction, user) => {
                 if(reaction.emoji.name == '⛔'){
-                    await message.delete().catch(null);
-                    await msg.delete();
+                    if(!message.deleted && message.deletable) message.delete();
+                    if(!msg.deleted && msg.deletable) msg.delete();
                     return collector.stop('cancelled');
                 };
                 let index = emojis.indexOf(reaction.emoji.name);
                 item = await possibleRewards[index];
                 category = item.colour ? 'backgrounds' : item.category ? 'roles' : 'frames';
-                await msg.delete();
+                if(!msg.deleted && msg.deletable) msg.delete();
                 return collector.stop('success');
             });
             collector.on('end', async (collected, reason) => {
