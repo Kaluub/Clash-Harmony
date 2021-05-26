@@ -11,13 +11,14 @@ module.exports = {
     admin:false,
     desc:'This is a command for displaying your profile card.',
     usage:'!profile',
-    async execute(message,args){
-        let member = message.mentions.members.first();
-        if(!member) member = message.member;
-        let userdata = await userdb.get(`${message.guild.id}/${member.id}`);
+    async execute({interaction,message}){
+        let member = message?.mentions.members.first() ?? interaction?.options[0]?.member;
+        const guild = interaction?.guild ?? message?.guild;
+        if(!member) member = message?.member ?? interaction?.member;
+        let userdata = await userdb.get(`${guild.id}/${member.id}`);
         if(!userdata){
-            await userdb.set(`${message.guild.id}/${member.id}`, new Data('user',{}));
-            userdata = await userdb.get(`${message.guild.id}/${member.id}`);
+            await userdb.set(`${guild.id}/${member.id}`, new Data('user',{}));
+            userdata = await userdb.get(`${guild.id}/${member.id}`);
         };
         let shop = await readJSON('rewards.json');
 
@@ -34,7 +35,7 @@ module.exports = {
                 msg = `**LUCKY!** You got lucky! You earned the Golden Frame!\nHere's your profile card, by the way:`;
                 userdata.unlocked.frames.push('golden_frame');
             };
-            await userdb.set(`${message.guild.id}/${message.author.id}`,userdata);
+            await userdb.set(`${guild.id}/${member.id}`,userdata);
         };
 
         const canvas = createCanvas(1000,350);
@@ -84,11 +85,9 @@ module.exports = {
         };
 
         // Cut pfp to circle:
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(175, 175, 130, 0, Math.PI * 2, true);
-        ctx.closePath();
-        ctx.clip();
+        ctx.save(); ctx.beginPath();
+        ctx.arc(175, 175, 128, 0, Math.PI * 2, true);
+        ctx.closePath(); ctx.clip();
         ctx.drawImage(avatar, 47, 47, avatar.width * (256/avatar.width), avatar.height * (256/avatar.height));
         ctx.restore();
 
@@ -96,6 +95,6 @@ module.exports = {
         ctx.drawImage(frame, 25, 25);
 
         const attachment = new MessageAttachment(canvas.toBuffer(),'card.png');
-        return message.channel.send(msg, attachment);
+        return {content:msg, files:[attachment]};
     }
 };

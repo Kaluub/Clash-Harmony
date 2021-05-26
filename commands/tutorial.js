@@ -6,7 +6,7 @@ module.exports = {
     admin:false,
     desc:'This command is used to view the tutorial.',
     usage:'!tutorial',
-    async execute(message,args){
+    async execute({interaction,message}){
         const embeds = [
             new MessageEmbed()
                 .setTitle(`Tutorial`)
@@ -49,12 +49,19 @@ module.exports = {
                 .setImage(`https://cdn.discordapp.com/attachments/807311206888636457/830543900976349204/Help_Menu.png`)
         ];
         let page = 0;
-        const msg = await message.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
+        let msg = await message?.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
+        if(!msg) {
+            await interaction.reply({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
+            msg = await interaction.fetchReply();
+        };
+        const member = interaction?.member ?? message?.member;
         const emojis = ['⬅️','➡️'];
         await msg.react(emojis[0]);
         await msg.react(emojis[1]);
-        const collector = msg.createReactionCollector(async (reaction, user) => user.id == message.author.id && emojis.includes(reaction.emoji.name), {time:300000});
+        const collector = msg.createReactionCollector(async (reaction, user) => user.id == member.user.id && emojis.includes(reaction.emoji.name), {time:300000});
         collector.on('collect', async (reaction, user) => {
+            if(reaction.partial) await reaction.fetch();
+            
             if(reaction.emoji.name == emojis[0]){
                 page -= 1;
                 if(page < 0) page = embeds.length - 1;
@@ -67,11 +74,7 @@ module.exports = {
             await reaction.users.remove(user.id);
         });
         collector.on('stop', async (collected, reason) => {
-            try {
-                return msg.reactions.removeAll();
-            } catch {
-                return true;
-            };
+            if(!msg.deleted) return msg.reactions.removeAll();
         });
     }
 };

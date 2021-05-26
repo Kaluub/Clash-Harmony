@@ -3,10 +3,10 @@ const Keyv = require('keyv');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
 const {readJSON} = require('../json.js');
 
-function baseEmbed(message,args,admins){
+function baseEmbed(id,args,admins){
     return new MessageEmbed()
         .setTitle(`Help Interface:`)
-        .setDescription(`Here is a list of every command currently accessible${args[0] == '-a' && admins.includes(message.author.id) ? ' (admin commands hidden)' : ''}.\n`)
+        .setDescription(`Here is a list of every command currently accessible${args[0] == '-a' && admins.includes(id) ? ' (admin commands hidden)' : ''}.\n`)
         .setColor('BLURPLE')
 };
 
@@ -16,25 +16,27 @@ module.exports = {
     admin:false,
     desc:'A list of every command.',
     usage:'!help [command]',
-    async execute(message,args,ex){
+    async execute({interaction,message,args,commands}){
         const {admins} = await readJSON('config.json');
-        const userdata = await userdb.get();
+        const guild = interaction?.guild ?? message?.guild;
+        const member = interaction?.member ?? message?.member;
+        const userdata = await userdb.get(`${guild.id}/${member.user.id}`);
 
-        if((args[0] == '-a' && admins.includes(message.author.id)) || !args[0]){
+        if((args[0] == '-a' && admins.includes(member.user.id)) || !args[0]){
             // Construct help menu:
-            const embeds = [baseEmbed(message,args,admins)];
+            const embeds = [baseEmbed(member.user.id,args,admins)];
             let currentEmbed = 0;
             let currentEmbedCommands = 0;
 
-            for(const [key,cmd] of ex.commands.entries()){
+            for(const [key,cmd] of commands.entries()){
                 if(!cmd) continue;
                 if(cmd.hidden) continue;
-                if(cmd.admin && (!admins.includes(message.author.id) || args.includes('-a'))) continue;
-                if(cmd.owner && message.author.id !== admins[0]) continue;
-                if(cmd.feature && (!userdata.unlocked.features.includes(cmd.feature) || !admins.includes(message.author.id))) continue;
+                if(cmd.admin && (!admins.includes(member.user.id) || args.includes('-a'))) continue;
+                if(cmd.owner && member.user.id !== admins[0]) continue;
+                if(cmd.feature && (!userdata.unlocked.features.includes(cmd.feature) || !admins.includes(member.user.id))) continue;
 
                 if(currentEmbedCommands >= 6){
-                    embeds.push(baseEmbed(message,args,admins));
+                    embeds.push(baseEmbed(member.user.id,args,admins));
                     currentEmbed += 1;
                     currentEmbedCommands = 0;
                 };
@@ -45,12 +47,18 @@ module.exports = {
 
             // Handle pages:
             let page = 0;
-            const msg = await message.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
+            let msg;
+            if(message){
+                msg = await message?.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
+            }else{
+                await interaction?.reply(embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`));
+                msg = await interaction?.fetchReply();
+            };
 
             const emojis = ['⬅️','➡️'];
             await msg.react(emojis[0]);
             await msg.react(emojis[1]);
-            const collector = msg.createReactionCollector(async (reaction, user) => user.id == message.author.id && emojis.includes(reaction.emoji.name), {time:300000});
+            const collector = msg.createReactionCollector(async (reaction, user) => user.id == member.user.id && emojis.includes(reaction.emoji.name), {time:300000});
             collector.on('collect', async (reaction, user) => {
                 if(reaction.emoji.name == emojis[0]){
                     page -= 1;
@@ -73,10 +81,10 @@ module.exports = {
         } else {
             // Singular command help:
             const commandName = args.shift().toLowerCase();
-            const command = ex.commands.get(commandName) || ex.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+            const command = commands.get(commandName) || commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
             if(command){
-                if(command.admin && !admins.includes(message.author.id)) return message.channel.send(`There is no command with that name.`);
-                if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(message.author.id))) return message.channel.send(`You don't have access to this command.`);
+                if(command.admin && !admins.includes(member.user.id)) return `There is no command with that name.`;
+                if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(member.user.id))) return `You don't have access to this command.`;
                 let msg = new MessageEmbed()
                     .setColor('#3F3FFF')
                     .setTitle(`Help interface: ${command.name}`)
@@ -84,9 +92,9 @@ module.exports = {
                     .addField(`Usage:`,`\`${command.usage}\` `)
                     .setTimestamp();
                 if(command.aliases && command.aliases.length > 0) msg.addField(`Aliases:`,command.aliases.join('; '));
-                return message.channel.send({embed:msg,split:true});
+                return msg;
             };
-            return message.channel.send(`There is no command with that name.`);
+            return `There is no command with that name.`;
         };
     }
 };

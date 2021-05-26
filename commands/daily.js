@@ -8,9 +8,11 @@ module.exports = {
     hidden:true,
     desc:`This is a (probably) satire command regarding daily rewards.`,
     usage:'!daily',
-    async execute(message,args){
-        let collected = await userdb.get(`${message.guild.id}/GoldenBackgrounds`);
-        const userdata = await userdb.get(`${message.guild.id}/${message.author.id}`);
+    async execute({interaction,message}){
+        const guild = interaction?.guild ?? message?.guild;
+        const member = interaction?.member ?? message?.member;
+        let collected = await userdb.get(`${guild.id}/GoldenBackgrounds`);
+        const userdata = await userdb.get(`${guild.id}/${member.user.id}`);
         if(!collected) collected = 0;
         const messages = [
             `You got absolutely nothing. Try again later!`,
@@ -43,17 +45,17 @@ module.exports = {
             if(userdata.unlocked.backgrounds.includes('golden_background')){
                 userdata.points += 1;
                 userdata.statistics.earned += 1;
-                await userdb.set(`${message.guild.id}/${message.author.id}`, userdata);
+                await userdb.set(`${guild.id}/${member.user.id}`, userdata);
                 economyLog(message.guild.id, message.author, null, 1);
-                return message.channel.send(`**LUCKY**: ...Too lucky. You earned 1 point.`);
+                return `**LUCKY**: ...Too lucky. You earned 1 point.`;
             };
             userdata.unlocked.backgrounds.push('golden_background');
             userdata.card.background = 'golden_background';
-            await userdb.set(`${message.guild.id}/${message.author.id}`, userdata);
-            await userdb.set(`${message.guild.id}/GoldenBackgrounds`, collected + 1);
-            return message.channel.send(`**LUCKY**: ...But something finally happened.`);
+            await userdb.set(`${guild.id}/${member.user.id}`, userdata);
+            await userdb.set(`${guild.id}/${member.user.id}`, collected + 1);
+            return `**LUCKY**: ...But something finally happened.`;
         } else {
-            return message.channel.send(messages[Math.floor(Math.random() * messages.length)]);
+            return messages[Math.floor(Math.random() * messages.length)];
         };
     }
 };

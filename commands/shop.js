@@ -9,22 +9,30 @@ module.exports = {
     admin:false,
     desc:'This is a command for displaying the shop.',
     usage:'!shop',
-    async execute(message,args){
-        let userdata = await userdb.get(`${message.guild.id}/${message.author.id}`);
+    async execute({interaction,message,args}){
+        const guild = interaction?.guild ?? message?.guild;
+        const member = interaction?.member ?? message?.member;
+        let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
         let shop = await readJSON('rewards.json');
 
         const emojis = ['💠','🌐','🔒'/*,'📝'*/];
         let embed = new MessageEmbed()
             .setColor('#33AA33')
-            .setTitle(`Shop Interface (${message.author.tag}):`)
+            .setTitle(`Shop Interface (${member.user.tag}):`)
             .setDescription(`You have ${userdata.points} points right now.\nTo select a category, react with the emojis provided.\n\nLegend:\n${emojis[0]} • Backgrounds\n${emojis[1]} • Frames\n${emojis[2]} • Roles`/*\n${emojis[3]} • Services`*/)
             .setFooter(`This message expires at:`)
             .setTimestamp(Date.now() + 300000);
-        const msg = await message.channel.send({embed:embed});
+        let msg = await message?.channel.send({embed:embed});
+        if(!msg) {
+            await interaction?.reply(embed);
+            msg = await interaction?.fetchReply();
+        };
         await msg.react(emojis[0]); await msg.react(emojis[1]); await msg.react(emojis[2]); //await msg.react(emojis[3]);
 
-        let collector = msg.createReactionCollector((reaction, user) => !user.bot && user.id == message.author.id && emojis.includes(reaction.emoji.name), {time:300000});
+        let collector = msg.createReactionCollector((reaction, user) => !user.bot && user.id == member.user.id && emojis.includes(reaction.emoji.name), {time:300000});
         collector.on('collect', async (reaction,user) => {
+            if(reaction.partial) await reaction.fetch();
+            
             if(reaction.emoji.name == emojis[0]){ // Backgrounds:
                 embed.setDescription('**Backgrounds**:');
                 for(const i in shop.rewards.backgrounds){
@@ -58,7 +66,7 @@ module.exports = {
                     if(!role.shown || !role.name) continue;
                     if(role.endTime && role.endTime < Date.now()) continue;
                     if(role.startTime && role.startTime > Date.now()) continue;
-                    if(message.member.roles.cache.has(role.id)) continue;
+                    if(member.roles.cache.has(role.id)) continue;
                     if(args.length && !role.name.includes(args.join())) continue;
                     embed.setDescription(embed.description + `\n\n${role.endTime?':regional_indicator_l:: ':''}${role.name} (${role.price} points)`);
                 };

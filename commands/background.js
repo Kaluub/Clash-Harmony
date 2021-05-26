@@ -5,14 +5,15 @@ const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
 module.exports = {
     name:'background',
     aliases:['bg','backg'],
-    admin:false,
     hidden:true,
     desc:`This is a command for customizing your profile card's background.`,
     usage:'!background [owned background]',
-    async execute(message,args){
-        if(!args[0]) return message.channel.send('Usage: ' + this.usage);
+    async execute({interaction,message,args}){
+        if(!args[0]) return `Usage: ${this.usage}`;
+        const guild = interaction?.guild ?? message?.guild;
+        const member = interaction?.member ?? message?.member;
         let name = args.join(' ');
-        let userdata = await userdb.get(`${message.guild.id}/${message.author.id}`);
+        let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
         let rewards = await readJSON('rewards.json');
         let background = null;
         for(const i in rewards.rewards.backgrounds){
@@ -22,10 +23,10 @@ module.exports = {
                 break;
             };
         };
-        if(!background) return message.channel.send('There are no backgrounds with this name.');
-        if(!userdata.unlocked.backgrounds.includes(background.id)) return message.channel.send(`You don't own this background. See \`!list backgrounds\` for a list of owned backgrounds.`);
+        if(!background) return 'There are no backgrounds with this name.';
+        if(!userdata.unlocked.backgrounds.includes(background.id)) return `You don't own this background. See \`!list backgrounds\` for a list of owned backgrounds.`;
         userdata.card.background = background.id;
-        await userdb.set(`${message.guild.id}/${message.author.id}`,userdata);
-        return message.channel.send(`Successfully set your active background to ${background.name}.`);
+        await userdb.set(`${guild.id}/${member.user.id}`,userdata);
+        return `Successfully set your active background to ${background.name}.`;
     }
 };

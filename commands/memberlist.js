@@ -7,11 +7,12 @@ module.exports = {
     admin:true,
     desc:'This command is used to generate a new member list. To update any previous member list, use `!ul [clash/harmony]`',
     usage:'!ml [clash/harmony]',
-    async execute(message,args){
-        if(!args[0]) return message.channel.send('Usage: ' + this.usage);
-        if(args[0] != 'clash' && args[0] != 'harmony') return message.channel.send('Usage: ' + this.usage);
-        let embed = await functions.updateMembers(await message.client.guilds.fetch('636986136283185172'),args[0]);
-        let msg = await message.channel.send({embed:embed});
+    async execute({interaction,message,args}){
+        if(!args[0]) return `Usage: ${this.usage}`;
+        if(args[0] != 'clash' && args[0] != 'harmony') return `Usage: ${this.usage}`;
+        const guild = interaction?.guild ?? message?.guild;
+        let embed = await functions.updateMembers(guild,args[0]);
+        if(!embed) return `An error occured while using this command.`;
         let config = await readJSON('config.json');
         if(args[0] == 'clash'){
             config.clashMembersMessage = new String(msg.id);
@@ -21,5 +22,6 @@ module.exports = {
             config.harmonyMembersMessageChannel = new String(msg.channel.id);
         };
         writeJSON('config.json',config);
+        return embed;
     }
 };

@@ -8,6 +8,17 @@ const commands = require('./commands.js');
 let maintenance = false;
 
 const client = new Discord.Client({
+    intents:[
+        Discord.Intents.FLAGS.GUILDS,
+        Discord.Intents.FLAGS.GUILD_MESSAGES,
+        Discord.Intents.FLAGS.DIRECT_MESSAGES,
+        Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
+    ],
+    partials:[
+        "CHANNEL",
+        "REACTION"
+    ],
     messageCacheLifetime:1800,
     messageSweepInterval:300,
     restTimeOffset:100
@@ -45,6 +56,7 @@ client.setInterval(function(){
 },30000);
 
 client.on('ready', () => {
+    process.title = "Clash & Harmony console";
     console.log("\x1b[34m\x1b[1m%s\x1b[0m",'Bot started successfully.');
     readline.prompt();
 });
@@ -73,23 +85,29 @@ client.on('message', async (msg) => {
         const collector = message.createReactionCollector((reaction, user) => !user.bot && emojis.includes(reaction.emoji.name), {time: 300000});
 
         collector.on('collect', async (reaction) => {
+            if(reaction.partial) await reaction.fetch();
             if(reaction.emoji.name == emojis[0]){
                 const channel = await client.channels.fetch(config.modMailChannel);
                 let embed = new Discord.MessageEmbed()
                     .setColor('#333333')
                     .setTitle(`Mod Mail`)
-                    .setDescription(`New message from ${msg.author} (${msg.author.tag}):${category?`\nCategory: *${category}*`:''}\n\n${msg.content}`)
+                    .setDescription(`New message from ${msg.author} (${msg.author.tag}):${category?`\nCategory: *${category}*`:''}\n\n${msg.content.length > 1900 ? msg.content.slice(0,1899) + `...` : msg.content}`)
+                    //.setFooter(`React with ⛔ to remove the attachment.`) // TODO: v13 discord.js feature
                     .setTimestamp();
-                channel.send(embed);
+                const file = Buffer.from(`This file is generated to allow for longer messages & ease of readability.\n\nMessage received:\n` + msg.content, 'utf-8');
+                const attachment = new Discord.MessageAttachment(file, `message.txt`);
+                channel.send({embed:embed, files:[attachment]});
                 msg.channel.send(`Your message has been sent to the staff of the Clash & Harmony Clans.\n**NOTE**: Even if you haven't received a message back, your message will be read!`);
                 return collector.stop('sent');
             };
+
             if(reaction.emoji.name == emojis[1]){
                 const categories = ['🟦','🟪','❓','❗'];
                 const rmsg = await message.channel.send('Please react to this message with one of the following:\n🟦: Harmony Application\n🟪: Clash Application\n❓: Question\n❗: Issue');
                 await rmsg.react('🟦'); await rmsg.react('🟪'); await rmsg.react('❓'); await rmsg.react('❗');
                 const rcol = rmsg.createReactionCollector((reaction, user) => !user.bot && categories.includes(reaction.emoji.name), {time: 10000});
-                rcol.on('collect', (r) => {
+                rcol.on('collect', async (r) => {
+                    if(r.partial) await r.fetch();
                     if(r.emoji.name == '🟦') rcol.stop('Harmony Application');
                     if(r.emoji.name == '🟪') rcol.stop('Clash Application');
                     if(r.emoji.name == '❓') rcol.stop('Question');
@@ -101,6 +119,7 @@ client.on('message', async (msg) => {
                     return message.channel.send(`The category \`${category}\` has been added to your mail.`);
                 });
             };
+
             if(reaction.emoji.name == emojis[2]){
                 return collector.stop('cancelled');
             };
@@ -137,14 +156,46 @@ client.on('message', async (msg) => {
         if((maintenance && command.name != 'maintenance'))
             if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.')
         if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send('This command requires admin permission.');
+        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(msg.author.id))) return msg.channel.send(`This command needs a special feature available from the shop.`);
         userdata.statistics.commandsUsed += 1;
         await userdb.set(`${msg.guild.id}/${msg.author.id}`,userdata);
         try{
-            command.execute(msg,args,{commands:commands.commands});
+            await command.execute({message:msg,args:args,commands:commands.commands}).then(async res => {
+                if(res) await msg.channel.send(res);
+            });
         } catch(error){
             console.error(error);
             return msg.channel.send('An error occured while running this command.');
         };
+    };
+});
+
+client.on('interaction', async (interaction) => {
+    if(!interaction.isCommand()) return;
+    let userdata = await userdb.get(`${interaction.guildID}/${interaction.user.id}`);
+    if(!userdata){
+        await userdb.set(`${interaction.guildID}/${interaction.user.id}`, new Data('user',{}));
+        userdata = await userdb.get(`${interaction.guildID}/${interaction.user.id}`);
+    };
+    const command = commands.commands.get(interaction.commandName.toLowerCase()) || commands.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName.toLowerCase()));
+    if(!command) return;
+    const config = await readJSON('config.json');
+    if((maintenance && command.name != 'maintenance'))
+        if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
+    if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply('This command requires admin permission.');
+    if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(interaction.user.id))) return interaction.reply(`This command needs a special feature available from the shop.`);
+    let args = [];
+    interaction.options.forEach(option => args.push(option.value ? option.value.toString() : option));
+    userdata.statistics.commandsUsed += 1;
+    await userdb.set(`${interaction.guildID}/${interaction.user.id}`,userdata);
+    try{
+        await command.execute({interaction:interaction,args:args,commands:commands.commands}).then(async res => {
+            if(res && !interaction.replied) await interaction.reply(res);
+            else if(!interaction.replied) interaction.reply(`No message was returned. This is probably a bug.`);
+        });
+    } catch(error){
+        console.error(error);
+        return interaction.reply('An error occured while running this command.', {ephemeral: true});
     };
 });
 
@@ -163,9 +214,9 @@ readline.on('line', async line => { // Console commands:
     };
     const command = commands.consoleCommands.get(commandName) || commands.consoleCommands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
     if(command){
-        try{
+        try {
             await command.execute(client,args,{commands:commands.consoleCommands,discordCommands:commands.commands,readline:readline});
-        } catch(error){
+        } catch(error) {
             console.error(error);
         };
     } else {
@@ -174,6 +225,7 @@ readline.on('line', async line => { // Console commands:
     readline.prompt();
 }).on('close', () => {
     console.log("\x1b[31m\x1b[1m%s\x1b[0m",'Shutting down ClashBot.');
+    client.destroy();
     process.exit(0);
 });
 

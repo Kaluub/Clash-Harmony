@@ -83,8 +83,17 @@ function economyLog(guildID, user, reward, points, user2){
     writeFileSync(`./data/logs/economy.log`, currentLog, {encoding:'utf-8'});
 };
 
+function resetLog(guildID, userID, user2ID, userdata, userdata2){
+    let time = new Date(Date.now());
+    let str = `[TIME: ${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}]\n[${guildID}/${userID}] ${JSON.stringify(userdata)}\n[${guildID}/${user2ID}] ${JSON.stringify(userdata2)}\n=====`;
+    let currentLog = readFileSync(`./data/logs/reset.log`, {encoding:'utf-8'});
+    currentLog += str;
+    writeFileSync(`./data/logs/reset.log`, currentLog, {encoding:'utf-8'});
+};
+
 module.exports = {
     updateMembers:updateMembers,
     guessRewards:guessRewards,
-    economyLog:economyLog
+    economyLog:economyLog,
+    resetLog:resetLog
 };

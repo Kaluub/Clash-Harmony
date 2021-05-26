@@ -5,12 +5,13 @@ const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
 module.exports = {
     name:'monthly',
     aliases:['m'],
-    admin:false,
     desc:`This is a command for earning your monthly rewards.`,
     usage:'!monthly',
-    async execute(message,args){
-        let userdata = await userdb.get(`${message.guild.id}/${message.author.id}`);
-        if(!userdata) return message.channel.send('Database error occured.');
+    async execute({interaction,message}){
+        const guild = interaction?.guild ?? message?.guild;
+        const member = interaction?.member ?? message?.member;
+        let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
+        if(!userdata) return 'Database error occured.';
         if(userdata.monthlyCooldown > Date.now()){
             let timeRemaining = userdata.monthlyCooldown - Date.now();
             let totalSeconds = (timeRemaining / 1000);
@@ -19,7 +20,7 @@ module.exports = {
             let hours = Math.floor(totalSeconds / 3600);
             totalSeconds %= 3600;
             let minutes = Math.floor(totalSeconds / 60);
-            return message.channel.send(`You can't claim your monthly bonus for another ${days}d ${hours}h ${minutes}m.\n\nWhen you claim your monthly bonus, there are a few things that influence the output:\nYou always will get 10 free points.\nHarmony & Clash Members get +10 points added on.\nNitro Boosters to this server get +50 points added on.\nYou also can get up to 10 random free points.`);
+            return `You can't claim your monthly bonus for another ${days}d ${hours}h ${minutes}m.\n\nWhen you claim your monthly bonus, there are a few things that influence the output:\nYou always will get 10 free points.\nHarmony & Clash Members get +10 points added on.\nNitro Boosters to this server get +50 points added on.\nYou also can get up to 10 random free points.`;
         };
         userdata.monthlyCooldown = Date.now() + 2592000000;
         if(userdata.unlocked.features.includes('MONTHLY_COOLDOWN_10')) userdata.monthlyCooldown -= 259200000;
@@ -47,8 +48,8 @@ module.exports = {
         msg += `\n\nIn total, you earned ${Math.floor(earnedPoints)} points. You can use this command again next month!`;
         userdata.points += Math.floor(earnedPoints);
         userdata.statistics.earned += earnedPoints;
-        await userdb.set(`${message.guild.id}/${message.author.id}`,userdata);
-        economyLog(message.guild.id, message.author, null, earnedPoints);
-        return message.channel.send(msg);
+        await userdb.set(`${guild.id}/${member.user.id}`,userdata);
+        economyLog(guild.id, member.user, null, earnedPoints);
+        return msg;
     }
 };

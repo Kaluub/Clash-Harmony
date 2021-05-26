@@ -9,8 +9,10 @@ module.exports = {
     admin:false,
     desc:`This is a command for viewing your owned frames and backgrounds.`,
     usage:'!list [frames/backgrounds]',
-    async execute(message,args){
-        let userdata = await userdb.get(`${message.guild.id}/${message.author.id}`);
+    async execute({interaction,message,args}){
+        const guild = interaction?.guild ?? message?.guild;
+        const member = interaction?.member ?? message?.guild;
+        let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
         let rewards = await readJSON('rewards.json');
         if(args[0]){
             const fText = ['frames','frame','f','fr'];
@@ -25,12 +27,12 @@ module.exports = {
                     let frame = rewards.rewards.frames[id];
                     embed.setDescription(embed.description + `\n• ${frame.name}`);
                 };
-                return message.channel.send(embed);
+                return embed;
             };
     
             const bText = ['backgrounds','background','b','bg','bgs','backg'];
             if(bText.includes(args[0].toLowerCase())){
-                let userdata = await userdb.get(`${message.guild.id}/${message.author.id}`);
+                let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
                 let rewards = await readJSON('rewards.json');
                 let embed = new MessageEmbed()
                     .setTitle('Owned backgrounds:')
@@ -42,7 +44,7 @@ module.exports = {
                     let background = rewards.rewards.backgrounds[id];
                     embed.setDescription(embed.description + `\n• ${background.name}`);
                 };
-                return message.channel.send(embed);
+                return embed;
             };
         };
 
@@ -53,11 +55,16 @@ module.exports = {
             .setDescription(`To select a category, react with the emojis provided.\n\nLegend:\n${emojis[0]} • Backgrounds\n${emojis[1]} • Frames`)
             .setFooter(`This message expires at:`)
             .setTimestamp(Date.now() + 300000);
-        const msg = await message.channel.send({embed:embed});
+        let msg = await message?.channel.send({embed:embed});
+        if(!msg) {
+            await interaction?.reply(embed);
+            msg = await interaction?.fetchReply();
+        };
         await msg.react(emojis[0]); await msg.react(emojis[1]);
 
-        let collector = msg.createReactionCollector((reaction, user) => !user.bot && user.id == message.author.id && emojis.includes(reaction.emoji.name), {time:300000});
+        let collector = msg.createReactionCollector((reaction, user) => !user.bot && user.id == member.user.id && emojis.includes(reaction.emoji.name), {time:300000});
         collector.on('collect', async (reaction,user) => {
+            
             if(reaction.emoji.name == emojis[0]){ // Backgrounds:
                 embed.setDescription('**Backgrounds**:\n');
                 for(const i in userdata.unlocked.backgrounds){
