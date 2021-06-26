@@ -1,0 +1,8 @@
+{
+    "backgrounds": {
+        "default_background": {
+            "id": "default_background",
+            "img": "default_background.png"
+        }
+    }
+}

@@ -13,7 +13,7 @@ module.exports = {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        let shop = await readJSON('rewards.json');
+        let shop = await readJSON('json/rewards.json');
 
         const emojis = ['💠','🌐','🔒'/*,'📝'*/];
         let embed = new MessageEmbed()
@@ -87,7 +87,7 @@ module.exports = {
             await msg.edit({embed:embed});
         });
         collector.on('end', async (collected, reason) => {
-            if(!message.deleted) await msg.reactions.removeAll();
+            if(!msg.deleted) await msg.reactions.removeAll();
         });
     }
 };

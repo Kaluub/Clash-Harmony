@@ -3,6 +3,7 @@ const {MessageEmbed} = require('discord.js');
 module.exports = {
     name:'edit',
     admin:true,
+    noGuild:true,
     desc:'This is a command for editing any message the bot has sent.',
     usage:'!edit [channel ID] [message ID] [new message]',
     async execute({interaction,message,args}){

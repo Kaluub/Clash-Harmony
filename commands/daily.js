@@ -1,6 +1,7 @@
 const {economyLog} = require(`../functions.js`);
 const Keyv = require(`keyv`);
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+const guilddb = new Keyv('sqlite://data/users.sqlite', {namespace:'guilds'});
 
 module.exports = {
     name:'daily',
@@ -11,9 +12,19 @@ module.exports = {
     async execute({interaction,message}){
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
-        let collected = await userdb.get(`${guild.id}/GoldenBackgrounds`);
+        let collected = await guilddb.get(`${guild.id}/GoldenBackgrounds`);
         const userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        if(!collected) collected = 0;
+        if(!collected){
+            // Due to how this system worked in the past, this block needs to exist.
+            collected = await userdb.get(`${guild.id}/GoldenBackgrounds`);
+            if(collected){
+                await guilddb.set(`${guild.id}/GoldenBackgrounds`, collected);
+                await userdb.delete(`${guild.id}/GoldenBackgrounds`);
+            } else {
+                collected = 0;
+                await guilddb.set(`${guild.id}/GoldenBackgrounds`, collected);
+            };
+        };
         const messages = [
             `You got absolutely nothing. Try again later!`,
             `...But nothing happened.`,

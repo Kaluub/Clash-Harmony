@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 
 module.exports = {
     name:'tutorial',
@@ -11,7 +11,7 @@ module.exports = {
             new MessageEmbed()
                 .setTitle(`Tutorial`)
                 .setColor(`#FF6961`)
-                .setDescription(`Welcome to the bots tutorial.\nThis bot is designed as a reward for the users of this server, both in their participation & engagement with the bot as well as activities in the clan.\n\nTo proceed with the tutorial, react with the ➡️ emoji below.\nTo go back a page, react with the ⬅️ emoji below.`),
+                .setDescription(`Welcome to the bots tutorial.\nThis bot is designed as a reward for the users of this server, both in their participation & engagement with the bot as well as activities in the clan.\n\nTo proceed with the tutorial, use the buttons below.`),
             new MessageEmbed()
                 .setTitle(`Tutorial: Mod Mail`)
                 .setColor(`#FFB347`)
@@ -49,32 +49,36 @@ module.exports = {
                 .setImage(`https://cdn.discordapp.com/attachments/807311206888636457/830543900976349204/Help_Menu.png`)
         ];
         let page = 0;
-        let msg = await message?.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
+        const row = new MessageActionRow().addComponents(
+            new MessageButton()
+                .setCustomID('back')
+                .setLabel('Back')
+                .setStyle('PRIMARY'),
+            new MessageButton()
+                .setCustomID('next')
+                .setLabel('Next')
+                .setStyle('PRIMARY')
+        );
+        let msg = await message?.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`), components: [row]});
         if(!msg) {
-            await interaction.reply({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
+            await interaction.reply({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)], components: [row]});
             msg = await interaction.fetchReply();
         };
         const member = interaction?.member ?? message?.member;
-        const emojis = ['⬅️','➡️'];
-        await msg.react(emojis[0]);
-        await msg.react(emojis[1]);
-        const collector = msg.createReactionCollector(async (reaction, user) => user.id == member.user.id && emojis.includes(reaction.emoji.name), {time:300000});
-        collector.on('collect', async (reaction, user) => {
-            if(reaction.partial) await reaction.fetch();
-            
-            if(reaction.emoji.name == emojis[0]){
+        const collector = msg.createMessageComponentInteractionCollector(interaction => interaction.user.id == member.user.id, {time:300000});
+        collector.on('collect', async (interaction) => {
+            if(interaction.customID == 'back'){
                 page -= 1;
                 if(page < 0) page = embeds.length - 1;
             };
-            if(reaction.emoji.name == emojis[1]){
+            if(interaction.customID == 'next'){
                 page += 1;
                 if(page >= embeds.length) page = 0;
             };
-            await msg.edit({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
-            await reaction.users.remove(user.id);
+            await interaction.update(embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`));
         });
-        collector.on('stop', async (collected, reason) => {
-            if(!msg.deleted) return msg.reactions.removeAll();
+        collector.on('stop', async (res) => {
+            if(!msg.deleted) await msg.edit({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length} | EXPIRED`), components: []});
         });
     }
 };

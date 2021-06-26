@@ -3,6 +3,7 @@ const {MessageAttachment} = require('discord.js');
 const fetch = require('node-fetch');
 const Keyv = require('keyv');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+const guilddb = new Keyv('sqlite://data/users.sqlite', {namespace:'guilds'});
 
 module.exports = {
     name:'db',
@@ -14,6 +15,7 @@ module.exports = {
             if(!args[0] || !args[1]) return `Usage: ${this.usage}`;
             if(args[0] == 'get'){
                 let userdata = await userdb.get(args[1]);
+                if(!userdata) userdata = await guilddb.get(args[1]);
                 if(!userdata) return 'No data found for this user.';
                 writeJSON('data/userdata.json',userdata);
                 const attachment = new MessageAttachment('./data/userdata.json','userdata.json');
@@ -29,14 +31,15 @@ module.exports = {
             return `Usage: ${this.usage}`;
         }
         if(interaction){
-            if(interaction.options[0].name == 'get'){
-                let userdata = await userdb.get(`${interaction.options[0].options[0].value}/${interaction.options[0].options[1].value}`);
+            if(interaction.options.first().name == 'get'){
+                const options = interaction.options.toArray();
+                let userdata = await userdb.get(`${options[0].options[0].value}/${options[0].options[1].value}`);
                 if(!userdata) return 'No data found for this user.';
                 writeJSON('data/userdata.json',userdata);
                 const attachment = new MessageAttachment('./data/userdata.json','userdata.json');
-                return {content:`Data for ${interaction.options[0].options[0].value}/${interaction.options[0].options[1].value}:`,files:[attachment]};
+                return {content:`Data for ${options[0].options[0].value}/${options[0].options[1].value}:`,files:[attachment]};
             };
-            if(interaction.options[0].name == 'set') return `Unsupported until Discord supports receiving attachments over interactions.`
+            if(interaction.options.first().name == 'set') return `Unsupported until Discord supports receiving attachments over interactions.`
         }
     }
 };

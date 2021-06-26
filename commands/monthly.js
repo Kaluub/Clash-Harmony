@@ -27,11 +27,11 @@ module.exports = {
         if(userdata.unlocked.features.includes('DEBUG')) userdata.monthlyCooldown = 1;
         let earnedPoints = 10;
         let msg = `Your monthly reward:\n • **10** base points`
-        if(message.member.roles.cache.has('636987578125647923') || message.member.roles.cache.has('813870575453077504')){
+        if(member.roles.cache.has('636987578125647923') || member.roles.cache.has('813870575453077504')){
             earnedPoints += 10;
             msg += `\n • **+10** points for being in the clan`;
         };
-        if(message.member.roles.cache.has('679411730748669953')){
+        if(member.roles.cache.has('679411730748669953')){
             earnedPoints += 50;
             msg += `\n • **+50** points for being a Nitro Booster`;
         };

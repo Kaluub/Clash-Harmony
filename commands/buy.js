@@ -64,7 +64,7 @@ module.exports = {
         const member = interaction?.member ?? message?.member;
         const guild = interaction?.guild ?? message?.guild;
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        let rewards = await readJSON('rewards.json');
+        let rewards = await readJSON('json/rewards.json');
         let name = args.join(' ');
         let item, category = null;
 
@@ -75,6 +75,11 @@ module.exports = {
         } else if(possibleRewards.length == 1){
             item = possibleRewards[0];
             category = possibleRewards[0].colour ? 'backgrounds' : possibleRewards[0].category ? 'roles' : 'frames';
+            let msg = await message?.channel.send("Purchasing item...");
+            if(!msg) {
+                await interaction?.reply("Purchasing item...");
+                msg = await interaction?.fetchReply();
+            };
             await buyItem(member,guild,item,category,userdata,msg);
         } else if(possibleRewards.length < 10){
             const emojis = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
@@ -111,7 +116,7 @@ module.exports = {
             });
             collector.on('end', async (collected, reason) => {
                 if(reason == 'cancelled' || reason == 'time') return;
-                await msg.reactions.removeAll();
+                if(!msg.deleted) await msg.reactions.removeAll();
                 await buyItem(member,guild,item,category,userdata,msg);
             });
         } else {

@@ -23,8 +23,9 @@ module.exports = {
         } else if(!member){
             return `Invalid interaction received.`;
         };
+        if(member.user.bot) return `You can't add rewards to a bot.`;
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        let rewards = await readJSON('rewards.json');
+        let rewards = await readJSON('json/rewards.json');
         args.shift();
         let itemname = args.join(' ');
         let item, category = null;

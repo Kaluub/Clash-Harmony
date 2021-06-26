@@ -1,7 +1,7 @@
 const {Client, Intents} = require('discord.js');
 const {readJSON} = require('./json.js');
 const {token} = readJSON('config.json');
-const interactions = readJSON('interactions.json');
+const interactions = readJSON('json/interactions.json');
 
 const client = new Client({intents:Intents.FLAGS.GUILDS});
 

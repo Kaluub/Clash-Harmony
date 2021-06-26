@@ -10,7 +10,7 @@ module.exports = {
     async execute({interaction,message,args}){
         if(!args[0]) return `Usage: ${this.usage}`;
         const member = interaction?.member ?? message?.member;
-        let rewards = await readJSON('rewards.json');
+        let rewards = await readJSON('json/rewards.json');
         let name = args.join(' ');
         let item, category = null;
 

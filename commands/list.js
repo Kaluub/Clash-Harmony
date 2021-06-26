@@ -13,7 +13,7 @@ module.exports = {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.guild;
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        let rewards = await readJSON('rewards.json');
+        let rewards = await readJSON('json/rewards.json');
         if(args[0]){
             const fText = ['frames','frame','f','fr'];
             if(fText.includes(args[0].toLowerCase())){
@@ -32,8 +32,6 @@ module.exports = {
     
             const bText = ['backgrounds','background','b','bg','bgs','backg'];
             if(bText.includes(args[0].toLowerCase())){
-                let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-                let rewards = await readJSON('rewards.json');
                 let embed = new MessageEmbed()
                     .setTitle('Owned backgrounds:')
                     .setColor('#838383')

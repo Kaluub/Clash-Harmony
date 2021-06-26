@@ -1,4 +1,4 @@
-const {MessageEmbed} = require('discord.js');
+const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 const Keyv = require('keyv');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
 const {readJSON} = require('../json.js');
@@ -16,7 +16,7 @@ module.exports = {
     admin:false,
     desc:'A list of every command.',
     usage:'!help [command]',
-    async execute({interaction,message,args,commands}){
+    async execute({interaction,message,args}){
         const {admins} = await readJSON('config.json');
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
@@ -28,7 +28,7 @@ module.exports = {
             let currentEmbed = 0;
             let currentEmbedCommands = 0;
 
-            for(const [key,cmd] of commands.entries()){
+            for(const [key,cmd] of member.client.commands.entries()){
                 if(!cmd) continue;
                 if(cmd.hidden) continue;
                 if(cmd.admin && (!admins.includes(member.user.id) || args.includes('-a'))) continue;
@@ -46,42 +46,46 @@ module.exports = {
             };
 
             // Handle pages:
+            const row = new MessageActionRow().addComponents(
+                new MessageButton()
+                    .setCustomID('back')
+                    .setLabel('Back')
+                    .setStyle('PRIMARY'),
+                new MessageButton()
+                    .setCustomID('next')
+                    .setLabel('Next')
+                    .setStyle('PRIMARY')
+            );
+
             let page = 0;
             let msg;
+
             if(message){
-                msg = await message?.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
-            }else{
-                await interaction?.reply(embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`));
+                msg = await message?.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`), components: [row]});
+            } else {
+                await interaction?.reply({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)], components: [row]});
                 msg = await interaction?.fetchReply();
             };
 
-            const emojis = ['⬅️','➡️'];
-            await msg.react(emojis[0]);
-            await msg.react(emojis[1]);
-            const collector = msg.createReactionCollector(async (reaction, user) => user.id == member.user.id && emojis.includes(reaction.emoji.name), {time:300000});
-            collector.on('collect', async (reaction, user) => {
-                if(reaction.emoji.name == emojis[0]){
+            const collector = msg.createMessageComponentInteractionCollector(interaction => interaction.user.id == member.user.id, {time:30000});
+            collector.on('collect', async (interaction) => {
+                if(interaction.customID == 'back'){
                     page -= 1;
                     if(page < 0) page = embeds.length - 1;
                 };
-                if(reaction.emoji.name == emojis[1]){
+                if(interaction.customID == 'next'){
                     page += 1;
                     if(page >= embeds.length) page = 0;
                 };
-                await msg.edit({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)});
-                await reaction.users.remove(user.id);
+                await interaction.update(embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`));
             });
-            collector.on('stop', async (collected, reason) => {
-                try {
-                    return msg.reactions.removeAll();
-                } catch {
-                    return true;
-                };
+            collector.on('stop', async (res) => {
+                if(!msg.deleted) await msg.edit({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length} | EXPIRED`), components: []});
             });
         } else {
             // Singular command help:
             const commandName = args.shift().toLowerCase();
-            const command = commands.get(commandName) || commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+            const command = member.client.commands.get(commandName) || member.client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
             if(command){
                 if(command.admin && !admins.includes(member.user.id)) return `There is no command with that name.`;
                 if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(member.user.id))) return `You don't have access to this command.`;

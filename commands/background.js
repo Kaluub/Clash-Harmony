@@ -14,7 +14,7 @@ module.exports = {
         const member = interaction?.member ?? message?.member;
         let name = args.join(' ');
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        let rewards = await readJSON('rewards.json');
+        let rewards = await readJSON('json/rewards.json');
         let background = null;
         for(const i in rewards.rewards.backgrounds){
             let b = rewards.rewards.backgrounds[i];
