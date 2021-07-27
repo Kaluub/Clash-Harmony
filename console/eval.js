@@ -1,7 +1,7 @@
 module.exports = {
     name:'eval',
     usage:'eval [JS code]',
-    async execute(client,args,ex){
+    async execute({args}){
         if(!args[0]) return console.log("\x1b[32m%s\x1b[0m",`Usage: ${this.usage}`);
         try {
             const code = args.join(" ");

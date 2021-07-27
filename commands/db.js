@@ -10,7 +10,7 @@ module.exports = {
     admin:true,
     desc:'This is a dangerous but useful command for managing user data.',
     usage:'!db [get/set] [guild ID + / + user ID]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         if(message){
             if(!args[0] || !args[1]) return `Usage: ${this.usage}`;
             if(args[0] == 'get'){
@@ -32,12 +32,12 @@ module.exports = {
         }
         if(interaction){
             if(interaction.options.first().name == 'get'){
-                const options = interaction.options.toArray();
-                let userdata = await userdb.get(`${options[0].options[0].value}/${options[0].options[1].value}`);
+                const options = interaction.options;
+                let userdata = await userdb.get(`${options.get('get').options.get('guild-id').value}/${options.get('get').options.get('user-id').value}`);
                 if(!userdata) return 'No data found for this user.';
                 writeJSON('data/userdata.json',userdata);
                 const attachment = new MessageAttachment('./data/userdata.json','userdata.json');
-                return {content:`Data for ${options[0].options[0].value}/${options[0].options[1].value}:`,files:[attachment]};
+                return {content:`Data for ${options.get('get').options.get('guild-id').value}/${options.get('get').options.get('user-id').value}:`,files:[attachment]};
             };
             if(interaction.options.first().name == 'set') return `Unsupported until Discord supports receiving attachments over interactions.`
         }

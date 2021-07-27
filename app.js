@@ -8,20 +8,20 @@ const commands = require('./commands.js');
 let maintenance = false;
 
 const client = new Discord.Client({
-    intents:[
+    intents: [
         Discord.Intents.FLAGS.GUILDS,
         Discord.Intents.FLAGS.GUILD_MESSAGES,
         Discord.Intents.FLAGS.DIRECT_MESSAGES,
         Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
         Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
     ],
-    partials:[
+    partials: [
         "CHANNEL",
         "REACTION"
     ],
-    messageCacheLifetime:1800,
-    messageSweepInterval:300,
-    restTimeOffset:100
+    messageCacheLifetime: 1800,
+    messageSweepInterval: 300,
+    restTimeOffset: 100
 });
 
 client.commands = commands.commands;
@@ -65,7 +65,7 @@ client.on('ready', async () => {
     readline.prompt();
 });
 
-client.on('message', async (msg) => {
+client.on('messageCreate', async (msg) => {
     if(msg.author.bot) return;
 
     const config = await readJSON('config.json');
@@ -80,7 +80,7 @@ client.on('message', async (msg) => {
         To add a category to your message, press ⏺️ the reaction.
         To cancel this message, press the ⛔ reaction.`);
         let category;
-        const message = await msg.channel.send(dmEmbed);
+        const message = await msg.channel.send({embeds: [dmEmbed]});
         await message.react('✅');
         await message.react('⏺️');
         await message.react('⛔');
@@ -100,7 +100,7 @@ client.on('message', async (msg) => {
                 if(msg.attachments.size) embed.setImage(msg.attachments.first().url);
                 const file = Buffer.from(`This file is generated to allow for longer messages & ease of readability.\n\nMessage received:\n${msg.content}`, 'utf-8');
                 const attachment = new Discord.MessageAttachment(file, `message.txt`);
-                channel.send({embed:embed, files:[attachment]});
+                channel.send({embeds: [embed], files:[attachment]});
                 msg.channel.send(`Your message has been sent to the staff of the Clash & Harmony Clans.\n**NOTE**: Even if you haven't received a message back, your message will be read!`);
                 return collector.stop('sent');
             };
@@ -141,50 +141,40 @@ client.on('message', async (msg) => {
         return;
     };
 
-    let userdata = await userdb.get(`${msg.guild.id}/${msg.author.id}`);
-
-    if(!userdata){ // Add new userdata if none found.
-        await userdb.set(`${msg.guild.id}/${msg.author.id}`, new Data('user',{}));
-        userdata = await userdb.get(`${msg.guild.id}/${msg.author.id}`);
-    };
-
-    if(userdata.version != Data.version){ // Update user data if outdated.
-        userdata = await Data.updateData(userdata);
-        await userdb.set(`${msg.guild.id}/${msg.author.id}`,userdata);
-    };
+    let userdata = await Data.get(msg.guild.id, msg.author.id);
 
     if(msg.content.startsWith(config.prefix)){ // Discord commands:
         const args = msg.content.slice(config.prefix.length).split(/ +/);
         const commandName = args.shift().toLowerCase();
         const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if(!command) return;
+        if(!userdata && !config.admins.includes(msg.author.id)) return msg.channel.send('Unable to use this command: Your data is locked, are you in a trade?');
         if((maintenance && command.name != 'maintenance'))
             if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.')
         if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send('This command requires admin permission.');
         if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(msg.author.id))) return msg.channel.send(`This command needs a special feature available from the shop.`);
         userdata.statistics.commandsUsed += 1;
-        await userdb.set(`${msg.guild.id}/${msg.author.id}`,userdata);
+        await userdb.set(`${msg.guild.id}/${msg.author.id}`, userdata);
         try{
             await command.execute({message:msg,args:args}).then(async res => {
                 if(res) await msg.channel.send(res);
+                readline.prompt(true);
             });
         } catch(error){
             console.error(error);
+            readline.prompt(true);
             return msg.channel.send('An error occured while running this command.');
         };
     };
 });
 
-client.on('interaction', async (interaction) => {
+client.on('interactionCreate', async (interaction) => {
     if(interaction.isCommand()){
-        let userdata = await userdb.get(`${interaction.guildID}/${interaction.user.id}`);
-        if(!userdata){
-            await userdb.set(`${interaction.guildID}/${interaction.user.id}`, new Data('user',{}));
-            userdata = await userdb.get(`${interaction.guildID}/${interaction.user.id}`);
-        };
-        const command = commands.commands.get(interaction.commandName.toLowerCase()) || commands.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName.toLowerCase()));
-        if(!command) return;
         const config = await readJSON('config.json');
+        let userdata = await Data.get(interaction.guildID, interaction.user.id);
+        if(!userdata && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
+        const command = commands.commands.get(interaction.commandName.toLowerCase()) || commands.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName.toLowerCase()));
+        if(!command) return interaction.reply('Command error: This command could not be handled as it does not exist.');
         if((maintenance && command.name != 'maintenance'))
             if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
         if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply('This command requires admin permission.');
@@ -198,14 +188,16 @@ client.on('interaction', async (interaction) => {
             await command.execute({interaction:interaction,args:args}).then(async res => {
                 if(res && !interaction.replied) await interaction.reply(res);
                 else if(!interaction.replied) interaction.reply(`No message was returned. This is probably a bug.`);
+                readline.prompt(true);
             });
         } catch(error){
             console.error(error);
+            readline.prompt(true);
             return interaction.reply('An error occured while running this command.', {ephemeral: true});
         };
     } else if(interaction.isMessageComponent() && interaction.isButton()){
-        if(interaction.customID.startsWith('poll')){ // Poll event
-            const parts = interaction.customID.split('-');
+        if(interaction.customId.startsWith('poll')){ // Poll event
+            const parts = interaction.customId.split('-');
             let events = await guilddb.get(`${interaction.guildID}/Events`);
             for(let event of events){
                 if(event.id == parts[2]){
@@ -251,7 +243,14 @@ readline.on('line', async line => { // Console commands:
     const command = commands.consoleCommands.get(commandName) || commands.consoleCommands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
     if(command){
         try {
-            await command.execute(client,args,{commands:commands.consoleCommands,discordCommands:commands.commands,readline:readline});
+            await command.execute({
+                client,
+                args,
+                line,
+                commands:commands.consoleCommands,
+                discordCommands:commands.commands,
+                readline:readline
+            });
         } catch(error) {
             console.error(error);
         };

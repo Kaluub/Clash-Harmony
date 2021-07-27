@@ -1,7 +1,17 @@
 const {readJSON} = require('../json.js');
-const {MessageEmbed} = require('discord.js');
+const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 const Keyv = require('keyv');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+
+class BaseEmbed extends MessageEmbed {
+    constructor(type, num){
+        super();
+        return this
+            .setColor('DARK_ORANGE')
+            .setTitle(`Shop Interface (${type} #${num})`)
+            .setDescription(`To purchase an item, use \`!buy [name]\`.\n`)
+    }
+}
 
 module.exports = {
     name:'shop',
@@ -9,85 +19,122 @@ module.exports = {
     admin:false,
     desc:'This is a command for displaying the shop.',
     usage:'!shop',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        let shop = await readJSON('json/rewards.json');
+        let rewards = await readJSON('json/rewards.json');
 
-        const emojis = ['💠','🌐','🔒'/*,'📝'*/];
-        let embed = new MessageEmbed()
+        const menuRow = new MessageActionRow().addComponents(
+            new MessageButton()
+                .setCustomId('backgrounds')
+                .setLabel('Backgrounds')
+                .setStyle('PRIMARY'),
+            new MessageButton()
+                .setCustomId('frames')
+                .setLabel('Frames')
+                .setStyle('PRIMARY'),
+            new MessageButton()
+                .setCustomId('roles')
+                .setLabel('Roles')
+                .setStyle('PRIMARY')
+        );
+
+        const categoryRow = new MessageActionRow().addComponents(
+            new MessageButton()
+                .setCustomId('back')
+                .setLabel('Back')
+                .setStyle('SECONDARY'),
+            new MessageButton()
+                .setCustomId('previous')
+                .setLabel('Previous')
+                .setStyle('PRIMARY'),
+            new MessageButton()
+                .setCustomId('next')
+                .setLabel('Next')
+                .setStyle('PRIMARY')
+        );
+
+        const menuEmbed = new MessageEmbed()
             .setColor('#33AA33')
             .setTitle(`Shop Interface (${member.user.tag}):`)
-            .setDescription(`You have ${userdata.points} points right now.\nTo select a category, react with the emojis provided.\n\nLegend:\n${emojis[0]} • Backgrounds\n${emojis[1]} • Frames\n${emojis[2]} • Roles`/*\n${emojis[3]} • Services`*/)
+            .setDescription(`You have ${userdata.points} points right now.\nTo select a category, use the buttons below.`)
             .setFooter(`This message expires at:`)
             .setTimestamp(Date.now() + 300000);
-        let msg = await message?.channel.send({embed:embed});
+        
+        let shopEmbeds = {
+            current: 'menu',
+            backgrounds: {
+                pageNum: 1,
+                count: 0,
+                embeds: [new BaseEmbed('Backgrounds', '1')]
+            },
+            frames: {
+                pageNum: 1,
+                count: 0,
+                embeds: [new BaseEmbed('Frames', '1')]
+            },
+            roles: {
+                pageNum: 1,
+                count: 0,
+                embeds: [new BaseEmbed('Roles', '1')]
+            }
+        };
+
+        for(const i in rewards){
+            const reward = rewards[i];
+            if(shopEmbeds[reward.type].count > 14){
+                shopEmbeds[reward.type].count = 0;
+                shopEmbeds[reward.type].embeds.push(new BaseEmbed(reward.type[0].toUpperCase() + reward.type.substring(1), shopEmbeds[reward.type].embeds.length + 1))
+            };
+            shopEmbeds[reward.type].count += 1;
+            shopEmbeds[reward.type].embeds[shopEmbeds[reward.type].embeds.length - 1]
+                .setDescription(shopEmbeds[reward.type].embeds[shopEmbeds[reward.type].embeds.length - 1].description + `\n• ${reward.name} (${reward.price} points)`)
+        };
+        
+        let msg = await message?.channel.send({embeds:[menuEmbed], components: [menuRow]});
         if(!msg) {
-            await interaction?.reply(embed);
+            await interaction?.reply({embeds:[menuEmbed]});
             msg = await interaction?.fetchReply();
         };
-        await msg.react(emojis[0]); await msg.react(emojis[1]); await msg.react(emojis[2]); //await msg.react(emojis[3]);
 
-        let collector = msg.createReactionCollector((reaction, user) => !user.bot && user.id == member.user.id && emojis.includes(reaction.emoji.name), {time:300000});
-        collector.on('collect', async (reaction,user) => {
-            if(reaction.partial) await reaction.fetch();
-            
-            if(reaction.emoji.name == emojis[0]){ // Backgrounds:
-                embed.setDescription('**Backgrounds**:');
-                for(const i in shop.rewards.backgrounds){
-                    let background = shop.rewards.backgrounds[i];
-                    if(!background.shown || !background.name) continue;
-                    if(background.endTime && background.endTime < Date.now()) continue;
-                    if(background.startTime && background.startTime > Date.now()) continue;
-                    if(userdata.unlocked.backgrounds.includes(background.id)) continue;
-                    if(args.length && !background.name.includes(args.join())) continue;
-                    embed.setDescription(embed.description + `\n\n${background.endTime?':regional_indicator_l:: ':''}${background.name} (${background.price} points)`);
-                };
+        console.log(shopEmbeds)
+        let collector = msg.createMessageComponentCollector({filter: int => int.user.id == member.user.id, idle:300000});
+        collector.on('collect', async int => {
+            if(int.customId == 'backgrounds'){
+                shopEmbeds.current = 'backgrounds';
+                await int.update({embeds: [shopEmbeds[shopEmbeds.current].embeds[shopEmbeds[shopEmbeds.current].pageNum - 1]], components: [categoryRow]})
             };
 
-            if(reaction.emoji.name == emojis[1]){ // Frames:
-                embed.setDescription('**Frames**:');
-                for(const i in shop.rewards.frames){
-                    let frame = shop.rewards.frames[i];
-                    if(!frame.shown || !frame.name) continue;
-                    if(frame.endTime && frame.endTime < Date.now()) continue;
-                    if(frame.startTime && frame.startTime > Date.now()) continue;
-                    if(userdata.unlocked.frames.includes(frame.id)) continue;
-                    if(args.length && !frame.name.includes(args.join())) continue;
-                    embed.setDescription(embed.description + `\n\n${frame.endTime?':regional_indicator_l:: ':''}${frame.name} (${frame.price} points)`);
-                };
+            if(int.customId == 'frames'){
+                shopEmbeds.current = 'frames';
+                await int.update({embeds: [shopEmbeds[shopEmbeds.current].embeds[shopEmbeds[shopEmbeds.current].pageNum - 1]], components: [categoryRow]})
             };
 
-            if(reaction.emoji.name == emojis[2]){ // Roles:
-                embed.setDescription('**Roles**:');
-                for(const i in shop.rewards.roles){
-                    let role = shop.rewards.roles[i];
-                    if(!role.shown || !role.name) continue;
-                    if(role.endTime && role.endTime < Date.now()) continue;
-                    if(role.startTime && role.startTime > Date.now()) continue;
-                    if(member.roles.cache.has(role.id)) continue;
-                    if(args.length && !role.name.includes(args.join())) continue;
-                    embed.setDescription(embed.description + `\n\n${role.endTime?':regional_indicator_l:: ':''}${role.name} (${role.price} points)`);
-                };
+            if(int.customId == 'roles'){
+                shopEmbeds.current = 'roles';
+                await int.update({embeds: [shopEmbeds[shopEmbeds.current].embeds[shopEmbeds[shopEmbeds.current].pageNum - 1]], components: [categoryRow]})
             };
 
-            /*if(reaction.emoji.name == emojis[3]){ // Services:
-                embed.setDescription('**Services**:\n');
-                for(const i in shop.rewards.services){
-                    let service = shop.rewards.services[i];
-                    if(!service.shown || !service.name) continue;
-                    if(service.endTime && service.endTime < Date.now()) continue;
-                    embed.setDescription(embed.description + `\n${service.name} (${service.price} points)`);
-                };
-            };*/
+            if(int.customId == 'back'){
+                shopEmbeds.current = 'menu';
+                await int.update({embeds: [menuEmbed], components: [menuRow]});
+            };
 
-            embed.setDescription(embed.description + `\n\n${args.length ? `Filtered by text: \`${args.join()}\`\n` : ''}To buy a reward, use \`!buy [reward name]\`.`);
-            await reaction.users.remove(user);
-            await msg.edit({embed:embed});
+            if(int.customId == 'previous'){
+                shopEmbeds[shopEmbeds.current].pageNum -= 1;
+                if(shopEmbeds[shopEmbeds.current].pageNum < 1) shopEmbeds[shopEmbeds.current].pageNum = shopEmbeds[shopEmbeds.current].embeds.length;
+                await int.update({embeds: [shopEmbeds[shopEmbeds.current].embeds[shopEmbeds[shopEmbeds.current].pageNum - 1]], components: [categoryRow]});
+            };
+
+            if(int.customId == 'next'){
+                shopEmbeds[shopEmbeds.current].pageNum += 1;
+                if(shopEmbeds[shopEmbeds.current].pageNum > shopEmbeds[shopEmbeds.current].embeds.length) shopEmbeds[shopEmbeds.current].pageNum = 1;
+                await int.update({embeds: [shopEmbeds[shopEmbeds.current].embeds[shopEmbeds[shopEmbeds.current].pageNum - 1]], components: [categoryRow]});
+            };
         });
-        collector.on('end', async (collected, reason) => {
-            if(!msg.deleted) await msg.reactions.removeAll();
+        collector.on('end', async () => {
+            if(!msg.deleted) await msg.edit({embeds: [new MessageEmbed().setDescription('Expired.')], components: []});
         });
     }
 };

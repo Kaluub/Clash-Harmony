@@ -16,7 +16,7 @@ module.exports = {
     admin:false,
     desc:'A list of every command.',
     usage:'!help [command]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         const {admins} = await readJSON('config.json');
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
@@ -48,11 +48,11 @@ module.exports = {
             // Handle pages:
             const row = new MessageActionRow().addComponents(
                 new MessageButton()
-                    .setCustomID('back')
+                    .setCustomId('back')
                     .setLabel('Back')
                     .setStyle('PRIMARY'),
                 new MessageButton()
-                    .setCustomID('next')
+                    .setCustomId('next')
                     .setLabel('Next')
                     .setStyle('PRIMARY')
             );
@@ -61,26 +61,26 @@ module.exports = {
             let msg;
 
             if(message){
-                msg = await message?.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`), components: [row]});
+                msg = await message?.channel.send({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)], components: [row]});
             } else {
                 await interaction?.reply({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)], components: [row]});
                 msg = await interaction?.fetchReply();
             };
 
-            const collector = msg.createMessageComponentInteractionCollector(interaction => interaction.user.id == member.user.id, {time:30000});
+            const collector = msg.createMessageComponentCollector({filter: interaction => interaction.user.id == member.user.id, idle: 30000});
             collector.on('collect', async (interaction) => {
-                if(interaction.customID == 'back'){
+                if(interaction.customId == 'back'){
                     page -= 1;
                     if(page < 0) page = embeds.length - 1;
                 };
-                if(interaction.customID == 'next'){
+                if(interaction.customId == 'next'){
                     page += 1;
                     if(page >= embeds.length) page = 0;
                 };
-                await interaction.update(embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`));
+                await interaction.update({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)]});
             });
-            collector.on('stop', async (res) => {
-                if(!msg.deleted) await msg.edit({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length} | EXPIRED`), components: []});
+            collector.on('end', async (res) => {
+                if(!msg.deleted) await msg.edit({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length} | EXPIRED`)], components: []});
             });
         } else {
             // Singular command help:
@@ -96,7 +96,7 @@ module.exports = {
                     .addField(`Usage:`,`\`${command.usage}\` `)
                     .setTimestamp();
                 if(command.aliases && command.aliases.length > 0) msg.addField(`Aliases:`,command.aliases.join('; '));
-                return msg;
+                return {embeds:[msg]};
             };
             return `There is no command with that name.`;
         };

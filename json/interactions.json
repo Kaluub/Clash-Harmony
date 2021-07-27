@@ -18,18 +18,6 @@
         ]
     },
     {
-        "name": "background",
-        "description": "This is a command for customizing your profile card's background.",
-        "options": [
-            {
-                "name": "background",
-                "description": "The background name to use for your profile card.",
-                "type": "STRING",
-                "required": true
-            }
-        ]
-    },
-    {
         "name": "buy",
         "description": "This command is used to purchase rewards from the shop.",
         "options": [
@@ -98,6 +86,24 @@
                         "required": true
                     }
                 ]
+            }
+        ]
+    },
+    {
+        "name": "duel",
+        "description": "This is a command for dueling other users.",
+        "options": [
+            {
+                "name": "member",
+                "description": "The member you'd like to duel.",
+                "type": "USER",
+                "required": true
+            },
+            {
+                "name": "points",
+                "description": "The amount of points duel for.",
+                "type": "INTEGER",
+                "required": false
             }
         ]
     },
@@ -275,18 +281,6 @@
                         "required": false
                     }
                 ]
-            }
-        ]
-    },
-    {
-        "name": "frame",
-        "description": "This is a command for customizing your profile card's frame.",
-        "options": [
-            {
-                "name": "frame",
-                "description": "The frame name to use for your profile card.",
-                "type": "STRING",
-                "required": true
             }
         ]
     },

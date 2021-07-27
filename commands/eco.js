@@ -8,11 +8,11 @@ module.exports = {
     admin:true,
     desc:'This command is used to manage point distribution.',
     usage:'!eco [@user/user ID] [points]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         if(!args[0] || !args[1]) return `Usage: ${this.usage}`;
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
-        let user = message?.mentions.users.first() ?? interaction?.options[0].user;
+        let user = message?.mentions.users.first() ?? interaction?.options.get('points').user;
         if(!user){
             try {
                 user = await member.client.users.fetch(args[0]);

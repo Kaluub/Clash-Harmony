@@ -9,12 +9,13 @@ module.exports = {
     hidden:true,
     desc:`This is a (probably) satire command regarding daily rewards.`,
     usage:'!daily',
-    async execute({interaction,message}){
+    execute: async ({interaction,message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
         let collected = await guilddb.get(`${guild.id}/GoldenBackgrounds`);
         const userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        if(!collected){
+
+        if(collected == undefined){
             // Due to how this system worked in the past, this block needs to exist.
             collected = await userdb.get(`${guild.id}/GoldenBackgrounds`);
             if(collected){
@@ -25,6 +26,7 @@ module.exports = {
                 await guilddb.set(`${guild.id}/GoldenBackgrounds`, collected);
             };
         };
+
         const messages = [
             `You got absolutely nothing. Try again later!`,
             `...But nothing happened.`,
@@ -52,6 +54,7 @@ module.exports = {
             `You first interacted with me at ${new Date(userdata.statistics.age).toUTCString()}... but for what cause?`,
             `You've used ${userdata.statistics.commandsUsed} commands to date... but for what cause?`
         ];
+
         if(Math.random() <= 0.01 / (collected + 1)){
             if(userdata.unlocked.backgrounds.includes('golden_background')){
                 userdata.points += 1;
@@ -65,8 +68,6 @@ module.exports = {
             await userdb.set(`${guild.id}/${member.user.id}`, userdata);
             await userdb.set(`${guild.id}/${member.user.id}`, collected + 1);
             return `**LUCKY**: ...But something finally happened.`;
-        } else {
-            return messages[Math.floor(Math.random() * messages.length)];
-        };
+        } else return messages[Math.floor(Math.random() * messages.length)];
     }
 };

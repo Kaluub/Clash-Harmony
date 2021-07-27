@@ -10,18 +10,14 @@ module.exports = {
     aliases:['p'],
     desc:'This is a command for displaying your profile card.',
     usage:'!profile',
-    async execute({interaction,message}){
+    execute: async ({interaction,message}) => {
         let member = message?.mentions.members.first() ?? interaction?.options.first()?.member;
         const self = interaction?.member ?? message?.member;
         const guild = interaction?.guild ?? message?.guild;
         if(!member) member = message?.member ?? interaction?.member;
         const selfdata = await userdb.get(`${guild.id}/${self.user.id}`);
-        let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        if(!userdata){
-            await userdb.set(`${guild.id}/${member.user.id}`, new Data('user',{}));
-            userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-        };
-        let shop = await readJSON('json/rewards.json');
+        let userdata = new Data(await userdb.get(`${guild.id}/${member.user.id}`));
+        let rewards = await readJSON('json/rewards.json');
 
         let msg = `${Math.random() < 0.05?'**TIP**: You can customize your profile card using !custom.\n':''}${Math.random() < 0.05?'**TIP**: You can set a profile status using !status.\n':''}${self.user.id == member.user.id ? 'Your' : `${member.user.username}'s`} profile card:`;
         // Luck minigame:
@@ -44,10 +40,10 @@ module.exports = {
 
         // Load images:
         const avatar = await loadImage(member.user.displayAvatarURL({format:'png',size:256}));
-        const background = await loadImage(`./img/backgrounds/${shop.rewards.backgrounds[userdata.card.background].img}`);
-        const frame = await loadImage(`./img/frames/${shop.rewards.frames[userdata.card.frame].img}`);
+        const background = await loadImage(`./img/backgrounds/${rewards[userdata.card.background].img}`);
+        const frame = await loadImage(`./img/frames/${rewards[userdata.card.frame].img}`);
 
-        let colour = shop.rewards.backgrounds[userdata.card.background].colour;
+        let colour = rewards[userdata.card.background].colour;
 
         ctx.drawImage(background, 0, 0);
 

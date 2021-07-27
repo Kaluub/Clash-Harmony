@@ -36,7 +36,7 @@ module.exports = {
     desc:'A command for starting and managing events.',
     usage:'!event [event]',
     admin:true,
-    async execute({interaction}){
+    execute: async ({interaction}) => {
         if(!interaction) return `This command can only be used as a slash command.`;
 
         let events = await db.get(`${interaction.guild.id}/Events`);
@@ -132,7 +132,7 @@ module.exports = {
         if(event.pollOptions){
             let n = 0;
             event.pollOptions.forEach(opt => {
-                row.addComponents(new MessageButton().setCustomID(`poll-${n}-${event.id}`).setLabel(opt).setStyle('PRIMARY'));
+                row.addComponents(new MessageButton().setCustomId(`poll-${n}-${event.id}`).setLabel(opt).setStyle('PRIMARY'));
                 n += 1;
             });
         } else if(['artcontest', 'buildcontest'].includes(event.type)){
@@ -142,6 +142,7 @@ module.exports = {
         };
 
         const channel = await interaction.client.channels.fetch(event.channelID);
+        if(!channel.isTest()) return `Invalid channel.`;
         const msg = await channel.send({content: `New event!`, embeds:[embed], components: row.components.length ? [row] : []});
         event.messageID = msg.id;
         events.push(event);

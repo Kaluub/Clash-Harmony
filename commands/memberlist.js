@@ -7,7 +7,7 @@ module.exports = {
     admin:true,
     desc:'This command is used to generate a new member list. To update any previous member list, use `!ul [clash/harmony]`',
     usage:'!ml [clash/harmony]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${this.usage}`;
         if(args[0] != 'clash' && args[0] != 'harmony') return `Usage: ${this.usage}`;
         const guild = interaction?.guild ?? message?.guild;
@@ -22,6 +22,6 @@ module.exports = {
             config.harmonyMembersMessageChannel = new String(msg.channel.id);
         };
         writeJSON('config.json',config);
-        return embed;
+        return {embeds:[embed]};
     }
 };

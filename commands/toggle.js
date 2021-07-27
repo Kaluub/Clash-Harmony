@@ -4,7 +4,7 @@ module.exports = {
     name:'toggle',
     desc:`A command for toggling some specific roles, used for pings.`,
     usage:'!toggle [trivia/qotd/polls]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${this.usage}`;
         const guild = interaction?.guild ?? message?.guild;
         if(guild.id !== '636986136283185172') return `This command is only useable in the Clash & Harmony Discord server.`;

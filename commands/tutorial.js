@@ -6,7 +6,7 @@ module.exports = {
     admin:false,
     desc:'This command is used to view the tutorial.',
     usage:'!tutorial',
-    async execute({interaction,message}){
+    execute: async ({interaction,message}) => {
         const embeds = [
             new MessageEmbed()
                 .setTitle(`Tutorial`)
@@ -51,34 +51,37 @@ module.exports = {
         let page = 0;
         const row = new MessageActionRow().addComponents(
             new MessageButton()
-                .setCustomID('back')
+                .setCustomId('back')
                 .setLabel('Back')
                 .setStyle('PRIMARY'),
             new MessageButton()
-                .setCustomID('next')
+                .setCustomId('next')
                 .setLabel('Next')
                 .setStyle('PRIMARY')
         );
-        let msg = await message?.channel.send({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`), components: [row]});
+
+        let msg = await message?.channel.send({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)], components: [row]});
         if(!msg) {
             await interaction.reply({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)], components: [row]});
             msg = await interaction.fetchReply();
         };
+
         const member = interaction?.member ?? message?.member;
-        const collector = msg.createMessageComponentInteractionCollector(interaction => interaction.user.id == member.user.id, {time:300000});
+        const collector = msg.createMessageComponentCollector(interaction => interaction.user.id == member.user.id, {time:300000});
         collector.on('collect', async (interaction) => {
-            if(interaction.customID == 'back'){
+            if(interaction.customId == 'back'){
                 page -= 1;
                 if(page < 0) page = embeds.length - 1;
             };
-            if(interaction.customID == 'next'){
+            if(interaction.customId == 'next'){
                 page += 1;
                 if(page >= embeds.length) page = 0;
             };
-            await interaction.update(embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`));
+            await interaction.update({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length}`)]});
         });
+
         collector.on('stop', async (res) => {
-            if(!msg.deleted) await msg.edit({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length} | EXPIRED`), components: []});
+            if(!msg.deleted) await msg.edit({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length} | EXPIRED`)], components: []});
         });
     }
 };

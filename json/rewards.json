@@ -1,528 +1,564 @@
 {
-    "rewards": {
-        "backgrounds": {
-            "default_background": {
-                "id": "default_background",
-                "name": "Default Background",
-                "desc": "Default dark-themed background in your eternal possession, and originally designed as a prototype by Kaluub.",
-                "img": "default_background.png",
-                "colour": "#FFFFFF",
-                "price": 0,
-                "shown": false
-            },
-            "light_background": {
-                "id": "light_background",
-                "name": "Light Background",
-                "desc": "That's an alternative light version of the default background. Be careful with your screen's brightness settings. Same as its predecessor — designed as a prototype by Kaluub.",
-                "img": "light_background.png",
-                "colour": "#000000",
-                "price": 15,
-                "shown": true
-            },
-            "clash_background": {
-                "id": "clash_background",
-                "name": "Clash Background",
-                "desc": "Clash-themed background following its colour palette and design, the first version of its kind. Available for any of the Clash clan's followers. Design by Aldople.",
-                "img": "clash_background.png",
-                "colour": "#ff05a6",
-                "price": 20,
-                "shown": true
-            },
-            "harmony_background": {
-                "id": "harmony_background",
-                "name": "Harmony Background",
-                "desc": "Harmony-themed background following its colour palette and design, the first version of its kind. Available for any of the Harmony clan's followers. Design by Aldople.",
-                "img": "harmony_background.png",
-                "colour": "#11DDFF",
-                "price": 20,
-                "shown": true
-            },
-            "clash_mascot_background": {
-                "id": "clash_mascot_background",
-                "name": "Clash Mascot Background",
-                "desc": "That's an upgraded version of the Clash background, now also featuring its original mascot! Design by Aldople.",
-                "img": "clash_mascot_background.png",
-                "colour": "#EFDFFF",
-                "price": 25,
-                "shown": true
-            },
-            "harmony_mascot_background": {
-                "id": "harmony_mascot_background",
-                "name": "Harmony Mascot Background",
-                "desc": "That's an upgraded version of the Harmony background, now also featuring its original mascot! Design by Aldople.",
-                "img": "harmony_mascot_background.png",
-                "colour": "#11DDFF",
-                "price": 25,
-                "shown": true
-            },
-            "clash_harmony_background": {
-                "id": "clash_harmony_background",
-                "name": "Clash & Harmony Background",
-                "desc": "A truly all-powerful collaboration of Clash & Harmony gets shown by this background. Design by Aldople.",
-                "img": "clash_harmony_background.png",
-                "colour": "#EACBF2",
-                "price": 35,
-                "shown": true
-            },
-            "clash_one_year_anniversary_background": {
-                "id": "clash_one_year_anniversary_background",
-                "name": "Clash 1 Year Anniversary Background",
-                "desc": "Festive background for celebration and appreciation of the Clash clan's first anniversary! Design by Aldople.",
-                "img": "clash_one_year_anniversary_background.png",
-                "colour": "#FFD700",
-                "price": 30,
-                "shown": true
-            },
-            "pixel_worlds_background": {
-                "id": "pixel_worlds_background",
-                "name": "Pixel Worlds Background",
-                "desc": "Pixel Worlds! That's what this background is all about. Design by Aldople.",
-                "img": "pixel_worlds_background.png",
-                "colour": "#000000",
-                "price": 25,
-                "shown": true
-            },
-            "pixel_background": {
-                "id": "pixel_background",
-                "name": "Pixelated Background",
-                "desc": "Pixels! Pixels everywhere! A must-have for anyone appreciating them. This background is alternatively known as \"Pixel Background\", and we definitely didn't have to change its name because of similarities with another one... Design by Aldople.",
-                "img": "pixel_background.png",
-                "colour": "#000000",
-                "price": 30,
-                "shown": true
-            },
-            "landscape_background": {
-                "id": "landscape_background",
-                "name": "Landscape Background",
-                "desc": "Who wouldn't want to have landscape as the background of their profile card? Design by Aldople.",
-                "img": "landscape_background.png",
-                "colour": "#000000",
-                "price": 30,
-                "shown": true
-            },
-            "citrina_background": {
-                "id": "citrina_background",
-                "name": "Citrina's Background",
-                "desc": "Custom background for Citrina, but even if you aren't them — it's solvable with a purchase from the !shop. Features everyone's favourite fruit — lemon! Design by Aldople.",
-                "img": "CitrinaBackground.png",
-                "colour": "#FFFF00",
-                "price": 50,
-                "shown": true
-            },
-            "quqqo_background": {
-                "id": "quqqo_background",
-                "name": "Ghustie's Background",
-                "desc": "Custom background for Ghustie, but even if you aren't them — it's solvable with a purchase from the !shop. Created by the one and only. Design by Ghustie.",
-                "img": "QuqqoBackground.png",
-                "colour": "#FFFFFF",
-                "price": 50,
-                "shown": true
-            },
-            "aldople_background": {
-                "id": "aldople_background",
-                "name": "Aldople's Background",
-                "desc": "Custom background for Aldople, but even if you aren't them — it's solvable with a purchase from the !shop. It's a piece of Ivan Marchuk's art titled Landscape, 1980. Design by the same person.",
-                "img": "AldopleBackground.png",
-                "colour": "#FFFFFF",
-                "price": 50,
-                "shown": true
-            },
-            "sieggy_background": {
-                "id": "sieggy_background",
-                "name": "Sieggy's Background",
-                "desc": "Custom background for Sieggy, but even if you aren't them — it's solvable with a purchase from the !shop. Sieggy & The Second Heart-themed! Design by Aldople.",
-                "img": "SieggyBackground.png",
-                "colour": "#FFC0CB",
-                "price": 50,
-                "shown": true
-            },
-            "kaluub_background": {
-                "id": "kaluub_background",
-                "name": "Kaluub's Background",
-                "desc": "Custom background for Kaluub, but even if you aren't them — it's solvable with a purchase from the !shop. Kaluub recommends. Design by Aldople.",
-                "img": "KaluubBackground.png",
-                "colour": "#00FF00",
-                "price": 50,
-                "shown": true
-            },
-            "append_background": {
-                "id": "append_background",
-                "name": "Append's Background",
-                "desc": "Custom background for Append, but even if you aren't them — it's solvable with a purchase from the !shop. It's a Takagi-san! Design by Aldople.",
-                "img": "AppendBackground.png",
-                "colour": "#000000",
-                "price": 50,
-                "shown": true
-            },
-            "zithi_background": {
-                "id": "zithi_background",
-                "name": "Zithi's Background",
-                "desc": "Custom background for Zithi, but even if you aren't them — it's solvable with a purchase from the !shop. Maeve? Design by Aldople.",
-                "img": "ZithiBackground.png",
-                "colour": "#FFFFFF",
-                "price": 50,
-                "shown": true
-            },
-            "twins_background": {
-                "id": "twins_background",
-                "name": "Twins' Background",
-                "desc": "Custom background for Bassem & Bassel, but even if you aren't them — it's solvable with a purchase from the !shop. Twin cats for twins. Design by Aldople.",
-                "img": "TwinsBackground.png",
-                "colour": "#77DD77",
-                "price": 50,
-                "shown": true
-            },
-            "cats_background": {
-                "id": "cats_background",
-                "name": "Cats Background",
-                "desc": "Cats! Design by Aldople.",
-                "img": "CatsBackground.png",
-                "colour": "#000000",
-                "price": 40,
-                "shown": true
-            },
-            "space_background": {
-                "id": "space_background",
-                "name": "Space Background",
-                "desc": "Space to fill up the blank space of your profile card. Design by Aldople.",
-                "img": "SpaceBackground.png",
-                "colour": "#FFFFFF",
-                "price": 40,
-                "shown": true
-            },
-            "ancient_clash_background": {
-                "id": "ancient_clash_background",
-                "name": "Ancient Clash Background",
-                "desc": "Lost, but not forgotten, aged variation of Clash! Design by Aldople.",
-                "img": "AncientClashBackground.png",
-                "colour": "#FFD700",
-                "price": 80,
-                "shown": true
-            },
-            "ancient_harmony_background": {
-                "id": "ancient_harmony_background",
-                "name": "Ancient Harmony Background",
-                "desc": "Lost, but not forgotten, aged variation of Harmony! Design by Aldople.",
-                "img": "AncientHarmonyBackground.png",
-                "colour": "#FFD700",
-                "price": 80,
-                "shown": true
-            },
-            "spring_background": {
-                "id": "spring_background",
-                "name": "Spring Background",
-                "desc": "One of the four seasonal backgrounds. Capture spring with this one! Design by Aldople.",
-                "img": "SpringBackground.png",
-                "colour": "#FDFD96",
-                "price": 50,
-                "startTime":1616284800000,
-                "endTime":1624233600000,
-                "shown": true
-            },
-            "summer_background": {
-                "id": "summer_background",
-                "name": "Summer Background",
-                "desc": "One of the four seasonal backgrounds. Capture summer with this one! Design by Aldople.",
-                "img": "SummerBackground.png",
-                "colour": "#FDFD96",
-                "price": 50,
-                "startTime":1624233600000,
-                "endTime":1632182400000,
-                "shown": true
-            },
-            "autumn_background": {
-                "id": "autumn_background",
-                "name": "Autumn Background",
-                "desc": "One of the four seasonal backgrounds. Capture autumn with this one! Design by Aldople.",
-                "img": "AutumnBackground.png",
-                "colour": "#FED8B1",
-                "price": 50,
-                "startTime":1632182400000,
-                "endTime":1640044800000,
-                "shown": true
-            },
-            "winter_background": {
-                "id": "winter_background",
-                "name": "Winter Background",
-                "desc": "One of the four seasonal backgrounds. Capture winter with this one! Design by Aldople.",
-                "img": "WinterBackground.png",
-                "colour": "#333333",
-                "price": 50,
-                "startTime":1640044800000,
-                "endTime":1647820800000,
-                "shown": true
-            },
-            "golden_background": {
-                "id": "golden_background",
-                "name": "Golden Background",
-                "desc": "You went through quite a lot to get this. A 0.1% chance. But how do you get the frame? Designed by Kaluub.",
-                "img": "golden_background.png",
-                "colour": "#000000",
-                "price": 0,
-                "shown": false
-            }
-        },
-        "frames": {
-            "default_frame": {
-                "id": "default_frame",
-                "name": "Default Frame",
-                "desc": "Default dark-themed frame in your eternal possession, and originally designed as a prototype by Kaluub.",
-                "img": "default_frame.png",
-                "price": 0,
-                "shown": false
-            },
-            "golden_frame": {
-                "id": "golden_frame",
-                "name": "Golden Frame",
-                "desc": "The true treasure! There's only a 0.25% chance to get this one, and originally designed as an easter egg by Kaluub.",
-                "img": "golden_frame.png",
-                "price": 0,
-                "shown": false
-            },
-            "clash_frame": {
-                "id": "clash_frame",
-                "name": "Clash Frame",
-                "desc": "Clash-themed frame following its colour palette and design, the first version of its kind. Available for any of the Clash clan's followers. Design by Aldople.",
-                "img": "clash_frame.png",
-                "price": 20,
-                "shown": true
-            },
-            "harmony_frame": {
-                "id": "harmony_frame",
-                "name": "Harmony Frame",
-                "desc": "Harmony-themed frame following its colour palette and design, the first version of its kind. Available for any of the Harmony clan's followers. Design by Aldople.",
-                "img": "harmony_frame.png",
-                "price": 20,
-                "shown": true
-            },
-            "clash_harmony_frame": {
-                "id": "clash_harmony_frame",
-                "name": "Clash & Harmony Frame",
-                "desc": "A truly all-powerful collaboration of Clash & Harmony gets shown by this frame. Design by Aldople.",
-                "img": "clash_harmony_frame.png",
-                "price": 35,
-                "shown": true
-            },
-            "clash_one_year_anniversary_frame": {
-                "id": "clash_one_year_anniversary_frame",
-                "name": "Clash 1 Year Anniversary Frame",
-                "desc": "Festive frame for celebration and appreciation of the Clash clan's first anniversary! Design by Aldople.",
-                "img": "clash_one_year_anniversary_frame.png",
-                "price": 35,
-                "shown": true
-            },
-            "pixel_worlds_frame": {
-                "id": "pixel_worlds_frame",
-                "name": "Pixel Worlds Frame",
-                "desc": "Pixel Worlds! That's what this frame is all about. Design by Aldople.",
-                "img": "pixel_worlds_frame.png",
-                "price": 25,
-                "shown": true
-            },
-            "pixel_frame": {
-                "id": "pixel_frame",
-                "name": "Pixelated Frame",
-                "desc": "Pixels! Pixels everywhere! A must-have for anyone appreciating them. This frame is alternatively known as \"Pixel Frame\", and we definitely didn't have to change its name because of similarities with another one... Design by Aldople.",
-                "img": "pixel_frame.png",
-                "price": 25,
-                "shown": true
-            },
-            "clouds_frame": {
-                "id": "clouds_frame",
-                "name": "Clouds Frame",
-                "desc": "It's getting cloudy around here. Design by Aldople.",
-                "img": "clouds_frame.png",
-                "price": 30,
-                "shown": true
-            },
-            "citrina_frame": {
-                "id": "citrina_frame",
-                "name": "Citrina's Frame",
-                "desc": "Custom frame for Citrina, but even if you aren't them — it's solvable with a purchase from the !shop. Features everyone's favourite fruit — lemon! Design by Aldople.",
-                "img": "CitrinaFrame.png",
-                "price": 50,
-                "shown": true
-            },
-            "quqqo_frame": {
-                "id": "quqqo_frame",
-                "name": "Ghustie's Frame",
-                "desc": "Custom frame for Ghustie, but even if you aren't them — it's solvable with a purchase from the !shop. It's haunted! Design by Aldople.",
-                "img": "QuqqoFrame.png",
-                "price": 50,
-                "shown": true
-            },
-            "aldople_frame": {
-                "id": "aldople_frame",
-                "name": "Aldople's Frame",
-                "desc": "Custom frame for Aldople, but even if you aren't them — it's solvable with a purchase from the !shop. It's nothing, or is it? Designed by nobody.",
-                "img": "AldopleFrame.png",
-                "price": 50,
-                "shown": true
-            },
-            "sieggy_frame": {
-                "id": "sieggy_frame",
-                "name": "Sieggy's Frame",
-                "desc": "Custom frame for Sieggy, but even if you aren't them — it's solvable with a purchase from the !shop. Executioner's axes! Design by Aldople.",
-                "img": "SieggyFrame.png",
-                "price": 50,
-                "shown": true
-            },
-            "kaluub_frame": {
-                "id": "kaluub_frame",
-                "name": "Kaluub's Frame",
-                "desc": "Custom frame for Kaluub, but even if you aren't them — it's solvable with a purchase from the !shop. Kaluub recommends. Design by Aldople.",
-                "img": "KaluubFrame.png",
-                "price": 50,
-                "shown": true
-            },
-            "append_frame": {
-                "id": "append_frame",
-                "name": "Append's Frame",
-                "desc": "Custom frame for Append, but even if you aren't them — it's solvable with a purchase from the !shop. As beautiful as the sky. Design by Aldople.",
-                "img": "AppendFrame.png",
-                "price": 50,
-                "shown": true
-            },
-            "zithi_frame": {
-                "id": "zithi_frame",
-                "name": "Zithi's Frame",
-                "desc": "Custom frame for Zithi, but even if you aren't them — it's solvable with a purchase from the !shop. No Maeve here. Design by Aldople.",
-                "img": "ZithiFrame.png",
-                "price": 50,
-                "shown": true
-            },
-            "twins_frame": {
-                "id": "twins_frame",
-                "name": "Twins' Frame",
-                "desc": "Custom frame for Bassem & Bassel, but even if you aren't them — it's solvable with a purchase from the !shop. Twin cats for twins. Design by Aldople.",
-                "img": "TwinsFrame.png",
-                "price": 50,
-                "shown": true
-            },
-            "space_frame": {
-                "id": "space_frame",
-                "name": "Space Frame",
-                "desc": "Space to fill up the blank space of your profile card. Design by Aldople.",
-                "img": "SpaceFrame.png",
-                "price": 40,
-                "shown": true
-            },
-            "ancient_clash_frame": {
-                "id": "ancient_clash_frame",
-                "name": "Ancient Clash Frame",
-                "desc": "Lost, but not forgotten, aged variation of Clash! Design by Aldople.",
-                "img": "AncientClashFrame.png",
-                "price": 80,
-                "shown": true
-            },
-            "ancient_harmony_frame": {
-                "id": "ancient_harmony_frame",
-                "name": "Ancient Harmony Frame",
-                "desc": "Lost, but not forgotten, aged variation of Harmony! Design by Aldople.",
-                "img": "AncientHarmonyFrame.png",
-                "price": 80,
-                "shown": true
-            },
-            "spring_frame": {
-                "id": "spring_frame",
-                "name": "Spring Frame",
-                "desc": "One of the four seasonal frames. Capture spring with this one! Design by Aldople.",
-                "img": "SpringFrame.png",
-                "price": 50,
-                "startTime":1616284800000,
-                "endTime":1624233600000,
-                "shown": true
-            },
-            "summer_frame": {
-                "id": "summer_frame",
-                "name": "Summer Frame",
-                "desc": "One of the four seasonal frames. Capture summer with this one! Design by Aldople.",
-                "img": "SummerFrame.png",
-                "price": 50,
-                "startTime":1624233600000,
-                "endTime":1632182400000,
-                "shown": true
-            },
-            "autumn_frame": {
-                "id": "autumn_frame",
-                "name": "Autumn Frame",
-                "desc": "One of the four seasonal frames. Capture autumn with this one! Design by Aldople.",
-                "img": "AutumnFrame.png",
-                "price": 50,
-                "startTime":1632182400000,
-                "endTime":1640044800000,
-                "shown": true
-            },
-            "winter_frame": {
-                "id": "winter_frame",
-                "name": "Winter Frame",
-                "desc": "One of the four seasonal frames. Capture winter with this one! Design by Aldople.",
-                "img": "WinterFrame.png",
-                "price": 50,
-                "startTime":1640044800000,
-                "endTime":1647820800000,
-                "shown": true
-            }
-        },
-        "roles": {
-            "828077072194207834": {
-                "id": "828077072194207834",
-                "name": "Early Bird Role",
-                "category": "roles",
-                "price": 100,
-                "endTime": 1619827199000,
-                "shown": true
-            },
-            "828078924940312606": {
-                "id": "828078924940312606",
-                "name": "Proactive Role",
-                "category": "roles",
-                "price": 75,
-                "shown": true
-            },
-            "828081364505985074": {
-                "id": "828081364505985074",
-                "name": "Palindrome Role",
-                "category": "roles",
-                "price": 1111,
-                "shown": true
-            },
-            "828079344051421184": {
-                "id": "828079344051421184",
-                "name": "Monuple Zero Role",
-                "category": "roles",
-                "price": 10,
-                "shown": true
-            },
-            "828079907203973140": {
-                "id": "828079907203973140",
-                "name": "Double Zero Role",
-                "category": "roles",
-                "price": 100,
-                "shown": true
-            },
-            "828079903445876776": {
-                "id": "828079903445876776",
-                "name": "Triple Zero Role",
-                "category": "roles",
-                "price": 1000,
-                "shown": true
-            },
-            "828079900354412574": {
-                "id": "828079900354412574",
-                "name": "Quadruple Zero Role",
-                "category": "roles",
-                "price": 10000,
-                "shown": true
-            }
-        },
-        "services": {
-            "demo_service": {
-                "id": "demo_service",
-                "name": "Demo Service",
-                "price": 25,
-                "shown": false
-            }
-        }
+    "default_background": {
+        "id": "default_background",
+        "type": "backgrounds",
+        "name": "Default Background",
+        "desc": "Default dark-themed background in your eternal possession, and originally designed as a prototype by Kaluub.",
+        "img": "default_background.png",
+        "colour": "#FFFFFF",
+        "price": 0,
+        "shown": false
+    },
+    "light_background": {
+        "id": "light_background",
+        "type": "backgrounds",
+        "name": "Light Background",
+        "desc": "That's an alternative light version of the default background. Be careful with your screen's brightness settings. Same as its predecessor — designed as a prototype by Kaluub.",
+        "img": "light_background.png",
+        "colour": "#000000",
+        "price": 15,
+        "shown": true
+    },
+    "clash_background": {
+        "id": "clash_background",
+        "type": "backgrounds",
+        "name": "Clash Background",
+        "desc": "Clash-themed background following its colour palette and design, the first version of its kind. Available for any of the Clash clan's followers. Design by Aldople.",
+        "img": "clash_background.png",
+        "colour": "#ff05a6",
+        "price": 20,
+        "shown": true
+    },
+    "harmony_background": {
+        "id": "harmony_background",
+        "type": "backgrounds",
+        "name": "Harmony Background",
+        "desc": "Harmony-themed background following its colour palette and design, the first version of its kind. Available for any of the Harmony clan's followers. Design by Aldople.",
+        "img": "harmony_background.png",
+        "colour": "#11DDFF",
+        "price": 20,
+        "shown": true
+    },
+    "clash_mascot_background": {
+        "id": "clash_mascot_background",
+        "type": "backgrounds",
+        "name": "Clash Mascot Background",
+        "desc": "That's an upgraded version of the Clash background, now also featuring its original mascot! Design by Aldople.",
+        "img": "clash_mascot_background.png",
+        "colour": "#EFDFFF",
+        "price": 25,
+        "shown": true
+    },
+    "harmony_mascot_background": {
+        "id": "harmony_mascot_background",
+        "type": "backgrounds",
+        "name": "Harmony Mascot Background",
+        "desc": "That's an upgraded version of the Harmony background, now also featuring its original mascot! Design by Aldople.",
+        "img": "harmony_mascot_background.png",
+        "colour": "#11DDFF",
+        "price": 25,
+        "shown": true
+    },
+    "clash_harmony_background": {
+        "id": "clash_harmony_background",
+        "type": "backgrounds",
+        "name": "Clash & Harmony Background",
+        "desc": "A truly all-powerful collaboration of Clash & Harmony gets shown by this background. Design by Aldople.",
+        "img": "clash_harmony_background.png",
+        "colour": "#EACBF2",
+        "price": 35,
+        "shown": true
+    },
+    "clash_one_year_anniversary_background": {
+        "id": "clash_one_year_anniversary_background",
+        "type": "backgrounds",
+        "name": "Clash 1 Year Anniversary Background",
+        "desc": "Festive background for celebration and appreciation of the Clash clan's first anniversary! Design by Aldople.",
+        "img": "clash_one_year_anniversary_background.png",
+        "colour": "#FFD700",
+        "price": 30,
+        "shown": true
+    },
+    "pixel_worlds_background": {
+        "id": "pixel_worlds_background",
+        "type": "backgrounds",
+        "name": "Pixel Worlds Background",
+        "desc": "Pixel Worlds! That's what this background is all about. Design by Aldople.",
+        "img": "pixel_worlds_background.png",
+        "colour": "#000000",
+        "price": 25,
+        "shown": true
+    },
+    "pixel_background": {
+        "id": "pixel_background",
+        "type": "backgrounds",
+        "name": "Pixelated Background",
+        "desc": "Pixels! Pixels everywhere! A must-have for anyone appreciating them. This background is alternatively known as \"Pixel Background\", and we definitely didn't have to change its name because of similarities with another one... Design by Aldople.",
+        "img": "pixel_background.png",
+        "colour": "#000000",
+        "price": 30,
+        "shown": true
+    },
+    "landscape_background": {
+        "id": "landscape_background",
+        "type": "backgrounds",
+        "name": "Landscape Background",
+        "desc": "Who wouldn't want to have landscape as the background of their profile card? Design by Aldople.",
+        "img": "landscape_background.png",
+        "colour": "#000000",
+        "price": 30,
+        "shown": true
+    },
+    "citrina_background": {
+        "id": "citrina_background",
+        "type": "backgrounds",
+        "name": "Citrina's Background",
+        "desc": "Custom background for Citrina, but even if you aren't them — it's solvable with a purchase from the !shop. Features everyone's favourite fruit — lemon! Design by Aldople.",
+        "img": "CitrinaBackground.png",
+        "colour": "#FFFF00",
+        "price": 50,
+        "shown": true
+    },
+    "quqqo_background": {
+        "id": "quqqo_background",
+        "type": "backgrounds",
+        "name": "Ghustie's Background",
+        "desc": "Custom background for Ghustie, but even if you aren't them — it's solvable with a purchase from the !shop. Created by the one and only. Design by Ghustie.",
+        "img": "QuqqoBackground.png",
+        "colour": "#FFFFFF",
+        "price": 50,
+        "shown": true
+    },
+    "aldople_background": {
+        "id": "aldople_background",
+        "type": "backgrounds",
+        "name": "Aldople's Background",
+        "desc": "Custom background for Aldople, but even if you aren't them — it's solvable with a purchase from the !shop. It's a piece of Ivan Marchuk's art titled Landscape, 1980. Design by the same person.",
+        "img": "AldopleBackground.png",
+        "colour": "#FFFFFF",
+        "price": 50,
+        "shown": true
+    },
+    "sieggy_background": {
+        "id": "sieggy_background",
+        "type": "backgrounds",
+        "name": "Sieggy's Background",
+        "desc": "Custom background for Sieggy, but even if you aren't them — it's solvable with a purchase from the !shop. Sieggy & The Second Heart-themed! Design by Aldople.",
+        "img": "SieggyBackground.png",
+        "colour": "#FFC0CB",
+        "price": 50,
+        "shown": true
+    },
+    "kaluub_background": {
+        "id": "kaluub_background",
+        "type": "backgrounds",
+        "name": "Kaluub's Background",
+        "desc": "Custom background for Kaluub, but even if you aren't them — it's solvable with a purchase from the !shop. Kaluub recommends. Design by Aldople.",
+        "img": "KaluubBackground.png",
+        "colour": "#00FF00",
+        "price": 50,
+        "shown": true
+    },
+    "append_background": {
+        "id": "append_background",
+        "type": "backgrounds",
+        "name": "Append's Background",
+        "desc": "Custom background for Append, but even if you aren't them — it's solvable with a purchase from the !shop. It's a Takagi-san! Design by Aldople.",
+        "img": "AppendBackground.png",
+        "colour": "#000000",
+        "price": 50,
+        "shown": true
+    },
+    "zithi_background": {
+        "id": "zithi_background",
+        "type": "backgrounds",
+        "name": "Zithi's Background",
+        "desc": "Custom background for Zithi, but even if you aren't them — it's solvable with a purchase from the !shop. Maeve? Design by Aldople.",
+        "img": "ZithiBackground.png",
+        "colour": "#FFFFFF",
+        "price": 50,
+        "shown": true
+    },
+    "twins_background": {
+        "id": "twins_background",
+        "type": "backgrounds",
+        "name": "Twins' Background",
+        "desc": "Custom background for Bassem & Bassel, but even if you aren't them — it's solvable with a purchase from the !shop. Twin cats for twins. Design by Aldople.",
+        "img": "TwinsBackground.png",
+        "colour": "#77DD77",
+        "price": 50,
+        "shown": true
+    },
+    "cats_background": {
+        "id": "cats_background",
+        "type": "backgrounds",
+        "name": "Cats Background",
+        "desc": "Cats! Design by Aldople.",
+        "img": "CatsBackground.png",
+        "colour": "#000000",
+        "price": 40,
+        "shown": true
+    },
+    "space_background": {
+        "id": "space_background",
+        "type": "backgrounds",
+        "name": "Space Background",
+        "desc": "Space to fill up the blank space of your profile card. Design by Aldople.",
+        "img": "SpaceBackground.png",
+        "colour": "#FFFFFF",
+        "price": 40,
+        "shown": true
+    },
+    "ancient_clash_background": {
+        "id": "ancient_clash_background",
+        "type": "backgrounds",
+        "name": "Ancient Clash Background",
+        "desc": "Lost, but not forgotten, aged variation of Clash! Design by Aldople.",
+        "img": "AncientClashBackground.png",
+        "colour": "#FFD700",
+        "price": 80,
+        "shown": true
+    },
+    "ancient_harmony_background": {
+        "id": "ancient_harmony_background",
+        "type": "backgrounds",
+        "name": "Ancient Harmony Background",
+        "desc": "Lost, but not forgotten, aged variation of Harmony! Design by Aldople.",
+        "img": "AncientHarmonyBackground.png",
+        "colour": "#FFD700",
+        "price": 80,
+        "shown": true
+    },
+    "spring_background": {
+        "id": "spring_background",
+        "type": "backgrounds",
+        "name": "Spring Background",
+        "desc": "One of the four seasonal backgrounds. Capture spring with this one! Design by Aldople.",
+        "img": "SpringBackground.png",
+        "colour": "#FDFD96",
+        "price": 50,
+        "startTime":1616284800000,
+        "endTime":1624233600000,
+        "shown": true
+    },
+    "summer_background": {
+        "id": "summer_background",
+        "type": "backgrounds",
+        "name": "Summer Background",
+        "desc": "One of the four seasonal backgrounds. Capture summer with this one! Design by Aldople.",
+        "img": "SummerBackground.png",
+        "colour": "#FDFD96",
+        "price": 50,
+        "startTime":1624233600000,
+        "endTime":1632182400000,
+        "shown": true
+    },
+    "autumn_background": {
+        "id": "autumn_background",
+        "type": "backgrounds",
+        "name": "Autumn Background",
+        "desc": "One of the four seasonal backgrounds. Capture autumn with this one! Design by Aldople.",
+        "img": "AutumnBackground.png",
+        "colour": "#FED8B1",
+        "price": 50,
+        "startTime":1632182400000,
+        "endTime":1640044800000,
+        "shown": true
+    },
+    "winter_background": {
+        "id": "winter_background",
+        "type": "backgrounds",
+        "name": "Winter Background",
+        "desc": "One of the four seasonal backgrounds. Capture winter with this one! Design by Aldople.",
+        "img": "WinterBackground.png",
+        "colour": "#333333",
+        "price": 50,
+        "startTime":1640044800000,
+        "endTime":1647820800000,
+        "shown": true
+    },
+    "golden_background": {
+        "id": "golden_background",
+        "type": "backgrounds",
+        "name": "Golden Background",
+        "desc": "You went through quite a lot to get this. An ever-increasing chance. But how do you get the frame? Designed by Kaluub.",
+        "img": "golden_background.png",
+        "colour": "#000000",
+        "price": 0,
+        "shown": false
+    },
+    "default_frame": {
+        "id": "default_frame",
+        "type": "frames",
+        "name": "Default Frame",
+        "desc": "Default dark-themed frame in your eternal possession, and originally designed as a prototype by Kaluub.",
+        "img": "default_frame.png",
+        "price": 0,
+        "shown": false
+    },
+    "golden_frame": {
+        "id": "golden_frame",
+        "type": "frames",
+        "name": "Golden Frame",
+        "desc": "The true treasure! There's only a 0.25% chance to get this one, and originally designed as an easter egg by Kaluub.",
+        "img": "golden_frame.png",
+        "price": 0,
+        "shown": false
+    },
+    "clash_frame": {
+        "id": "clash_frame",
+        "type": "frames",
+        "name": "Clash Frame",
+        "desc": "Clash-themed frame following its colour palette and design, the first version of its kind. Available for any of the Clash clan's followers. Design by Aldople.",
+        "img": "clash_frame.png",
+        "price": 20,
+        "shown": true
+    },
+    "harmony_frame": {
+        "id": "harmony_frame",
+        "type": "frames",
+        "name": "Harmony Frame",
+        "desc": "Harmony-themed frame following its colour palette and design, the first version of its kind. Available for any of the Harmony clan's followers. Design by Aldople.",
+        "img": "harmony_frame.png",
+        "price": 20,
+        "shown": true
+    },
+    "clash_harmony_frame": {
+        "id": "clash_harmony_frame",
+        "type": "frames",
+        "name": "Clash & Harmony Frame",
+        "desc": "A truly all-powerful collaboration of Clash & Harmony gets shown by this frame. Design by Aldople.",
+        "img": "clash_harmony_frame.png",
+        "price": 35,
+        "shown": true
+    },
+    "clash_one_year_anniversary_frame": {
+        "id": "clash_one_year_anniversary_frame",
+        "type": "frames",
+        "name": "Clash 1 Year Anniversary Frame",
+        "desc": "Festive frame for celebration and appreciation of the Clash clan's first anniversary! Design by Aldople.",
+        "img": "clash_one_year_anniversary_frame.png",
+        "price": 35,
+        "shown": true
+    },
+    "pixel_worlds_frame": {
+        "id": "pixel_worlds_frame",
+        "type": "frames",
+        "name": "Pixel Worlds Frame",
+        "desc": "Pixel Worlds! That's what this frame is all about. Design by Aldople.",
+        "img": "pixel_worlds_frame.png",
+        "price": 25,
+        "shown": true
+    },
+    "pixel_frame": {
+        "id": "pixel_frame",
+        "type": "frames",
+        "name": "Pixelated Frame",
+        "desc": "Pixels! Pixels everywhere! A must-have for anyone appreciating them. This frame is alternatively known as \"Pixel Frame\", and we definitely didn't have to change its name because of similarities with another one... Design by Aldople.",
+        "img": "pixel_frame.png",
+        "price": 25,
+        "shown": true
+    },
+    "clouds_frame": {
+        "id": "clouds_frame",
+        "type": "frames",
+        "name": "Clouds Frame",
+        "desc": "It's getting cloudy around here. Design by Aldople.",
+        "img": "clouds_frame.png",
+        "price": 30,
+        "shown": true
+    },
+    "citrina_frame": {
+        "id": "citrina_frame",
+        "type": "frames",
+        "name": "Citrina's Frame",
+        "desc": "Custom frame for Citrina, but even if you aren't them — it's solvable with a purchase from the !shop. Features everyone's favourite fruit — lemon! Design by Aldople.",
+        "img": "CitrinaFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "quqqo_frame": {
+        "id": "quqqo_frame",
+        "type": "frames",
+        "name": "Ghustie's Frame",
+        "desc": "Custom frame for Ghustie, but even if you aren't them — it's solvable with a purchase from the !shop. It's haunted! Design by Aldople.",
+        "img": "QuqqoFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "aldople_frame": {
+        "id": "aldople_frame",
+        "type": "frames",
+        "name": "Aldople's Frame",
+        "desc": "Custom frame for Aldople, but even if you aren't them — it's solvable with a purchase from the !shop. It's nothing, or is it? Designed by nobody.",
+        "img": "AldopleFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "sieggy_frame": {
+        "id": "sieggy_frame",
+        "type": "frames",
+        "name": "Sieggy's Frame",
+        "desc": "Custom frame for Sieggy, but even if you aren't them — it's solvable with a purchase from the !shop. Executioner's axes! Design by Aldople.",
+        "img": "SieggyFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "kaluub_frame": {
+        "id": "kaluub_frame",
+        "type": "frames",
+        "name": "Kaluub's Frame",
+        "desc": "Custom frame for Kaluub, but even if you aren't them — it's solvable with a purchase from the !shop. Kaluub recommends. Design by Aldople.",
+        "img": "KaluubFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "append_frame": {
+        "id": "append_frame",
+        "type": "frames",
+        "name": "Append's Frame",
+        "desc": "Custom frame for Append, but even if you aren't them — it's solvable with a purchase from the !shop. As beautiful as the sky. Design by Aldople.",
+        "img": "AppendFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "zithi_frame": {
+        "id": "zithi_frame",
+        "type": "frames",
+        "name": "Zithi's Frame",
+        "desc": "Custom frame for Zithi, but even if you aren't them — it's solvable with a purchase from the !shop. No Maeve here. Design by Aldople.",
+        "img": "ZithiFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "twins_frame": {
+        "id": "twins_frame",
+        "type": "frames",
+        "name": "Twins' Frame",
+        "desc": "Custom frame for Bassem & Bassel, but even if you aren't them — it's solvable with a purchase from the !shop. Twin cats for twins. Design by Aldople.",
+        "img": "TwinsFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "space_frame": {
+        "id": "space_frame",
+        "type": "frames",
+        "name": "Space Frame",
+        "desc": "Space to fill up the blank space of your profile card. Design by Aldople.",
+        "img": "SpaceFrame.png",
+        "price": 40,
+        "shown": true
+    },
+    "ancient_clash_frame": {
+        "id": "ancient_clash_frame",
+        "type": "frames",
+        "name": "Ancient Clash Frame",
+        "desc": "Lost, but not forgotten, aged variation of Clash! Design by Aldople.",
+        "img": "AncientClashFrame.png",
+        "price": 80,
+        "shown": true
+    },
+    "ancient_harmony_frame": {
+        "id": "ancient_harmony_frame",
+        "type": "frames",
+        "name": "Ancient Harmony Frame",
+        "desc": "Lost, but not forgotten, aged variation of Harmony! Design by Aldople.",
+        "img": "AncientHarmonyFrame.png",
+        "price": 80,
+        "shown": true
+    },
+    "spring_frame": {
+        "id": "spring_frame",
+        "type": "frames",
+        "name": "Spring Frame",
+        "desc": "One of the four seasonal frames. Capture spring with this one! Design by Aldople.",
+        "img": "SpringFrame.png",
+        "price": 50,
+        "startTime":1616284800000,
+        "endTime":1624233600000,
+        "shown": true
+    },
+    "summer_frame": {
+        "id": "summer_frame",
+        "type": "frames",
+        "name": "Summer Frame",
+        "desc": "One of the four seasonal frames. Capture summer with this one! Design by Aldople.",
+        "img": "SummerFrame.png",
+        "price": 50,
+        "startTime":1624233600000,
+        "endTime":1632182400000,
+        "shown": true
+    },
+    "autumn_frame": {
+        "id": "autumn_frame",
+        "type": "frames",
+        "name": "Autumn Frame",
+        "desc": "One of the four seasonal frames. Capture autumn with this one! Design by Aldople.",
+        "img": "AutumnFrame.png",
+        "price": 50,
+        "startTime":1632182400000,
+        "endTime":1640044800000,
+        "shown": true
+    },
+    "winter_frame": {
+        "id": "winter_frame",
+        "type": "frames",
+        "name": "Winter Frame",
+        "desc": "One of the four seasonal frames. Capture winter with this one! Design by Aldople.",
+        "img": "WinterFrame.png",
+        "price": 50,
+        "startTime":1640044800000,
+        "endTime":1647820800000,
+        "shown": true
+    },
+    "828077072194207834": {
+        "id": "828077072194207834",
+        "type": "roles",
+        "name": "Early Bird Role",
+        "price": 100,
+        "endTime": 1619827199000,
+        "shown": true
+    },
+    "828078924940312606": {
+        "id": "828078924940312606",
+        "type": "roles",
+        "name": "Proactive Role",
+        "price": 75,
+        "shown": true
+    },
+    "828081364505985074": {
+        "id": "828081364505985074",
+        "type": "roles",
+        "name": "Palindrome Role",
+        "price": 1111,
+        "shown": true
+    },
+    "828079344051421184": {
+        "id": "828079344051421184",
+        "type": "roles",
+        "name": "Monuple Zero Role",
+        "price": 10,
+        "shown": true
+    },
+    "828079907203973140": {
+        "id": "828079907203973140",
+        "type": "roles",
+        "name": "Double Zero Role",
+        "price": 100,
+        "shown": true
+    },
+    "828079903445876776": {
+        "id": "828079903445876776",
+        "type": "roles",
+        "name": "Triple Zero Role",
+        "price": 1000,
+        "shown": true
+    },
+    "828079900354412574": {
+        "id": "828079900354412574",
+        "type": "roles",
+        "name": "Quadruple Zero Role",
+        "price": 10000,
+        "shown": true
     }
 }

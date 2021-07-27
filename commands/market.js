@@ -19,7 +19,8 @@ module.exports = {
     name:'market',
     desc:'A command for interacting with the market.',
     usage:'!market [list/add]',
-    async execute({interaction, message, args}){
+    admin: true,
+    execute: async ({interaction, message, args}) => {
         if(!args.length) return `Usage: ${this.usage}`;
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
@@ -37,7 +38,7 @@ module.exports = {
             if(args.includes('-p')) market.items.sort((a,b) => (a.price > b.price) ? 1 : ((b.price > a.price) ? -1 : 0));
             if(args.includes('-t')) market.items.sort((a,b) => (a.timestamp > b.timestamp) ? 1 : ((b.timestamp > a.timestamp) ? -1 : 0));
             for(const item of market.items){
-                if(item.timestamp > Date.now()) continue;
+                if(item.timestamp < Date.now()) continue;
                 if(currentEmbedItems >= 15){
                     embeds.push(new MarketEmbed());
                     currentEmbed += 1;
@@ -47,72 +48,73 @@ module.exports = {
                 embeds[currentEmbed].setDescription(embeds[currentEmbed].description + `\n**${reward.name}**: ${item.price} points (${Math.floor((item.timestamp + (market.itemLifespan * 3600000) - Date.now()) / 3600000)} hours)`);
                 currentEmbedItems += 1;
             };
+            if(embeds[0].description.split(/\r\n|\r|\n/).length < 2) return `There is nothing on the market!`;
 
             const row = new MessageActionRow().addComponents(
                 new MessageButton()
-                    .setCustomID('back')
+                    .setCustomId('back')
                     .setLabel('Back')
                     .setStyle('PRIMARY'),
                 new MessageButton()
-                    .setCustomID('up')
+                    .setCustomId('up')
                     .setLabel('Up')
                     .setStyle('SECONDARY'),
                 new MessageButton()
-                    .setCustomID('select')
+                    .setCustomId('select')
                     .setLabel('Select')
                     .setStyle('DANGER'),
                 new MessageButton()
-                    .setCustomID('down')
+                    .setCustomId('down')
                     .setLabel('Down')
                     .setStyle('SECONDARY'),
                 new MessageButton()
-                    .setCustomID('next')
+                    .setCustomId('next')
                     .setLabel('Next')
                     .setStyle('PRIMARY')
             );
-            if(embeds.length < 2) row.components.forEach(component => {if(component.customID == 'back' || component.customID == 'next') component.setDisabled(true)});
+            if(embeds.length < 2) row.components.forEach(component => {if(component.customId == 'back' || component.customId == 'next') component.setDisabled(true)});
 
             let page = 0;
             let sel = 0;
 
             let descArr = embeds[page].description.replace('➡️ ', '').split('\n');
             descArr[sel + 1] = "➡️ " + descArr[sel + 1];
-            let msg = await message?.channel.send({embed:embeds[page].setDescription(descArr.join('\n')).setFooter(`Page: ${page + 1}/${embeds.length}`), components: [row]});
+            let msg = await message?.channel.send({embeds:[embeds[page].setDescription(descArr.join('\n')).setFooter(`Page: ${page + 1}/${embeds.length}`)], components: [row]});
             if(!msg) {
                 await interaction.reply({embeds:[embeds[page].setDescription(descArr.join('\n')).setFooter(`Page: ${page + 1}/${embeds.length}`)], components: [row]});
                 msg = await interaction.fetchReply();
             };
 
-            const collector = msg.createMessageComponentInteractionCollector(interaction => interaction.user.id == member.user.id, {time:300000});
+            const collector = msg.createMessageComponentCollector(interaction => interaction.user.id == member.user.id, {time:300000});
             collector.on('collect', async (interaction) => {
-                if(interaction.customID == 'back'){
+                if(interaction.customId == 'back'){
                     page -= 1;
                     sel = 0;
                     if(page < 0) page = embeds.length - 1;
                 };
-                if(interaction.customID == 'next'){
+                if(interaction.customId == 'next'){
                     page += 1;
                     sel = 0;
                     if(page >= embeds.length) page = 0;
                 };
-                if(interaction.customID == 'up'){
+                if(interaction.customId == 'up'){
                     sel -= 1;
                     if(sel < 0) sel = embeds[page].description.split('\n').length - 2;
                 };
-                if(interaction.customID == 'down'){
+                if(interaction.customId == 'down'){
                     sel += 1;
                     if(sel >= embeds[page].description.split('\n').length - 1) sel = 0;
                 };
-                if(interaction.customID == 'select'){
+                if(interaction.customId == 'select'){
                     const item = market.items;
                 } else {
                     descArr = embeds[page].description.replace('➡️ ', '').split('\n');
                     descArr[sel + 1] = "➡️ " + descArr[sel + 1];
-                    await interaction.update(embeds[page].setDescription(descArr.join('\n')).setFooter(`Page: ${page + 1}/${embeds.length}`));
+                    await interaction.update({embeds:[embeds[page].setDescription(descArr.join('\n')).setFooter(`Page: ${page + 1}/${embeds.length}`)]});
                 };
             });
             collector.on('stop', async (res) => {
-                if(!msg.deleted) await msg.edit({embed:embeds[page].setFooter(`Page: ${page + 1}/${embeds.length} | EXPIRED`), components: []});
+                if(!msg.deleted) await msg.edit({embeds:[embeds[page].setFooter(`Page: ${page + 1}/${embeds.length} | EXPIRED`)], components: []});
             });
         };
 

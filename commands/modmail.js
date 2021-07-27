@@ -5,7 +5,7 @@ module.exports = {
     admin:true,
     desc:'This command is used to change the mod-mail channel.',
     usage:'!modmail [#channel]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${this.usage}`;
         let channel = message?.mentions.channels.first() ?? interaction?.options[0].channel;
         if(!channel) return `Usage: ${this.usage}`;

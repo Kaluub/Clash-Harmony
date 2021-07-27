@@ -12,9 +12,8 @@
     "@keyv/sqlite": "^2.0.2",
     "canvas": "^2.7.0",
     "discord-rpc": "^4.0.1",
-    "discord.js": "^13.0.0-dev.f7eeccba4b7015496df811f10cc2da2b0fab0630",
+    "discord.js": "^13.0.0-dev.28b5ffb.1625702624",
     "gif-encoder-2": "^1.0.5",
-    "gm": "^1.23.1",
     "keyv": "^4.0.3",
     "node-fetch": "^2.6.1"
   }

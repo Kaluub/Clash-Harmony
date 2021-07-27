@@ -10,7 +10,7 @@ module.exports = {
     admin:false,
     desc:'This is a command for customizing your profile card.',
     usage:'!custom [reward name]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${this.usage}`;
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
@@ -24,20 +24,20 @@ module.exports = {
         if(possibleRewards.length == 0){
             return 'There are no rewards with or similar to this name.';
         } else if(possibleRewards.length == 1){
-            let category = possibleRewards[0].colour ? 'backgrounds' : 'frames';
-            if(!userdata.unlocked[category].includes(possibleRewards[0].id)) return `You don't own the ${category.slice(0,-1)} "${possibleRewards[0].name}". See \`!list ${category}\` for a list of owned ${category}.`;
-            userdata.card[category.slice(0,-1)] = await possibleRewards[0].id;
-            await userdb.set(`${guild.id}/${member.user.id}`,userdata);
-            return `Successfully set your active ${category.slice(0,-1)} to ${possibleRewards[0].name}.`;
+            const item = possibleRewards[0]
+            if(!userdata.unlocked[item.type].includes(item.id)) return `You don't own the ${item.type.slice(0,-1)} "${item.name}". See \`!list ${item.type.slice(0,-1)}\` for a list of owned ${item.type}.`;
+            userdata.card[item.type.slice(0,-1)] = item.id;
+            await userdb.set(`${guild.id}/${member.user.id}`, userdata);
+            return `Successfully set your active ${item.type.slice(0,-1)} to ${item.name}.`;
         } else if(possibleRewards.length < 10){
             const emojis = ['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
             const embed = new MessageEmbed()
                 .setTitle('Similar rewards:')
                 .setColor('#AEC6CF')
                 .setDescription('Loading...');
-            let msg = await message?.channel.send({embed:embed});
+            let msg = await message?.channel.send({embeds:[embed]});
             if(!msg) {
-                await interaction?.reply(embed);
+                await interaction?.reply({embeds:[embed]});
                 msg = await interaction?.fetchReply();
             };
             embed.setDescription('A list of similar rewards is provided here.\nTo select one, react with the corresponding emoji.\n');
@@ -48,9 +48,11 @@ module.exports = {
                 await msg.react(emojis[index]);
             };
             embed.setDescription(embed.description + `\n\n🗑️: Reset Card\n⛔: Cancel`);
+            
             await msg.react('🗑️');
             await msg.react('⛔');
-            await msg.edit({embed:embed});
+            await msg.edit({embeds:[embed]});
+
             const collector = await msg.createReactionCollector((reaction, user) => user.id == member.user.id && emojis.includes(reaction.emoji.name) || reaction.emoji.name == '⛔' || reaction.emoji.name == '🗑️', {time:300000});
             collector.on('collect', async (reaction, user) => {
                 if(reaction.emoji.name == '🗑️'){
@@ -59,22 +61,23 @@ module.exports = {
                     userdata.card.frame = 'default_frame';
                     await userdb.set(`${guild.id}/${member.user.id}`,userdata);
                     await msg.reactions.removeAll();
-                    await msg.edit({content:`Successfully reset your active frame and background.`, embed:null});
+                    await msg.edit({content:`Successfully reset your active frame and background.`, embeds:[]});
                     return collector.stop('success');
                 };
+
                 if(reaction.emoji.name == '⛔'){
                     if(!message?.deleted && message?.deletable) message?.delete();
                     if(!msg.deleted && msg.deletable) msg.delete();
                     return collector.stop('success');
                 };
+
                 let index = emojis.indexOf(reaction.emoji.name);
-                let reward = await possibleRewards[index];
-                let category = reward.colour ? 'backgrounds' : 'frames';
-                if(await userdata.unlocked[category].includes(reward.id)){
-                    userdata.card[category.slice(0,-1)] = await possibleRewards[index].id;
-                    await userdb.set(`${guild.id}/${member.user.id}`,userdata);
+                let reward = possibleRewards[index];
+                if(userdata.unlocked[reward.type].includes(reward.id)){
+                    userdata.card[reward.type.slice(0,-1)] = reward.id;
+                    await userdb.set(`${guild.id}/${member.user.id}`, userdata);
                     await msg.reactions.removeAll();
-                    await msg.edit({content:`Successfully set your active ${category.slice(0,-1)} to ${await possibleRewards[index].name}.`, embed:null});
+                    await msg.edit({content:`Successfully set your active ${reward.type.slice(0,-1)} to ${reward.name}.`, embeds:[]});
                     return collector.stop('success');
                 } else {
                     await reaction.users.remove(user.id);
@@ -82,11 +85,8 @@ module.exports = {
                     return `You don't own this reward!`;
                 };
             });
-            collector.on('end', async (collected, reason) => {
-                if(reason == 'success') return;
-            });
         } else {
-            return `There are too many items (${possibleRewards.length}) with a similar name! Consider being a little more specific.`;
+            return `There are too many rewards (${possibleRewards.length}) with a similar name! Consider being a little more specific.`;
         };
     }
 };

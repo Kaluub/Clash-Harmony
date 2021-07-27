@@ -7,7 +7,7 @@ module.exports = {
     aliases:['m'],
     desc:`This is a command for earning your monthly rewards.`,
     usage:'!monthly',
-    async execute({interaction,message}){
+    execute: async ({interaction,message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);

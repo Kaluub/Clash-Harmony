@@ -1,7 +1,7 @@
 module.exports = {
     name:'add',
     usage:'add [command file]',
-    async execute(client,args){
+    async execute({args}){
         if(!args[0]) return console.log("\x1b[32m%s\x1b[0m",`Usage: ${this.usage}`);
         const {commands} = require('../commands.js');
         const commandFile = args[0].toLowerCase();

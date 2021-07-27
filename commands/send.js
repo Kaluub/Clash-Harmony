@@ -4,16 +4,18 @@ module.exports = {
     noGuild:true,
     desc:'This is a command for sending any message to a channel.',
     usage:'!send [channel/user ID] [message]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         if(!args[0] || !args[1]) return `Usage: ${this.usage}`;
         const client = interaction?.client ?? message?.client;
         let channel;
         let success = true;
+
         try{
             channel = await client.channels.fetch(args[0]);
         } catch {
             success = false;
         };
+
         if(!success){
             try{
                 channel = await client.users.fetch(args[0]);
@@ -29,6 +31,7 @@ module.exports = {
         } catch {
             return `Couldn't send a message to this channel/user.`;
         };
+        
         return `Sent a message to ${channel}.`;
     }
 };

@@ -7,7 +7,7 @@ module.exports = {
     admin:false,
     desc:'This command is used to set your custom status displayed on your profile card.',
     usage:'!status [reset/text (60 character limit)]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${this.usage}`;
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;

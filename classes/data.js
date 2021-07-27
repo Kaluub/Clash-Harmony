@@ -1,55 +1,70 @@
+const Keyv = require('keyv');
+const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+
+let lockedIds = [];
+
 class Data {
-    constructor(type, data){
-        if(type = 'user'){
-            this.version = Data.version;
-            this.blocked = data.blocked ?? false;
-            this.points = data.points ?? 0;
-            this.status = data.status ?? '';
-            this.monthlyCooldown = data.monthlyCooldown ?? Date.now();
-            this.statistics = data.statistics ?? {
-                spent: 0,
-                earned: 0,
-                commandsUsed: 0,
-                age: Date.now(),
-                duelsWon: 0,
-                duelsLost: 0
-            };
-            this.unlocked = data.unlocked ?? {
-                backgrounds: ['default_background'],
-                frames: ['default_frame'],
-                features: []
-            };
-            this.card = data.card ?? {
-                background: 'default_background',
-                frame: 'default_frame'
-            };
-            this.duels = data.duels ?? {
-                background: 'default_background'
-            }
+    constructor(data){
+        this.blocked = data?.blocked ?? false;
+        this.points = data?.points ?? 0;
+        this.status = data?.status ?? '';
+        this.monthlyCooldown = data?.monthlyCooldown ?? Date.now();
+        this.statistics = {
+            spent: data?.statistics?.spent ?? 0,
+            earned: data?.statistics?.earned ?? 0,
+            commandsUsed: data?.statistics?.commandsUsed ?? 0,
+            age: data?.statistics?.age ?? Date.now(),
+            duelsWon: data?.statistics?.duelsWon ?? 0,
+            duelsLost: data?.statistics?.duelsLost ?? 0,
+            tradesCompleted: data?.statistics?.tradesCompleted ?? 0
+        };
+        this.unlocked = {
+            backgrounds: data?.unlocked?.backgrounds ?? ['default_background'],
+            frames: data?.unlocked?.frames ?? ['default_frame'],
+            roles: data?.unlocked?.roles ?? [],
+            features: data?.unlocked?.features ?? []
+        };
+        this.card = {
+            background: data?.card?.background ?? 'default_background',
+            frame: data?.card?.frame ?? 'default_frame'
+        };
+        this.duels = {
+            background: data?.duels?.backgrounds ?? 'default_background'
         };
     };
 
-    static version = '4';
+    static async get(guildID, userID){
+        if(lockedIds.includes(userID)) return false;
+        const data = await userdb.get(`${guildID}/${userID}`);
+        return new Data(data);
+    };
 
-    static async updateData(data){
-        if(!data || !data.version){
-            data = new Data('user',{});
-        };
-        if(data.version == '1'){ // Data version 2 migration
-            data.version = '2';
-            data.monthlyCooldown = Date.now();
-        };
-        if(data.version == '2'){ // Data version 3 migration
-            data.version = '3';
-            data.unlocked.features = [];
-        };
-        if(data.version == '3'){ // Data version 4 migration
-            data.version = '4';
-            data.duels = {background: 'default_background'};
-            data.statistics.duelsWon = 0;
-            data.statistics.duelsLost = 0;
-        };
-        return data;
+    static async forceGet(guildID, userID){
+        const data = await userdb.get(`${guildID}/${userID}`);
+        return new Data(data);
+    };
+
+    static async set(guildID, userID, data){
+        if(!(data instanceof Data)) return false;
+        if(lockedIds.includes(userID)) return false;
+        await userdb.set(`${guildID}/${userID}`, data);
+        return true;
+    };
+
+    static async forceSet(guildID, userID, data){
+        if(!(data instanceof Data)) return false;
+        await userdb.set(`${guildID}/${userID}`, data);
+        return true;
+    };
+
+    static lockIds(ids){
+        lockedIds.push(...ids);
+        return true;
+    };
+
+    static unlockIds(ids){
+        lockedIds = lockedIds.filter(id => !ids.includes(id));
+        return true;
     };
 };
 

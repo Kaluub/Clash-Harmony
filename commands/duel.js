@@ -8,6 +8,7 @@ const GIFEncoder = require('gif-encoder-2');
 async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfdata}, {member, userdata}){
     // Get duel data:
     const duels = await readJSON(`json/duels.json`);
+    const rewards = await readJSON(`json/rewards.json`);
 
     // Update duel logic:
     if(battle[0].round == 0){
@@ -41,6 +42,8 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
     const backgroundImage = await loadImage(`./img/duels/backgrounds/${duels.backgrounds[selfdata.duels.background].img}`);
     const selfImage = await loadImage(self.user.displayAvatarURL({format:'png',size:128}));
     const memberImage = await loadImage(member.user.displayAvatarURL({format:'png',size:128}));
+    let selfFrame = await loadImage(`./img/frames/${rewards[selfdata.card.frame].img}`);
+    let memberFrame = await loadImage(`./img/frames/${rewards[userdata.card.frame].img}`);
     const healthImage = await loadImage(`./img/duels/health.png`);
     const healthMissingImage = await loadImage(`./img/duels/health_missing.png`);
 
@@ -58,6 +61,10 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
     ctx.closePath(); ctx.clip();
     ctx.drawImage(memberImage, 772, 236);
     ctx.restore();
+
+    // Draw frames:
+    ctx.drawImage(selfFrame, 89, 225, selfFrame.width * 0.5, selfFrame.height * 0.5);
+    ctx.drawImage(memberFrame, 761, 225, memberFrame.width * 0.5, memberFrame.height * 0.5);
 
     // Draw names:
     ctx.textAlign = "center";
@@ -97,11 +104,10 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
     const embed = new MessageEmbed()
         .setTitle(`Duel!`)
         .setDescription(`Duel between ${self.user.username} and ${member.user.username}!\nRound: ${battle[0].round}.\nRound detail: ${battle[0].log[battle[0].log.length - 1]}`)
-        .attachFiles([attachment])
         .setImage(`attachment://duel.png`)
         .setColor(battle[1].hp < 1 || battle[2].hp < 1 ? `#33AA33` : `#AA3333`)
         .setTimestamp();
-    const msg = await channel.send(embed);
+    const msg = await channel.send({embeds:[embed], files:[attachment]});
 
     // Queue next update:
     if(battle[1].hp < 1 || battle[2].hp < 1){
@@ -141,10 +147,10 @@ module.exports = {
     aliases:['d'],
     desc:'This is a command for dueling other users.',
     usage:'!duel [stats/@user] [amount]',
-    async execute({interaction,message,args}){
+    execute: async ({interaction,message,args}) => {
         const guild = interaction?.guild ?? message?.guild;
         const self = interaction?.member ?? message?.member;
-        const member = interaction?.options[0].member ?? message?.mentions.members.first();
+        const member = interaction?.options.first().member ?? message?.mentions.members.first();
         if(!member) {
             if(args[0] == 'stats'){
                 const selfdata = await userdb.get(`${guild.id}/${self.user.id}`);
@@ -153,7 +159,7 @@ module.exports = {
                     .setTitle('Your duel stats:')
                     .setDescription(`Duels won: ${selfdata.statistics.duelsWon}\nDuels lost: ${selfdata.statistics.duelsLost}`)
                     .setTimestamp()
-                return embed;
+                return {embeds:[embed]};
             };
             return `Usage: ${this.usage}`;
         }
@@ -215,18 +221,17 @@ module.exports = {
         const embed = new MessageEmbed()
             .setTitle(`Request to duel!`)
             .setDescription(`React with '✅' to start the duel with ${self.user.username}!${amount !== 0 ? `\nPrice: ${amount} points.` : ''}`)
-            .attachFiles([attachment])
             .setImage('attachment://startduel.png')
             .setFooter(`This request expires at:`)
             .setTimestamp(Date.now() + 60000)
             .setColor(`#33AA33`);
-        let msg = await message?.channel.send({content:`Ping: ${member.user}`, embed:embed});
+        let msg = await message?.channel.send({content:`Ping: ${member.user}`, embed:embed, files:[attachment]});
         if(!msg){
-            await interaction?.reply({content:`Ping: ${member.user}`, embeds:[embed]});
+            await interaction?.reply({content:`Ping: ${member.user}`, embeds:[embed], files:[attachment]});
             msg = await interaction?.fetchReply();
         };
         await msg.react('✅');
-        const collector = msg.createReactionCollector((reaction, user) => reaction.emoji.name == '✅', {time:60000});
+        const collector = msg.createReactionCollector({filter: (reaction, user) => reaction.emoji.name == '✅', time: 60000});
         collector.on('collect', async (reaction, user) => {
             if(user.id !== member.id) return reaction.users.remove(user.id);
             let battle = [

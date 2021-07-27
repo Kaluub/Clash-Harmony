@@ -5,10 +5,10 @@ module.exports = {
     desc:'A command used to generate and send embed messages.',
     usage:'!embed [values]',
     admin:true,
-    async execute({interaction}){
+    execute: async ({interaction}) => {
         if(!interaction) return `This command can only be used as a slash command.`;
         const embed = new MessageEmbed();
-        for(const option of interaction.options){
+        for(const [name, option] of interaction.options){
             try {
                 if(option.name == 'title') embed.setTitle(option.value);
                 if(option.name == 'description') embed.setDescription(option.value);
@@ -24,10 +24,10 @@ module.exports = {
             };
         };
         try {
-            interaction.channel.send(embed);
+            await interaction.channel.send({embeds:[embed]});
         } catch {
             return {content: `There was an error with your embed.`, ephemeral: true};
         };
-        return {content: `Succesfully made an embed using your parameters.`, ephemeral: true};
+        return {content: `Successfully made an embed using your parameters.`, ephemeral: true};
     }
 };
