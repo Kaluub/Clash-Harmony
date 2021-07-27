@@ -16,7 +16,6 @@ module.exports = {
         if(!member) member = await message.guild.members.fetch({query:args.join(' '), limit:1}).then(col => col.first());
         if(!member) return message.channel.send(`Please provide a valid @user mention or username.`);
         if(member.user.bot) return message.channel.send(`You can't give your points to a bot.`);
-        if(message.author.id == member.user.id) return message.channel.send(`You can't give points to yourself.`);
         let userdata = await userdb.get(`${message.guild.id}/${message.author.id}`);
         if(Date.now() - userdata.statistics.age < 1210000000) return message.channel.send('You need to wait at least 2 weeks between your first interaction with this bot and now in order to send points.');
         if(userdata.points < count) return message.channel.send(`You don't have enough points! You would need ${count - userdata.points} more points to confirm this transaction.`);

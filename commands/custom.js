@@ -6,7 +6,7 @@ const {MessageEmbed} = require('discord.js');
 
 module.exports = {
     name:'custom',
-    aliases:['c','use'],
+    aliases:['c'],
     admin:false,
     desc:'This is a command for customizing your profile card.',
     usage:'!custom [reward name]',
