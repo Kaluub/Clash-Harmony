@@ -34,7 +34,8 @@ const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
 const statuses = [
     {name:'for !help',options:{type:'WATCHING'}},
     {name:'for !tutorial',options:{type:'WATCHING'}},
-    {name:'DMs for Mod Mail.',options:{type:'LISTENING'}}
+    {name:'DMs for Mod Mail.',options:{type:'LISTENING'}},
+    {name:'with a looming update...',options:{type:'PLAYING'}}
 ];
 let statusNum = 0;
 client.setInterval(function(){
@@ -78,12 +79,16 @@ client.on('message', async (msg) => {
                 let embed = new Discord.MessageEmbed()
                     .setColor('#333333')
                     .setTitle(`Mod Mail`)
-                    .setDescription(`New message from ${msg.author} (${msg.author.tag}):${category?`\nCategory: *${category}*`:''}\n\n${msg.content}`)
+                    .setDescription(`New message from ${msg.author} (${msg.author.tag}):${category?`\nCategory: *${category}*`:''}\n\n${msg.content.length > 1900 ? msg.content.slice(0,1899) + `...` : msg.content}`)
+                    //.setFooter(`React with ⛔ to remove the attachment.`) // TODO: v13 discord.js feature
                     .setTimestamp();
-                channel.send(embed);
+                const file = Buffer.from(`This file is generated to allow for longer messages & ease of readability.\n\nMessage received:\n` + msg.content, 'utf-8');
+                const attachment = new Discord.MessageAttachment(file, `message.txt`);
+                channel.send({embed:embed, files:[attachment]});
                 msg.channel.send(`Your message has been sent to the staff of the Clash & Harmony Clans.\n**NOTE**: Even if you haven't received a message back, your message will be read!`);
                 return collector.stop('sent');
             };
+
             if(reaction.emoji.name == emojis[1]){
                 const categories = ['🟦','🟪','❓','❗'];
                 const rmsg = await message.channel.send('Please react to this message with one of the following:\n🟦: Harmony Application\n🟪: Clash Application\n❓: Question\n❗: Issue');
@@ -101,6 +106,7 @@ client.on('message', async (msg) => {
                     return message.channel.send(`The category \`${category}\` has been added to your mail.`);
                 });
             };
+
             if(reaction.emoji.name == emojis[2]){
                 return collector.stop('cancelled');
             };
@@ -137,6 +143,7 @@ client.on('message', async (msg) => {
         if((maintenance && command.name != 'maintenance'))
             if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.')
         if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send('This command requires admin permission.');
+        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(message.author.id))) return msg.channel.send(`This command needs a special feature available from the shop.`);
         userdata.statistics.commandsUsed += 1;
         await userdb.set(`${msg.guild.id}/${msg.author.id}`,userdata);
         try{

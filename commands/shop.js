@@ -79,7 +79,7 @@ module.exports = {
             await msg.edit({embed:embed});
         });
         collector.on('end', async (collected, reason) => {
-            if(!message.deleted) await msg.reactions.removeAll();
+            if(!msg.deleted) await msg.reactions.removeAll();
         });
     }
 };
