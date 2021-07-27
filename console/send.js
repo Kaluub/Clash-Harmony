@@ -2,7 +2,7 @@ module.exports = {
     name:'send',
     aliases:['s'],
     usage:'send [user/channel ID] [message]',
-    async execute(client,args){
+    async execute({client,args}){
         if(!args[0] || !args[1]) return console.log("\x1b[32m%s\x1b[0m",'Usage: ' + this.usage);
         let channel;
         let success = true;

@@ -1,7 +1,7 @@
 module.exports = {
     name:'uptime',
     usage:'uptime',
-    async execute(client,args){
+    async execute({client}){
         let totalSeconds = (client.uptime / 1000);
         let days = Math.floor(totalSeconds / 86400);
         totalSeconds %= 86400;

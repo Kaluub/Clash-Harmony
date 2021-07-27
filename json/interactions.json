@@ -1,0 +1,499 @@
+[
+    {
+        "name": "add",
+        "description": "This command is used to add rewards directly to users from the shop.",
+        "options": [
+            {
+                "name": "user",
+                "description": "The user to give the reward to.",
+                "type": "USER",
+                "required": true
+            },
+            {
+                "name": "reward",
+                "description": "The reward name to give to the user.",
+                "type": "STRING",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "buy",
+        "description": "This command is used to purchase rewards from the shop.",
+        "options": [
+            {
+                "name": "reward",
+                "description": "The reward name to purchase.",
+                "type": "STRING",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "custom",
+        "description": "This is a command for customizing your profile card.",
+        "options": [
+            {
+                "name": "reward",
+                "description": "The name of the reward you would like to use.",
+                "type": "STRING",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "daily",
+        "description": "This is a (probably) satire command regarding daily rewards."
+    },
+    {
+        "name": "db",
+        "description": "This is a dangerous but useful command for managing user data.",
+        "options": [
+            {
+                "name": "get",
+                "description": "Get a users data.",
+                "type": "SUB_COMMAND",
+                "options": [
+                    {
+                        "name": "guild-id",
+                        "description": "Guild ID to use.",
+                        "type": "STRING",
+                        "required": true
+                    },
+                    {
+                        "name": "user-id",
+                        "description": "User ID to use.",
+                        "type": "STRING",
+                        "required": true
+                    }
+                ]
+            },
+            {
+                "name": "set",
+                "description": "Set a users data.",
+                "type": "SUB_COMMAND",
+                "options": [
+                    {
+                        "name": "guild-id",
+                        "description": "Guild ID to use.",
+                        "type": "STRING",
+                        "required": true
+                    },
+                    {
+                        "name": "user-id",
+                        "description": "User ID to use.",
+                        "type": "STRING",
+                        "required": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "duel",
+        "description": "This is a command for dueling other users.",
+        "options": [
+            {
+                "name": "member",
+                "description": "The member you'd like to duel.",
+                "type": "USER",
+                "required": true
+            },
+            {
+                "name": "points",
+                "description": "The amount of points duel for.",
+                "type": "INTEGER",
+                "required": false
+            }
+        ]
+    },
+    {
+        "name": "eco",
+        "description": "This command is used to manage point distribution.",
+        "options": [
+            {
+                "name": "member",
+                "description": "The member to give the points to.",
+                "type": "USER",
+                "required": true
+            },
+            {
+                "name": "points",
+                "description": "The amount of points to give this member.",
+                "type": "INTEGER",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "edit",
+        "description": "This is a command for editing any message the bot has sent.",
+        "options": [
+            {
+                "name": "channel-id",
+                "description": "The channel ID of the channel where the message is stored.",
+                "type": "STRING",
+                "required": true
+            },
+            {
+                "name": "message-id",
+                "description": "The message ID of the message to edit.",
+                "type": "STRING",
+                "required": true
+            },
+            {
+                "name": "content",
+                "description": "The content to use for the edited message.",
+                "type": "STRING",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "embed",
+        "description": "A command used to generate and send embed messages.",
+        "options": [
+            {
+                "name": "description",
+                "description": "The description of the embed.",
+                "type": "STRING",
+                "required": true
+            },
+            {
+                "name": "title",
+                "description": "The title of the embed.",
+                "type": "STRING",
+                "required": false
+            },
+            {
+                "name": "color",
+                "description": "The hex color code for the embed.",
+                "type": "STRING",
+                "required": false
+            },
+            {
+                "name": "image",
+                "description": "The image URL for the embed.",
+                "type": "STRING",
+                "required": false
+            },
+            {
+                "name": "url",
+                "description": "The URL of the title for the embed.",
+                "type": "STRING",
+                "required": false
+            },
+            {
+                "name": "author",
+                "description": "The author of the embed (JSON object).",
+                "type": "STRING",
+                "required": false
+            },
+            {
+                "name": "footer",
+                "description": "The footer of the embed (JSON object).",
+                "type": "STRING",
+                "required": false
+            },
+            {
+                "name": "fields",
+                "description": "The fields to add to the embed (JSON array).",
+                "type": "STRING",
+                "required": false
+            },
+            {
+                "name": "timestamp",
+                "description": "The time of the embed. Valid Date number. If the number '0' is provided, the curent time is used.",
+                "type": "STRING",
+                "required": false
+            }
+        ]
+    },
+    {
+        "name": "event",
+        "description": "A command for starting and managing events.",
+        "options": [
+            {
+                "name": "create",
+                "description": "A command to create & start an event.",
+                "type": "SUB_COMMAND",
+                "options": [
+                    {
+                        "name": "name",
+                        "description": "The name/theme of the event.",
+                        "type": "STRING",
+                        "required": true
+                    },
+                    {
+                        "name": "type",
+                        "description": "The type of the event.",
+                        "type": "STRING",
+                        "required": true,
+                        "choices": [
+                            {
+                                "name": "Art Contest",
+                                "value": "artcontest"
+                            },
+                            {
+                                "name": "Build Contest",
+                                "value": "buildcontest"
+                            },
+                            {
+                                "name": "AMA Event",
+                                "value": "ama"
+                            },
+                            {
+                                "name": "Karaoke Event",
+                                "value": "karaoke"
+                            },
+                            {
+                                "name": "PW Game Event",
+                                "value": "pixelworldsevent"
+                            },
+                            {
+                                "name": "Poll",
+                                "value": "poll"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "channel",
+                        "description": "The channel to post the event message in. If none is provided, the current channel is used.",
+                        "type": "CHANNEL",
+                        "required": false
+                    },
+                    {
+                        "name": "length",
+                        "description": "The length of the event, in hours. If not provided, it'll default to 3 days.",
+                        "type": "INTEGER",
+                        "required": false
+                    },
+                    {
+                        "name": "points",
+                        "description": "The reward of the event.",
+                        "type": "INTEGER",
+                        "required": false
+                    },
+                    {
+                        "name": "poll-options",
+                        "description": "The options of a poll event, if applicable. Example: 'Option 1; Option 2; Option 3'. Max 5 options.",
+                        "type": "STRING",
+                        "required": false
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "help",
+        "description": "A list of every command.",
+        "options": [
+            {
+                "name": "filter",
+                "description": "The command name/filter to use.",
+                "type": "STRING",
+                "required": false
+            }
+        ]
+    },
+    {
+        "name": "info",
+        "description": "This is a command for viewing the info of a reward.",
+        "options": [
+            {
+                "name": "reward",
+                "description": "The reward name to view the info for.",
+                "type": "STRING",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "list",
+        "description": "This is a command for viewing your owned frames and backgrounds.",
+        "options": [
+            {
+                "name": "filter",
+                "description": "Show only frames or backgrounds.",
+                "type": "STRING",
+                "required": false,
+                "choices": [
+                    {
+                        "name": "frames",
+                        "value": "frames"
+                    },
+                    {
+                        "name": "backgrounds",
+                        "value": "backgrounds"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "memberlist",
+        "description": "This command is used to generate a new member list.",
+        "options": [
+            {
+                "name": "clan",
+                "description": "Choose which clan to generate the member list for.",
+                "type": "STRING",
+                "required": true,
+                "choices": [
+                    {
+                        "name": "clash",
+                        "value": "clash"
+                    },
+                    {
+                        "name": "harmony",
+                        "value": "harmony"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "maintenance",
+        "description": "This is a command regarding maintenance breaks."
+    },
+    {
+        "name": "modmail",
+        "description": "This command is used to change the mod-mail channel.",
+        "options": [
+            {
+                "name": "channel",
+                "description": "The channel to use the mod-mail feature in.",
+                "type": "CHANNEL",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "monthly",
+        "description": "This is a command for earning your monthly rewards."
+    },
+    {
+        "name": "pay",
+        "description": "This command is used to circulate points between users.",
+        "options": [
+            {
+                "name": "member",
+                "description": "The member to give your points to.",
+                "type": "USER",
+                "required": true
+            },
+            {
+                "name": "points",
+                "description": "The amount of points to give this member.",
+                "type": "INTEGER",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "profile",
+        "description": "This is a command for displaying yours or others profile card.",
+        "options": [
+            {
+                "name": "member",
+                "description": "The member who's card to display.",
+                "type": "USER",
+                "required": false
+            }
+        ]
+    },
+    {
+        "name": "send",
+        "description": "This is a command for sending any message to a channel.",
+        "options": [
+            {
+                "name": "id",
+                "description": "The channel/user ID to send a message to.",
+                "type": "STRING",
+                "required": true
+            },
+            {
+                "name": "content",
+                "description": "The content to use for the message.",
+                "type": "STRING",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "shop",
+        "description": "This is a command for displaying the shop.",
+        "options": [
+            {
+                "name": "filter",
+                "description": "The text filter to apply to the shop.",
+                "type": "STRING",
+                "required": false
+            }
+        ]
+    },
+    {
+        "name": "status",
+        "description": "This command is used to set your custom status displayed on your profile card.",
+        "options": [
+            {
+                "name": "text",
+                "description": "The text you wish to use as your status. 60 characters maximum.",
+                "type": "STRING",
+                "required": true
+            }
+        ]
+    },
+    {
+        "name": "toggle",
+        "description": "A command for toggling some specific roles, used for pings.",
+        "options": [
+            {
+                "name": "role",
+                "description": "Choose which role to toggle.",
+                "type": "STRING",
+                "required": true,
+                "choices": [
+                    {
+                        "name": "trivia",
+                        "value": "trivia"
+                    },
+                    {
+                        "name": "qotd",
+                        "value": "qotd"
+                    },
+                    {
+                        "name": "polls",
+                        "value": "polls"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "tutorial",
+        "description": "This command is used to view the tutorial."
+    },
+    {
+        "name": "updatelist",
+        "description": "This command is used to update an existing member list.",
+        "options": [
+            {
+                "name": "clan",
+                "description": "Choose which clan to update the member list for.",
+                "type": "STRING",
+                "required": true,
+                "choices": [
+                    {
+                        "name": "clash",
+                        "value": "clash"
+                    },
+                    {
+                        "name": "harmony",
+                        "value": "harmony"
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -45,28 +45,13 @@ async function updateMembers(guild,clan){
     return embed;
 };
 
-async function guessRewards(rewards,name,all){
+async function guessRewards(rewards,name,roles){
     let possibleRewards = [];
-    for(const i in rewards.rewards.frames){
-        let f = rewards.rewards.frames[i];
-        if(f.name.toLowerCase().includes(name.toLowerCase())){
-            possibleRewards.push(f);
-        };
+    for(const i in rewards){
+        const item = rewards[i];
+        if(item.type == 'roles' && !roles) continue;
+        if(item.name.toLowerCase().includes(name.toLowerCase())) possibleRewards.push(item);
     };
-    for(const i in rewards.rewards.backgrounds){
-        let b = rewards.rewards.backgrounds[i];
-        if(b.name.toLowerCase().includes(name.toLowerCase())){
-            possibleRewards.push(b);
-        };
-    };
-    if(all){
-        for(const i in rewards.rewards.roles){
-            let r = rewards.rewards.roles[i];
-            if(r.name.toLowerCase().includes(name.toLowerCase())){
-                possibleRewards.push(r);
-            };
-        };
-    }
     return possibleRewards;
 };
 
@@ -83,8 +68,17 @@ function economyLog(guildID, user, reward, points, user2){
     writeFileSync(`./data/logs/economy.log`, currentLog, {encoding:'utf-8'});
 };
 
+function resetLog(guildID, userID, user2ID, userdata, userdata2){
+    let time = new Date(Date.now());
+    let str = `[TIME: ${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}]\n[${guildID}/${userID}] ${JSON.stringify(userdata)}\n[${guildID}/${user2ID}] ${JSON.stringify(userdata2)}\n=====`;
+    let currentLog = readFileSync(`./data/logs/reset.log`, {encoding:'utf-8'});
+    currentLog += str;
+    writeFileSync(`./data/logs/reset.log`, currentLog, {encoding:'utf-8'});
+};
+
 module.exports = {
     updateMembers:updateMembers,
     guessRewards:guessRewards,
-    economyLog:economyLog
+    economyLog:economyLog,
+    resetLog:resetLog
 };
