@@ -4,11 +4,11 @@ const Data = require('../classes/data.js');
 module.exports = {
     name:'vanity',
     desc:`Manages your vanity roles.`,
-    usage:'!vanity',
+    usage:'/vanity',
     execute: async ({interaction, message}) => {
         const guild = interaction?.guild || message?.guild;
         if(!guild) return `This isn't usable outside of a guild.`;
-        //if(guild.id !== "636986136283185172") return `This command can only be used in the Clash & Harmony Discord server.`;
+        if(guild.id !== "636986136283185172") return `This command can only be used in the Clash & Harmony Discord server.`;
         
         let member = interaction?.member || message?.member;
         const data = await Data.get(guild.id, member.user.id);

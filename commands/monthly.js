@@ -6,7 +6,7 @@ module.exports = {
     name:'monthly',
     aliases:['m'],
     desc:`This is a command for earning your monthly rewards.`,
-    usage:'!monthly',
+    usage:'/monthly',
     execute: async ({interaction,message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;

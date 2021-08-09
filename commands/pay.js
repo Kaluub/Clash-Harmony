@@ -7,9 +7,9 @@ module.exports = {
     name:'pay',
     aliases:['give','send'],
     desc:'This command is used to circulate points between users.',
-    usage:'!pay [points] [@user/user name]',
+    usage:'/pay [points] [@user/user name]',
     execute: async ({interaction,message,args}) => {
-        if(!args[0] || !args[1]) return `Usage: ${this.usage}`;
+        if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
         let count = message ? parseInt(args[0]) : interaction?.options.get("points").value;
         if(isNaN(count) || count < 1) return `You need to provide a valid number!`;
         args.shift();

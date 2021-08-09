@@ -1,16 +1,15 @@
 const {MessageEmbed} = require('discord.js');
-const Keyv = require('keyv');
-const {readJSON} = require('../json');
-const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+const Data = require('../classes/data.js');
+const {readJSON} = require('../json.js');
 
 module.exports = {
     name:'add',
     admin:true,
     desc:'This command is used to add rewards directly to users from the shop.',
-    usage:'!add [@user] [reward name]',
+    usage:'/add [@user] [reward name]',
     execute: async ({interaction,message,args}) => {
-        if(!args[0] || !args[1]) return `Usage: ${this.usage}`;
-        let member = message?.mentions.members.first() ?? interaction?.options.first().member;
+        if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
+        let member = message?.mentions.members.first() ?? interaction?.options.getMember('user');
         const guild = interaction?.guild ?? message?.guild;
         const author = interaction?.user ?? message?.author;
         if(!member && message){
@@ -18,12 +17,12 @@ module.exports = {
                 member = await message.guild.members.fetch(args[0]);
                 if(!member) return 'Invalid guild member.';
             } catch {
-                return `Usage: ${this.usage}`;
+                return `Usage: ${module.exports.usage}`;
             };
         } else if(!member) return `Invalid interaction received.`;
         if(member.user.bot) return `You can't add rewards to a bot.`;
 
-        let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
+        let userdata = await Data.get(guild.id, member.user.id);
         let rewards = await readJSON('json/rewards.json');
 
         args.shift();
@@ -40,15 +39,15 @@ module.exports = {
         if(!item) return `No reward found with the name \`${itemname}\`.`;
 
         if(item.type == 'frames' || item.type == 'backgrounds'){
-            if(await userdata.unlocked[item.type].includes(item.id)) return 'This user has this reward.';
-            userdata.unlocked[item.type].push(item.id);
-            await userdb.set(`${guild.id}/${member.user.id}`, userdata);
+            if(userdata.hasReward(item)) return 'This user has this reward.';
+            userdata.addReward(item);
+            await Data.set(guild.id, member.user.id, userdata);
             return `You gave the ${item.name} to ${member.user.tag}.`;
         } else if(item.type == 'roles'){
             if(guild.id != '636986136283185172') return 'This reward can only be claimed in the Clash & Harmony discord server!';
             if(await member.roles.cache.has(item.id)) return 'This user has this reward!';
             userdata.unlocked[item.type].push(item.id);
-            await userdb.set(`${guild.id}/${member.user.id}`, userdata);
+            await Data.set(guild.id, member.user.id, userdata);
             await member.roles.add(item.id, `Reward given by ${author.tag}.`);
             return `You gave the ${item.name} to ${member.user.tag}.`;
         } else if(item.type == 'services'){

@@ -59,9 +59,9 @@ module.exports = {
     aliases:['b'],
     admin:false,
     desc:'This command is used to purchase rewards from the shop.',
-    usage:'!buy [reward name]',
+    usage:'/buy [reward name]',
     execute: async ({interaction, message, args}) => {
-        if(!args[0]) return `Usage: ${this.usage}`;
+        if(!args[0]) return `Usage: ${module.exports.usage}`;
         const member = interaction?.member ?? message?.member;
         const guild = interaction?.guild ?? message?.guild;
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);

@@ -1,7 +1,7 @@
 module.exports = {
     name:'maintenance',
     desc:`This is a command regarding maintenance breaks.`,
-    usage:'!maintenance',
+    usage:'/maintenance',
     noGuild:true,
     execute: async () => {
         return {

@@ -5,9 +5,9 @@ module.exports = {
     admin:true,
     noGuild:true,
     desc:'This is a command for editing any message the bot has sent.',
-    usage:'!edit [channel ID] [message ID] [new message]',
+    usage:'/edit [channel ID] [message ID] [new message]',
     execute: async ({interaction,message,args}) => {
-        if(!args[0] || !args[1] || !args[2]) return `Usage: ${this.usage}`;
+        if(!args[0] || !args[1] || !args[2]) return `Usage: ${module.exports.usage}`;
         const client = interaction?.client ?? message?.client;
         let channel, msg;
 

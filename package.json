@@ -4,15 +4,15 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@keyv/sqlite": "^2.0.2",
-    "canvas": "^2.7.0",
+    "canvas": "^2.8.0",
     "discord-rpc": "^4.0.1",
-    "discord.js": "^13.0.0-dev.28b5ffb.1625702624",
+    "discord.js": "^13.0.1",
     "gif-encoder-2": "^1.0.5",
     "keyv": "^4.0.3",
     "node-fetch": "^2.6.1"

@@ -8,7 +8,7 @@ module.exports = {
     admin:false,
     hidden:true,
     desc:`This is a (probably) satire command regarding daily rewards.`,
-    usage:'!daily',
+    usage:'/daily',
     execute: async ({interaction,message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;

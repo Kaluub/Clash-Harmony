@@ -9,10 +9,10 @@ module.exports = {
     name:'db',
     admin:true,
     desc:'This is a dangerous but useful command for managing user data.',
-    usage:'!db [get/set] [guild ID + / + user ID]',
+    usage:'/db [get/set] [guild ID + / + user ID]',
     execute: async ({interaction,message,args}) => {
         if(message){
-            if(!args[0] || !args[1]) return `Usage: ${this.usage}`;
+            if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
             if(args[0] == 'get'){
                 let userdata = await userdb.get(args[1]);
                 if(!userdata) userdata = await guilddb.get(args[1]);
@@ -28,18 +28,17 @@ module.exports = {
                 await userdb.set(args[1],data);
                 return `Data set for ${args[1]}.`;
             };
-            return `Usage: ${this.usage}`;
-        }
+            return `Usage: ${module.exports.usage}`;
+        };
         if(interaction){
-            if(interaction.options.first().name == 'get'){
-                const options = interaction.options;
-                let userdata = await userdb.get(`${options.get('get').options.get('guild-id').value}/${options.get('get').options.get('user-id').value}`);
+            if(interaction.options.getSubcommand(false) == 'get'){
+                let userdata = await userdb.get(`${interaction.options.getString('guild-id')}/${interaction.options.getString('user-id')}`);
                 if(!userdata) return 'No data found for this user.';
                 writeJSON('data/userdata.json',userdata);
                 const attachment = new MessageAttachment('./data/userdata.json','userdata.json');
-                return {content:`Data for ${options.get('get').options.get('guild-id').value}/${options.get('get').options.get('user-id').value}:`,files:[attachment]};
+                return {content:`Data for ${interaction.options.getString('guild-id')}/${interaction.options.getString('user-id')}:`,files:[attachment]};
             };
-            if(interaction.options.first().name == 'set') return `Unsupported until Discord supports receiving attachments over interactions.`
-        }
+            if(interaction.options.getSubcommand(false) == 'set') return `Unsupported until Discord supports receiving attachments over interactions.`;
+        };
     }
 };

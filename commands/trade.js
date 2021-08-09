@@ -65,14 +65,14 @@ async function startTrade({member, partner, channel}){
                 };
                 if(!reward){
                     const tempMsg2 = await m.channel.send(`No reward was found.`);
-                    tempMsg2.client.setTimeout(async () => {
+                    setTimeout(async () => {
                         if(!tempMsg2.deleted) await tempMsg2.delete();
                     }, 3000);
                     return mCol.stop();
                 };
                 trade[m.author.id].items.push(reward);
                 const tempMsg3 = await m.channel.send(`Sucessfully added ${reward.name} to the trade.`);
-                tempMsg3.client.setTimeout(async () => {
+                setTimeout(async () => {
                     if(!tempMsg3.deleted) await tempMsg3.delete();
                 }, 3000);
                 await m.delete();
@@ -101,14 +101,14 @@ async function startTrade({member, partner, channel}){
                 };
                 if(!reward){
                     const tempMsg2 = await m.channel.send(`No reward was found.`);
-                    tempMsg2.client.setTimeout(async () => {
+                    setTimeout(async () => {
                         if(!tempMsg2.deleted) await tempMsg2.delete();
                     }, 3000);
                     return mCol.stop();
                 };
                 trade[m.author.id].items = trade[m.author.id].items.filter(r => r != reward);
                 const tempMsg3 = await m.channel.send(`Sucessfully removed ${reward.name} from the trade.`);
-                tempMsg3.client.setTimeout(async () => {
+                setTimeout(async () => {
                     if(!tempMsg3.deleted) await tempMsg3.delete();
                 }, 3000);
                 await m.delete();
@@ -129,7 +129,7 @@ async function startTrade({member, partner, channel}){
                 let points = parseInt(m.content);
                 if(isNaN(points) || points < 0 || userdata.points < points){
                     const tempMsg2 = await m.channel.send(`Invalid points amount. You must have enough points, the points must be above zero or you didn't type a number.`);
-                    tempMsg2.client.setTimeout(async () => {
+                    setTimeout(async () => {
                         if(!tempMsg2.deleted) await tempMsg2.delete();
                     }, 3000);
                     await m.delete();
@@ -137,7 +137,7 @@ async function startTrade({member, partner, channel}){
                 };
                 trade[m.author.id].points = points;
                 const tempMsg3 = await m.channel.send(`${points} points will be added with the trade.`);
-                tempMsg3.client.setTimeout(async () => {
+                setTimeout(async () => {
                     if(!tempMsg3.deleted) await tempMsg3.delete();
                 }, 3000);
                 await m.delete();
@@ -234,7 +234,7 @@ async function endTrade({trade, guild, member, partner}){
 module.exports = {
     name:'trade',
     desc:`Initiates a trading sequence.`,
-    usage:'!trade [@user]',
+    usage:'/trade [@user]',
     execute: async ({interaction, message}) => {
         const guild = interaction?.guild ?? message?.guild;
         if(!guild) return `This command can not be used outside of a server!`;
@@ -242,7 +242,7 @@ module.exports = {
 
         const member = interaction?.member ?? message?.member;
         const partner = interaction?.options?.first().member ?? message?.mentions.members.first();
-        if(!partner) return `Usage: ${this.usage}`;
+        if(!partner) return `Usage: ${module.exports.usage}`;
         if(partner.user.bot) return `You can't trade with a bot.`;
         if(member.user.id == partner.user.id) return `You can't trade with yourself.`;
 

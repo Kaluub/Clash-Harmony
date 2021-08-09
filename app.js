@@ -13,14 +13,13 @@ const client = new Discord.Client({
         Discord.Intents.FLAGS.GUILD_MESSAGES,
         Discord.Intents.FLAGS.DIRECT_MESSAGES,
         Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
+        Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+        Discord.Intents.FLAGS.GUILD_MEMBERS
     ],
     partials: [
         "CHANNEL",
         "REACTION"
     ],
-    messageCacheLifetime: 1800,
-    messageSweepInterval: 300,
     restTimeOffset: 100
 });
 
@@ -46,23 +45,24 @@ const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
 const guilddb = new Keyv('sqlite://data/users.sqlite', {namespace:'guilds'});
 
 const statuses = [
-    {name:'for !help',options:{type:'WATCHING'}},
-    {name:'for !tutorial',options:{type:'WATCHING'}},
+    {name:'for /help',options:{type:'WATCHING'}},
+    {name:'for /tutorial',options:{type:'WATCHING'}},
     {name:'DMs for Mod Mail.',options:{type:'LISTENING'}}
 ];
 let statusNum = 0;
-client.setInterval(function(){
-    if(maintenance) return;
-    client.user.setActivity(statuses[statusNum].name,statuses[statusNum].options);
-    statusNum += 1;
-    if(statusNum >= statuses.length) statusNum = 0;
-},30000);
 
 client.on('ready', async () => {
     await require('./commands/event.js').initEvents(client);
     process.title = "Clash & Harmony console";
     console.log("\x1b[34m\x1b[1m%s\x1b[0m",'Bot started successfully.');
     readline.prompt();
+
+    setInterval(function(){
+        if(maintenance) return;
+        client.user.setActivity(statuses[statusNum].name,statuses[statusNum].options);
+        statusNum += 1;
+        if(statusNum >= statuses.length) statusNum = 0;
+    },30000);
 });
 
 client.on('messageCreate', async (msg) => {
@@ -71,7 +71,7 @@ client.on('messageCreate', async (msg) => {
     const config = await readJSON('config.json');
     if(!msg.guild){ // Modmail
         let userdata = await userdb.get(`636986136283185172/${msg.author.id}`);
-        if(userdata && userdata.blocked) return message.channel.send(`You've previously been blocked from using this system. Please directly DM a staff member to help you out.`);
+        if(userdata && userdata.blocked) return msg.channel.send(`You've previously been blocked from using this system. Please directly DM a staff member to help you out.`);
         let dmEmbed = new Discord.MessageEmbed().setColor('#333333').setTitle('Clash & Harmony Mod Mail system:').setTimestamp();
         dmEmbed.setDescription(`Warning:
         Sending messages in DMs will send them to the staff of the Clash & Harmony Clans.
@@ -86,7 +86,7 @@ client.on('messageCreate', async (msg) => {
         await message.react('⛔');
 
         const emojis = ['✅','⏺️','⛔'];
-        const collector = message.createReactionCollector((reaction, user) => !user.bot && emojis.includes(reaction.emoji.name), {time: 300000});
+        const collector = message.createReactionCollector({filter: (reaction, user) => !user.bot && emojis.includes(reaction.emoji.name), idle: 300000});
 
         collector.on('collect', async (reaction) => {
             if(reaction.partial) await reaction.fetch();
@@ -109,7 +109,7 @@ client.on('messageCreate', async (msg) => {
                 const categories = ['🟦','🟪','❓','❗','📝'];
                 const rmsg = await message.channel.send('Please react to this message with one of the following:\n🟦: Harmony Application\n🟪: Clash Application\n❓: Question\n❗: Issue\n📝: Event Submission');
                 await rmsg.react('🟦'); await rmsg.react('🟪'); await rmsg.react('❓'); await rmsg.react('❗'); await rmsg.react('📝');
-                const rcol = rmsg.createReactionCollector((reaction, user) => !user.bot && categories.includes(reaction.emoji.name), {time: 10000});
+                const rcol = rmsg.createReactionCollector({filter: (reaction, user) => !user.bot && categories.includes(reaction.emoji.name), time: 10000});
                 rcol.on('collect', async (r) => {
                     if(r.partial) await r.fetch();
                     if(r.emoji.name == '🟦') rcol.stop('Harmony Application');
@@ -141,20 +141,19 @@ client.on('messageCreate', async (msg) => {
         return;
     };
 
-    let userdata = await Data.get(msg.guild.id, msg.author.id);
-
     if(msg.content.startsWith(config.prefix)){ // Discord commands:
         const args = msg.content.slice(config.prefix.length).split(/ +/);
         const commandName = args.shift().toLowerCase();
         const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if(!command) return;
-        if(!userdata && !config.admins.includes(msg.author.id)) return msg.channel.send('Unable to use this command: Your data is locked, are you in a trade?');
+        if(Data.isLocked(msg.author.id) && !config.admins.includes(msg.author.id)) return msg.channel.send('Unable to use this command: Your data is locked, are you in a trade?');
+        let userdata = await Data.get(msg.guild.id, msg.author.id);
         if((maintenance && command.name != 'maintenance'))
             if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.')
         if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send('This command requires admin permission.');
-        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(msg.author.id))) return msg.channel.send(`This command needs a special feature available from the shop.`);
-        userdata.statistics.commandsUsed += 1;
-        await userdb.set(`${msg.guild.id}/${msg.author.id}`, userdata);
+        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(msg.author.id))) return msg.channel.send(`This command needs a special feature available from the shop.`);
+        userdata.addStatistic('commandsUsed');
+        await Data.set(msg.guild.id, msg.author.id, userdata);
         try{
             await command.execute({message:msg,args:args}).then(async res => {
                 if(res) await msg.channel.send(res);
@@ -171,19 +170,19 @@ client.on('messageCreate', async (msg) => {
 client.on('interactionCreate', async (interaction) => {
     if(interaction.isCommand()){
         const config = await readJSON('config.json');
-        let userdata = await Data.get(interaction.guildID, interaction.user.id);
+        let userdata = await Data.get(interaction.guildId, interaction.user.id);
         if(!userdata && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
         const command = commands.commands.get(interaction.commandName.toLowerCase()) || commands.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName.toLowerCase()));
         if(!command) return interaction.reply('Command error: This command could not be handled as it does not exist.');
         if((maintenance && command.name != 'maintenance'))
             if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
         if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply('This command requires admin permission.');
-        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(interaction.user.id))) return interaction.reply(`This command needs a special feature available from the shop.`);
+        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(interaction.user.id))) return interaction.reply(`This command needs a special feature available from the shop.`);
         if(!interaction.guild && !command.noGuild) return interaction.reply(`This command can not be used in DMs.`);
         let args = [];
-        interaction.options.forEach((option) => args.push(option.value ? option.value.toString() : option));
-        userdata.statistics.commandsUsed += 1;
-        await userdb.set(`${interaction.guildID}/${interaction.user.id}`,userdata);
+        interaction?.options?.data.forEach((option) => args.push(option.value ? option.value.toString() : option));
+        userdata.addStatistic('commandsUsed');
+        await Data.set(interaction.guildId, interaction.user.id, userdata);
         try{
             await command.execute({interaction:interaction,args:args}).then(async res => {
                 if(res && !interaction.replied) await interaction.reply(res);
@@ -198,7 +197,7 @@ client.on('interactionCreate', async (interaction) => {
     } else if(interaction.isMessageComponent() && interaction.isButton()){
         if(interaction.customId.startsWith('poll')){ // Poll event
             const parts = interaction.customId.split('-');
-            let events = await guilddb.get(`${interaction.guildID}/Events`);
+            let events = await guilddb.get(`${interaction.guildId}/Events`);
             for(let event of events){
                 if(event.id == parts[2]){
                     const index = events.indexOf(event);
@@ -221,7 +220,7 @@ client.on('interactionCreate', async (interaction) => {
                     break;
                 };
             };
-            await guilddb.set(`${interaction.guildID}/Events`, events);
+            await guilddb.set(`${interaction.guildId}/Events`, events);
             return interaction.reply({content: `Vote submitted for option ${parts[1]}.`, ephemeral: true});
         };
     };

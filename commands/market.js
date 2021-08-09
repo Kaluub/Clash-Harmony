@@ -18,10 +18,10 @@ class MarketEmbed extends MessageEmbed {
 module.exports = {
     name:'market',
     desc:'A command for interacting with the market.',
-    usage:'!market [list/add]',
+    usage:'/market [list/add]',
     admin: true,
     execute: async ({interaction, message, args}) => {
-        if(!args.length) return `Usage: ${this.usage}`;
+        if(!args.length) return `Usage: ${module.exports.usage}`;
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
         const rewards = readJSON('json/rewards.json');
@@ -119,7 +119,7 @@ module.exports = {
         };
 
         if(args[0] == 'add'){ // testing
-            if(!args[1] || !args[2] || !args[3]) return `Usage: ${this.usage} (todo)`;
+            if(!args[1] || !args[2] || !args[3]) return `Usage: ${module.exports.usage} (todo)`;
             const marketitem = new MarketItem({id: member.user.id, item: args[1], category: args[2], price: parseInt(args[3]), timestamp: Date.now()});
             market.items.push(marketitem);
             await db.set(`${guild.id}/Market`, market);

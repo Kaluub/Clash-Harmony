@@ -1,8 +1,7 @@
 const {createCanvas, loadImage} = require('canvas');
 const {readJSON} = require('../json.js');
 const {MessageAttachment, MessageEmbed} = require('discord.js');
-const Keyv = require('keyv');
-const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+const Data = require('../classes/data.js');
 const GIFEncoder = require('gif-encoder-2');
 
 async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfdata}, {member, userdata}){
@@ -18,15 +17,15 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
         if(battle[0].round % 2 != 0){ // Player 1:
             let damage = 10;
             let random = Math.random();
-            if(random > 0.7) damage += 5; // CRIT!
-            else if(random < 0.15) damage = 0; // MISS!
+            if(random >= 0.75) damage += 5; // CRIT!
+            else if(random <= 0.15) damage = 0; // MISS!
             battle[0].log.push(`${damage == 10 ? '' : damage == 0 ? 'MISS! ': 'CRIT! '}${self.user.username} deals ${damage} damage!`);
             battle[2].hp -= damage;
         } else { // Player 2:
             let damage = 10;
             let random = Math.random();
-            if(random > 0.7) damage += 5; // CRIT!
-            else if(random < 0.15) damage = 0; // MISS!
+            if(random >= 0.75) damage += 5; // CRIT!
+            else if(random <= 0.15) damage = 0; // MISS!
             battle[0].log.push(`${damage == 10 ? '' : damage == 0 ? 'MISS! ': 'CRIT! '}${member.user.username} deals ${damage} damage!`);
             battle[1].hp -= damage;
         };
@@ -42,8 +41,8 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
     const backgroundImage = await loadImage(`./img/duels/backgrounds/${duels.backgrounds[selfdata.duels.background].img}`);
     const selfImage = await loadImage(self.user.displayAvatarURL({format:'png',size:128}));
     const memberImage = await loadImage(member.user.displayAvatarURL({format:'png',size:128}));
-    let selfFrame = await loadImage(`./img/frames/${rewards[selfdata.card.frame].img}`);
-    let memberFrame = await loadImage(`./img/frames/${rewards[userdata.card.frame].img}`);
+    const selfFrame = await loadImage(`./img/frames/${rewards[selfdata.card.frame].img}`);
+    const memberFrame = await loadImage(`./img/frames/${rewards[userdata.card.frame].img}`);
     const healthImage = await loadImage(`./img/duels/health.png`);
     const healthMissingImage = await loadImage(`./img/duels/health_missing.png`);
 
@@ -55,11 +54,11 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
     ctx.save(); ctx.beginPath();
     ctx.arc(164, 300, 64, 0, Math.PI * 2);
     ctx.closePath(); ctx.clip();
-    ctx.drawImage(selfImage, 100, 236);
+    ctx.drawImage(selfImage, 100, 236, selfImage.width * (128/selfImage.width), selfImage.height * (128/selfImage.height));
     ctx.restore(); ctx.save(); ctx.beginPath();
     ctx.arc(836, 300, 64, 0, Math.PI * 2);
     ctx.closePath(); ctx.clip();
-    ctx.drawImage(memberImage, 772, 236);
+    ctx.drawImage(memberImage, 772, 236, memberImage.width * (128/memberImage.width), memberImage.height * (128/memberImage.height));
     ctx.restore();
 
     // Draw frames:
@@ -127,15 +126,15 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
             selfdata.statistics.duelsWon += 1;
             userdata.statistics.duelsLost += 1;
         };
-        await userdb.set(`${self.guild.id}/${self.user.id}`, selfdata);
-        await userdb.set(`${member.guild.id}/${member.user.id}`, userdata);
+        await Data.set(self.guild.id, self.user.id, selfdata);
+        await Data.set(member.guild.id, member.user.id, userdata);
         if(encoder){
             encoder.finish();
             const replay = new MessageAttachment(encoder.out.getData(), 'duel.gif');
             await channel.send({content:"Replay of your duel:", files:[replay]});
         };
     } else {
-        msg.client.setTimeout(async () => {
+        setTimeout(async () => {
             await updateDuel(battle, {canvas:canvas, ctx:ctx, encoder:encoder}, channel, {self:self, selfdata:selfdata}, {member:member, userdata:userdata}).then();
             await msg.delete();
         }, 1500);
@@ -146,14 +145,14 @@ module.exports = {
     name:'duel',
     aliases:['d'],
     desc:'This is a command for dueling other users.',
-    usage:'!duel [stats/@user] [amount]',
+    usage:'/duel [stats/@user] [amount]',
     execute: async ({interaction,message,args}) => {
         const guild = interaction?.guild ?? message?.guild;
         const self = interaction?.member ?? message?.member;
-        const member = interaction?.options.first().member ?? message?.mentions.members.first();
+        const member = interaction?.options.getMember('member') ?? message?.mentions.members.first();
         if(!member) {
             if(args[0] == 'stats'){
-                const selfdata = await userdb.get(`${guild.id}/${self.user.id}`);
+                const selfdata = await Data.get(guild.id, self.user.id);
                 const embed = new MessageEmbed()
                     .setColor('#7777AA')
                     .setTitle('Your duel stats:')
@@ -161,11 +160,11 @@ module.exports = {
                     .setTimestamp()
                 return {embeds:[embed]};
             };
-            return `Usage: ${this.usage}`;
+            return `Usage: ${module.exports.usage}`;
         }
         if(self.user.id == member.user.id) return `You can't battle yourself.`;
-        const selfdata = await userdb.get(`${guild.id}/${self.user.id}`);
-        const userdata = await userdb.get(`${guild.id}/${member.user.id}`);
+        const selfdata = await Data.get(guild.id, self.user.id);
+        const userdata = await Data.get(guild.id, member.user.id);
         let amount = 0;
         if(args[1]){
             amount = parseInt(args[1]);
@@ -183,28 +182,34 @@ module.exports = {
             encoder.start();
         };
 
-        // Load needed images:
         const duels = await readJSON(`json/duels.json`);
+        const rewards = await readJSON(`json/rewards.json`);
+
         const backgroundImage = await loadImage(`./img/duels/backgrounds/${duels.backgrounds[selfdata.duels.background].img}`);
         const selfImage = await loadImage(self.user.displayAvatarURL({format:'png',size:128}));
         const memberImage = await loadImage(member.user.displayAvatarURL({format:'png',size:128}));
-
+        const selfFrame = await loadImage(`./img/frames/${rewards[selfdata.card.frame].img}`);
+        const memberFrame = await loadImage(`./img/frames/${rewards[userdata.card.frame].img}`);
+    
         // Draw first things:
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(backgroundImage, 0, 0);
-
-
+    
         // Draw avatars:
         ctx.save(); ctx.beginPath();
         ctx.arc(164, 300, 64, 0, Math.PI * 2);
         ctx.closePath(); ctx.clip();
-        ctx.drawImage(selfImage, 100, 236);
+        ctx.drawImage(selfImage, 100, 236, selfImage.width * (128/selfImage.width), selfImage.height * (128/selfImage.height));
         ctx.restore(); ctx.save(); ctx.beginPath();
         ctx.arc(836, 300, 64, 0, Math.PI * 2);
         ctx.closePath(); ctx.clip();
-        ctx.drawImage(memberImage, 772, 236);
+        ctx.drawImage(memberImage, 772, 236, memberImage.width * (128/memberImage.width), memberImage.height * (128/memberImage.height));
         ctx.restore();
-
+    
+        // Draw frames:
+        ctx.drawImage(selfFrame, 89, 225, selfFrame.width * 0.5, selfFrame.height * 0.5);
+        ctx.drawImage(memberFrame, 761, 225, memberFrame.width * 0.5, memberFrame.height * 0.5);
+    
         // Draw names:
         ctx.textAlign = "center";
         ctx.font = '32px "Noto Sans"';
