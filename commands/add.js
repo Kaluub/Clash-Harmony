@@ -28,8 +28,7 @@ module.exports = {
         args.shift();
         let itemname = args.join(' ');
         let item = null;
-        for(const ii in rewards){
-            const i = rewards[ii];
+        for(const i of rewards){
             if(i.name.toLowerCase() == itemname.toLowerCase()){
                 item = i;
                 break;

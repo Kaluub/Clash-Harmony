@@ -1,6 +1,6 @@
 const {createCanvas, loadImage} = require('canvas');
 const {readJSON} = require('../json.js');
-const {MessageAttachment, MessageEmbed} = require('discord.js');
+const {MessageAttachment, MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
 const Data = require('../classes/data.js');
 const GIFEncoder = require('gif-encoder-2');
 
@@ -64,6 +64,8 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
     // Draw frames:
     ctx.drawImage(selfFrame, 89, 225, selfFrame.width * 0.5, selfFrame.height * 0.5);
     ctx.drawImage(memberFrame, 761, 225, memberFrame.width * 0.5, memberFrame.height * 0.5);
+
+    // Draw FX:
 
     // Draw names:
     ctx.textAlign = "center";
@@ -146,6 +148,7 @@ module.exports = {
     aliases:['d'],
     desc:'This is a command for dueling other users.',
     usage:'/duel [stats/@user] [amount]',
+    admin: true,
     execute: async ({interaction,message,args}) => {
         const guild = interaction?.guild ?? message?.guild;
         const self = interaction?.member ?? message?.member;
@@ -225,20 +228,25 @@ module.exports = {
         const attachment = new MessageAttachment(canvas.toBuffer(), 'startduel.png');
         const embed = new MessageEmbed()
             .setTitle(`Request to duel!`)
-            .setDescription(`React with '✅' to start the duel with ${self.user.username}!${amount !== 0 ? `\nPrice: ${amount} points.` : ''}`)
+            .setDescription(`Press the '✅' button to start the duel with ${self.user.username}!${amount !== 0 ? `\nPrice: ${amount} points.` : ''}`)
             .setImage('attachment://startduel.png')
             .setFooter(`This request expires at:`)
             .setTimestamp(Date.now() + 60000)
             .setColor(`#33AA33`);
-        let msg = await message?.channel.send({content:`Ping: ${member.user}`, embed:embed, files:[attachment]});
+        const row = new MessageActionRow().addComponents(
+            new MessageButton()
+                .setEmoji('✅')
+                .setStyle('SUCCESS')
+                .setCustomId('start')
+        );
+        let msg = await message?.channel.send({content:`Ping: ${member.user}`, embeds: [embed], files: [attachment], components: [row]});
         if(!msg){
-            await interaction?.reply({content:`Ping: ${member.user}`, embeds:[embed], files:[attachment]});
+            await interaction?.reply({content:`Ping: ${member.user}`, embeds: [embed], files: [attachment], components: [row]});
             msg = await interaction?.fetchReply();
         };
-        await msg.react('✅');
-        const collector = msg.createReactionCollector({filter: (reaction, user) => reaction.emoji.name == '✅', time: 60000});
-        collector.on('collect', async (reaction, user) => {
-            if(user.id !== member.id) return reaction.users.remove(user.id);
+        const collector = msg.createMessageComponentCollector({filter: int => int.user.id == member.user.id, time: 60000});
+        collector.on('collect', async int => {
+            //int.reply({content: 'Starting the duel.', ephemeral: true});
             let battle = [
                 {
                     round: 0,

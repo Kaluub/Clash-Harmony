@@ -18,6 +18,11 @@ module.exports = {
             });
             return console.log("\x1b[32m%s\x1b[0m",`Successfully updated all commands.`);
         } else {
+            if(args[0].includes('.js')){
+                delete require.cache[require.resolve(`../${args[0]}`)];
+                require(`../${args[0]}`);
+                return console.log("\x1b[32m%s\x1b[0m",`Reloaded the file "${args[0]}". Note that there could be some issues!`);
+            };
             const {commands} = require('../commands.js');
             const commandName = args[0].toLowerCase();
             const command = commands.get(commandName) || commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));

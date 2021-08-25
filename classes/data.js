@@ -38,7 +38,7 @@ class Data {
     setBlocked(boolean = true){
         this.blocked = boolean;
         return this;
-    }
+    };
 
     addPoints(points = 0){
         this.points += points;
@@ -107,7 +107,7 @@ class Data {
         else return false;
     };
 
-    // Utility statics
+    // Utility statics:
 
     static isLocked(id){
         if(lockedIds.includes(id)) return true;
@@ -119,17 +119,7 @@ class Data {
         return new Data(data);
     };
 
-    static async forceGet(guildID, userID){
-        const data = await userdb.get(`${guildID}/${userID}`);
-        return new Data(data);
-    };
-
     static async set(guildID, userID, data){
-        await userdb.set(`${guildID}/${userID}`, data);
-        return true;
-    };
-
-    static async forceSet(guildID, userID, data){
         await userdb.set(`${guildID}/${userID}`, data);
         return true;
     };

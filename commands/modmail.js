@@ -7,7 +7,7 @@ module.exports = {
     usage:'/modmail [#channel]',
     execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${module.exports.usage}`;
-        let channel = message?.mentions.channels.first() ?? interaction?.options[0].channel;
+        let channel = message?.mentions.channels.first() ?? interaction?.options.getChannel('channel');
         if(!channel) return `Usage: ${module.exports.usage}`;
         let config = await readJSON('config.json');
         config.modMailChannel = new String(channel.id);

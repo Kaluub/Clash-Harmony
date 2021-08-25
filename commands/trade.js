@@ -53,7 +53,7 @@ async function startTrade({member, partner, channel}){
             const mCol = int.channel.createMessageCollector({filter: m => m.author.id == int.user.id, time: 30000});
             mCol.on('collect', async m => {
                 let reward;
-                const userdata = await Data.forceGet(channel.guild.id, m.author.id);
+                const userdata = await Data.get(channel.guild.id, m.author.id);
                 for(const r in rewards){
                     const re = rewards[r];
                     if(re.name.toLowerCase() == m.content.toLowerCase() && userdata.unlocked[re.type].includes(re.id)){
@@ -90,7 +90,7 @@ async function startTrade({member, partner, channel}){
             const mCol = int.channel.createMessageCollector({filter: m => m.author.id == int.user.id, time: 30000});
             mCol.on('collect', async m => {
                 let reward;
-                const userdata = await Data.forceGet(channel.guild.id, m.author.id);
+                const userdata = await Data.get(channel.guild.id, m.author.id);
                 for(const r in rewards){
                     const re = rewards[r];
                     if(re.name.toLowerCase() == m.content.toLowerCase() && userdata.unlocked[re.type].includes(re.id)){
@@ -125,7 +125,7 @@ async function startTrade({member, partner, channel}){
             const tempMsg = await int.fetchReply();
             const mCol = int.channel.createMessageCollector({filter: m => m.author.id == int.user.id, time: 30000});
             mCol.on('collect', async m => {
-                const userdata = await Data.forceGet(channel.guild.id, m.author.id);
+                const userdata = await Data.get(channel.guild.id, m.author.id);
                 let points = parseInt(m.content);
                 if(isNaN(points) || points < 0 || userdata.points < points){
                     const tempMsg2 = await m.channel.send(`Invalid points amount. You must have enough points, the points must be above zero or you didn't type a number.`);
@@ -198,8 +198,8 @@ async function updateTradeEmbed({trade, member, partner, embed, int, message}){
 };
 
 async function endTrade({trade, guild, member, partner}){
-    let memberdata = await Data.forceGet(guild.id, member.user.id);
-    let partnerdata = await Data.forceGet(guild.id, partner.user.id);
+    let memberdata = await Data.get(guild.id, member.user.id);
+    let partnerdata = await Data.get(guild.id, partner.user.id);
 
     if(trade[member.user.id].points > 0){
         memberdata.points -= trade[member.user.id].points;
@@ -226,8 +226,8 @@ async function endTrade({trade, guild, member, partner}){
     if(!partnerdata.unlocked.frames.includes(partnerdata.card.frame)) partnerdata.card.frame = 'default_frame';
     memberdata.statistics.tradesCompleted += 1;
     partnerdata.statistics.tradesCompleted += 1;
-    await Data.forceSet(guild.id, member.user.id, memberdata);
-    await Data.forceSet(guild.id, partner.user.id, partnerdata);
+    await Data.set(guild.id, member.user.id, memberdata);
+    await Data.set(guild.id, partner.user.id, partnerdata);
     Data.unlockIds([member.user.id, partner.user.id]);
 };
 

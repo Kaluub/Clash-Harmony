@@ -69,7 +69,7 @@ module.exports = {
         let name = args.join(' ');
         let item = null;
 
-        let possibleRewards = await guessRewards(rewards,name,true);
+        let possibleRewards = await guessRewards(rewards, name, true);
 
         if(possibleRewards.length == 0){
             return 'There are no rewards with or similar to this name.';
