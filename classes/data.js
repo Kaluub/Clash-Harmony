@@ -33,26 +33,93 @@ class Data {
         };
     };
 
-    static async get(guildID, userID){
-        if(lockedIds.includes(userID)) return false;
-        const data = await userdb.get(`${guildID}/${userID}`);
-        return new Data(data);
+    // Chaining methods:
+
+    setBlocked(boolean = true){
+        this.blocked = boolean;
+        return this;
     };
 
-    static async forceGet(guildID, userID){
+    addPoints(points = 0){
+        this.points += points;
+        return this;
+    };
+
+    setPoints(points = 0){
+        this.points = points;
+        return this;
+    };
+
+    addReward(reward){
+        this.unlocked[reward.type].push(reward.id);
+        return this;
+    };
+
+    removeReward(reward){
+        this.unlocked[reward.type] = this.unlocked[reward.type].filter(r => r != reward.id);
+        return this;
+    };
+
+    addStatistic(statistic, amount = 1){
+        this.statistics[statistic] += amount;
+        return this;
+    };
+
+    setStatistic(statistic, amount = 0){
+        this.statistics[statistic] = amount;
+        return this;
+    };
+
+    setMonthlyCooldown(time = 0){
+        this.monthlyCooldown = time;
+        return this;
+    };
+
+    setStatus(status = ''){
+        this.status = status;
+        return this;
+    };
+
+    setCardBackground(id = 'default_background'){
+        this.card.background = id;
+        return this;
+    };
+
+    setCardFrame(id = 'default_frame'){
+        this.card.frame = id;
+        return this;
+    };
+
+    setDuelBackground(id = 'default_background'){
+        this.duels.background = id;
+        return this;
+    };
+
+    // Booleans:
+
+    isBlocked(){
+        if(this.blocked) return true;
+        else return false;
+    };
+
+    hasReward(reward){
+        if(this.unlocked[reward.type].includes(reward.id)) return true;
+        else return false;
+    };
+
+    // Utility statics:
+
+    static isLocked(id){
+        if(lockedIds.includes(id)) return true;
+        else return false;
+    };
+
+    static async get(guildID, userID){
         const data = await userdb.get(`${guildID}/${userID}`);
         return new Data(data);
     };
 
     static async set(guildID, userID, data){
-        if(!(data instanceof Data)) return false;
-        if(lockedIds.includes(userID)) return false;
-        await userdb.set(`${guildID}/${userID}`, data);
-        return true;
-    };
-
-    static async forceSet(guildID, userID, data){
-        if(!(data instanceof Data)) return false;
         await userdb.set(`${guildID}/${userID}`, data);
         return true;
     };

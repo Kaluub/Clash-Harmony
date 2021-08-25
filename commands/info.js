@@ -6,9 +6,9 @@ module.exports = {
     name:'info',
     aliases:['i'],
     desc:`This is a command for viewing the info of a reward.`,
-    usage:'!info [reward name]',
+    usage:'/info [reward name]',
     execute: async ({interaction,message,args}) => {
-        if(!args[0]) return `Usage: ${this.usage}`;
+        if(!args[0]) return `Usage: ${module.exports.usage}`;
         const member = interaction?.member ?? message?.member;
         let rewards = await readJSON('json/rewards.json');
         let name = args.join(' ');

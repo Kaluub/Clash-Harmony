@@ -7,7 +7,7 @@ module.exports = {
     aliases:['l'],
     admin:false,
     desc:`This is a command for viewing your owned frames and backgrounds.`,
-    usage:'!list [frames/backgrounds]',
+    usage:'/list [frames/backgrounds]',
     execute: async ({interaction,message,args}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;

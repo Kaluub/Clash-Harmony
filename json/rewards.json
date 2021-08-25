@@ -287,6 +287,16 @@
         "price": 0,
         "shown": false
     },
+    "melting_ice_cream_background": {
+        "id": "melting_ice_cream_background",
+        "type": "backgrounds",
+        "name": "Melting Ice Cream Background",
+        "desc": "Perhaps the most delicious background available. Wouldn't want to try it myself, though. Designed by SpicyBee.",
+        "img": "MeltingIceCreamBackground.png",
+        "colour": "#000000",
+        "price": 31,
+        "shown": false
+    },
     "default_frame": {
         "id": "default_frame",
         "type": "frames",

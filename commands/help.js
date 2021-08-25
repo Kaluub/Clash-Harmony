@@ -15,7 +15,7 @@ module.exports = {
     aliases:['?'],
     admin:false,
     desc:'A list of every command.',
-    usage:'!help [command]',
+    usage:'/help [command]',
     execute: async ({interaction,message,args}) => {
         const {admins} = await readJSON('config.json');
         const guild = interaction?.guild ?? message?.guild;
@@ -41,7 +41,7 @@ module.exports = {
                     currentEmbedCommands = 0;
                 };
 
-                embeds[currentEmbed].setDescription(embeds[currentEmbed].description + `\n**!${cmd.name}**:\nDescription: ${cmd.desc}\nUsage: \`${cmd.usage}\`\n`);
+                embeds[currentEmbed].setDescription(embeds[currentEmbed].description + `\n**/${cmd.name}**:\nDescription: ${cmd.desc}\nUsage: \`${cmd.usage}\`\n`);
                 currentEmbedCommands += 1;
             };
 
@@ -91,7 +91,7 @@ module.exports = {
                 if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !admins.includes(member.user.id))) return `You don't have access to this command.`;
                 let msg = new MessageEmbed()
                     .setColor('#3F3FFF')
-                    .setTitle(`Help interface: ${command.name}`)
+                    .setTitle(`Help interface: /${command.name}`)
                     .addField(`Description:`,`${command.desc}`)
                     .addField(`Usage:`,`\`${command.usage}\` `)
                     .setTimestamp();

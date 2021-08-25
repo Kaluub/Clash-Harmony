@@ -9,8 +9,8 @@ async function initEvents(client){
         if(!events) return;
         for(const event of events){
             if(Date.now() > event.timestamp) continue;
-            if(['artcontest', 'buildcontest'].includes(event.type)) client.setTimeout(submissionBasedEvent, event.timestamp - Date.now(), client, event);
-            if(event.type == 'ama') client.setTimeout(amaEvent, event.timestamp - Date.now(), client, event);
+            if(['artcontest', 'buildcontest'].includes(event.type)) setTimeout(submissionBasedEvent, event.timestamp - Date.now(), client, event);
+            if(event.type == 'ama') setTimeout(amaEvent, event.timestamp - Date.now(), client, event);
         };
     });
 };
@@ -34,7 +34,7 @@ async function amaEvent(client, event){
 module.exports = {
     name:'event',
     desc:'A command for starting and managing events.',
-    usage:'!event [event]',
+    usage:'/event [TODO]',
     admin:true,
     execute: async ({interaction}) => {
         if(!interaction) return `This command can only be used as a slash command.`;
@@ -136,9 +136,9 @@ module.exports = {
                 n += 1;
             });
         } else if(['artcontest', 'buildcontest'].includes(event.type)){
-            interaction.client.setTimeout(submissionBasedEvent, event.timestamp - Date.now(), interaction.client, event);
+            setTimeout(submissionBasedEvent, event.timestamp - Date.now(), interaction.client, event);
         } else if(event.type == 'ama'){
-            interaction.client.setTimeout(amaEvent, event.timestamp - Date.now(), interaction.client, event);
+            setTimeout(amaEvent, event.timestamp - Date.now(), interaction.client, event);
         };
 
         const channel = await interaction.client.channels.fetch(event.channelID);

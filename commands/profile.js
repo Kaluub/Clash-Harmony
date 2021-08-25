@@ -9,9 +9,9 @@ module.exports = {
     name:'profile',
     aliases:['p'],
     desc:'This is a command for displaying your profile card.',
-    usage:'!profile',
+    usage:'/profile',
     execute: async ({interaction,message}) => {
-        let member = message?.mentions.members.first() ?? interaction?.options.first()?.member;
+        let member = message?.mentions.members.first() ?? interaction?.options.getMember("member");
         const self = interaction?.member ?? message?.member;
         const guild = interaction?.guild ?? message?.guild;
         if(!member) member = message?.member ?? interaction?.member;

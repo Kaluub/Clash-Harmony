@@ -3,9 +3,9 @@ const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 module.exports = {
     name:'tutorial',
     aliases:['tut'],
-    admin:false,
     desc:'This command is used to view the tutorial.',
-    usage:'!tutorial',
+    usage:'/tutorial',
+    noGuild: true,
     execute: async ({interaction,message}) => {
         const embeds = [
             new MessageEmbed()
@@ -16,7 +16,7 @@ module.exports = {
                 .setTitle(`Tutorial: Mod Mail`)
                 .setColor(`#FFB347`)
                 .setDescription(`This bot features a mod-mail system.\nTo use it, DM the bot with a message that you would wish to send to the staff of the Clash & Harmony clans.\nYou may also add a category.`)
-                .setImage(`https://cdn.discordapp.com/attachments/807311206888636457/829533051083030548/Using_Mod_Mail.png`),
+                .setImage(`https://cdn.discordapp.com/attachments/822280580577361941/870739087852728490/unknown.png`),
             new MessageEmbed()
                 .setTitle(`Tutorial: Profile Card Basics`)
                 .setColor(`#FDFD96`)
@@ -25,28 +25,28 @@ module.exports = {
             new MessageEmbed()
                 .setTitle(`Tutorial: Points`)
                 .setColor(`#77DD77`)
-                .setDescription(`Points are earned through two main methods:\n • The monthly reward (!monthly)\n • Various clan-related events\nYou can spend your points on card customization options or roles using \`!shop\`.`)
-                .setImage(`https://cdn.discordapp.com/attachments/807311206888636457/829526293435383848/Shop_Demo.png`),
+                .setDescription(`Points are earned through two main methods:\n • The monthly reward (/monthly)\n • Various clan-related events\nYou can spend your points on card customization options or roles using \`!shop\`.`)
+                .setImage(`https://cdn.discordapp.com/attachments/822280580577361941/870742292145778699/unknown.png`),
             new MessageEmbed()
                 .setTitle(`Tutorial: Customizing Profile Card`)
                 .setColor(`#AEC6CF`)
-                .setDescription(`Player cards can be customized using the command \`!custom\`.\nYou need to purchase the reward using points through \`!shop\` before using them.`)
-                .setImage(`https://cdn.discordapp.com/attachments/807311206888636457/829527400348909569/Customizing_Profile_Card.png`),
+                .setDescription(`Player cards can be customized using the command \`/custom\`.\nYou need to purchase the reward using points through \`!shop\` before using them.`)
+                .setImage(`https://cdn.discordapp.com/attachments/822280580577361941/870743311021916190/unknown.png`),
             new MessageEmbed()
                 .setTitle(`Tutorial: Setting Status`)
                 .setColor(`#C3B1E1`)
                 .setDescription(`You can set a custom status that will be displayed on your profile card for others to see. To set one, use the command \`!status [message]\`. Please note that statuses have a 60 character limit.`)
-                .setImage(`https://cdn.discordapp.com/attachments/807311206888636457/830544658488360970/Statuses.png`),
+                .setImage(`https://cdn.discordapp.com/attachments/822280580577361941/870744481144643614/unknown.png`),
             new MessageEmbed()
                 .setTitle(`Tutorial: Viewing Reward Info`)
                 .setColor(`#99A8D1`)
-                .setDescription(`You can view details such as the price, description, and image from any reward by using \`!info [reward name]\`.`)
-                .setImage(`https://cdn.discordapp.com/attachments/807311206888636457/830544149224357888/Info_Menu.png`),
+                .setDescription(`You can view details such as the price, description, and image from any reward by using \`/info [reward name]\`.`)
+                .setImage(`https://cdn.discordapp.com/attachments/822280580577361941/870744715094523934/unknown.png`),
             new MessageEmbed()
                 .setTitle(`Tutorial: Viewing All Commands`)
                 .setColor(`#A9A9A9`)
                 .setDescription(`To view every usable command, you can use \`!help\`. From there, a message containing all commands will be shown.`)
-                .setImage(`https://cdn.discordapp.com/attachments/807311206888636457/830543900976349204/Help_Menu.png`)
+                .setImage(`https://cdn.discordapp.com/attachments/822280580577361941/870749918661337188/unknown.png`)
         ];
         let page = 0;
         const row = new MessageActionRow().addComponents(

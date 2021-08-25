@@ -3,9 +3,9 @@ module.exports = {
     admin:true,
     noGuild:true,
     desc:'This is a command for sending any message to a channel.',
-    usage:'!send [channel/user ID] [message]',
+    usage:'/send [channel/user ID] [message]',
     execute: async ({interaction,message,args}) => {
-        if(!args[0] || !args[1]) return `Usage: ${this.usage}`;
+        if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
         const client = interaction?.client ?? message?.client;
         let channel;
         let success = true;

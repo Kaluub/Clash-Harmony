@@ -1,7 +1,8 @@
-const {MessageEmbed} = require('discord.js');
+const {MessageEmbed, MessageActionRow} = require('discord.js');
 const {readFileSync, writeFileSync} = require('fs');
 
-async function updateMembers(guild,clan){
+// Utility function for updating the member list for both clans.
+async function updateMembers(guild, clan){
     if(guild.id != '636986136283185172') return;
     await guild.members.fetch();
     let leaderRole = await guild.roles.cache.get('637252689763368960');
@@ -45,16 +46,17 @@ async function updateMembers(guild,clan){
     return embed;
 };
 
-async function guessRewards(rewards,name,roles){
-    let possibleRewards = [];
-    for(const i in rewards){
-        const item = rewards[i];
+// Utility function for "guessing" a reward based on its name
+async function guessRewards(rewards, name, roles){
+    const possibleRewards = [];
+    for(const item of rewards){
         if(item.type == 'roles' && !roles) continue;
         if(item.name.toLowerCase().includes(name.toLowerCase())) possibleRewards.push(item);
     };
     return possibleRewards;
 };
 
+// Logging function when any economy-affecting action occurs (adding an item, earning points, etc.)
 function economyLog(guildID, user, reward, points, user2){
     let time = new Date(Date.now());
     let str;
@@ -68,6 +70,7 @@ function economyLog(guildID, user, reward, points, user2){
     writeFileSync(`./data/logs/economy.log`, currentLog, {encoding:'utf-8'});
 };
 
+// Logging function. Not used much right now.
 function resetLog(guildID, userID, user2ID, userdata, userdata2){
     let time = new Date(Date.now());
     let str = `[TIME: ${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}]\n[${guildID}/${userID}] ${JSON.stringify(userdata)}\n[${guildID}/${user2ID}] ${JSON.stringify(userdata2)}\n=====`;
@@ -76,9 +79,44 @@ function resetLog(guildID, userID, user2ID, userdata, userdata2){
     writeFileSync(`./data/logs/reset.log`, currentLog, {encoding:'utf-8'});
 };
 
+// Updates a suggestion embed (used multiple times, so a function helped)
+async function updateSuggestion(data, message){
+    const net = data.positive - data.negative;
+    let color = '#222277';
+    if(net > 9) color = '#55FF55';
+    else if(net > 2) color = '#22BB22';
+    else if(net < -2) color = '#BB2222';
+    else if(net < -9) color = '#FF5555';
+
+    const fields = [{name: 'Rating:', value: `${data.positive} positive ratings\n${data.negative} negative ratings\n${data.voters.length} voter(s)`}];
+    if(data.notes?.length){
+        let string = ``;
+        for(const note of data.notes){
+            string += `${note}\n\n`;
+        };
+        if(string.length > 1000) string = string.slice(0, 1000) + `...`;
+        fields.push({name: 'Notes:', value: string});
+    };
+    if(data.staffnote?.length) fields.push({name: `❗ Staff note: <t:${data.staffnoteTime}> ❗`, value: data.staffnote});
+    await message.edit({components: [
+        new MessageActionRow(message.components[0])
+    ], embeds: [
+        new MessageEmbed(message.embeds[0])
+            .setFields(fields)
+            .setColor(color)
+    ]});
+};
+
+// Helper for random integer between 2 specific values
+function randInt(min = 0, max = 1){
+    return Math.floor(Math.random() * (max - min)) + min;
+};
+
 module.exports = {
-    updateMembers:updateMembers,
-    guessRewards:guessRewards,
-    economyLog:economyLog,
-    resetLog:resetLog
+    updateMembers,
+    guessRewards,
+    economyLog,
+    resetLog,
+    updateSuggestion,
+    randInt
 };

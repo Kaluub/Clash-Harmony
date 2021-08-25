@@ -15,7 +15,11 @@ for(const file of consoleCommandFiles){
     consoleCommands.set(command.name,command);
 };
 
-module.exports = {
-    commands:commands,
-    consoleCommands:consoleCommands
+const events = [];
+const eventFiles = readdirSync('./events').filter(file => file.endsWith('.js'));
+for(const file of eventFiles){
+    const event = require(`./events/${file}`);
+    events.push(event);
 };
+
+module.exports = { commands, consoleCommands, events };

@@ -9,9 +9,9 @@ module.exports = {
     aliases:['c'],
     admin:false,
     desc:'This is a command for customizing your profile card.',
-    usage:'!custom [reward name]',
+    usage:'/custom [reward name]',
     execute: async ({interaction,message,args}) => {
-        if(!args[0]) return `Usage: ${this.usage}`;
+        if(!args[0]) return `Usage: ${module.exports.usage}`;
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
         let name = args.join(' ');

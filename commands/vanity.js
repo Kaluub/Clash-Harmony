@@ -1,17 +1,25 @@
 const {MessageEmbed, MessageButton, MessageActionRow} = require("discord.js");
+const { readJSON } = require('../json.js');
 const Data = require('../classes/data.js');
 
 module.exports = {
     name:'vanity',
-    desc:`Manages your vanity roles.`,
-    usage:'!vanity',
+    desc:`Manage your vanity roles.`,
+    usage:'/vanity',
     execute: async ({interaction, message}) => {
         const guild = interaction?.guild || message?.guild;
         if(!guild) return `This isn't usable outside of a guild.`;
-        //if(guild.id !== "636986136283185172") return `This command can only be used in the Clash & Harmony Discord server.`;
+        if(guild.id !== "636986136283185172") return `This command can only be used in the Clash & Harmony Discord server.`;
         
         let member = interaction?.member || message?.member;
+        await member.fetch();
         const data = await Data.get(guild.id, member.user.id);
+
+        const roles = readJSON('json/vanityroles.json');
+        member.roles.cache.each(role => {
+            if(roles.includes(role.id) && !data.unlocked.roles.includes(role.id)) data.unlocked.roles.push(role.id);
+        });
+        await Data.set(guild.id, member.user.id, data);
         if(data.unlocked.roles.length < 1) return `You have no vanity roles!`;
 
         let desc = `Here is a list of all your purchased roles.\nA red circle indicates the role is inactive, a green circle the opposite.\n`;
@@ -79,8 +87,7 @@ module.exports = {
             await interaction.update({embeds:[embed.setDescription(descArr.join('\n'))]});
         });
         collector.on('end', async () => {
-            console.log(msg.deleted)
-            if(!msg.deleted) await msg.edit({embeds:[embed], components: [null]});
+            if(!msg.deleted) await msg.edit({embeds:[embed], components: []});
         });
     }
 };

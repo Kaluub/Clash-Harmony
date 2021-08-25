@@ -4,11 +4,11 @@ module.exports = {
     name:'modmail',
     admin:true,
     desc:'This command is used to change the mod-mail channel.',
-    usage:'!modmail [#channel]',
+    usage:'/modmail [#channel]',
     execute: async ({interaction,message,args}) => {
-        if(!args[0]) return `Usage: ${this.usage}`;
-        let channel = message?.mentions.channels.first() ?? interaction?.options[0].channel;
-        if(!channel) return `Usage: ${this.usage}`;
+        if(!args[0]) return `Usage: ${module.exports.usage}`;
+        let channel = message?.mentions.channels.first() ?? interaction?.options.getChannel('channel');
+        if(!channel) return `Usage: ${module.exports.usage}`;
         let config = await readJSON('config.json');
         config.modMailChannel = new String(channel.id);
         writeJSON('config.json',config);

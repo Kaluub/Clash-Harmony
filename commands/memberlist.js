@@ -6,10 +6,10 @@ module.exports = {
     aliases:['ml'],
     admin:true,
     desc:'This command is used to generate a new member list. To update any previous member list, use `!ul [clash/harmony]`',
-    usage:'!ml [clash/harmony]',
+    usage:'/ml [clash/harmony]',
     execute: async ({interaction,message,args}) => {
-        if(!args[0]) return `Usage: ${this.usage}`;
-        if(args[0] != 'clash' && args[0] != 'harmony') return `Usage: ${this.usage}`;
+        if(!args[0]) return `Usage: ${module.exports.usage}`;
+        if(args[0] != 'clash' && args[0] != 'harmony') return `Usage: ${module.exports.usage}`;
         const guild = interaction?.guild ?? message?.guild;
         let embed = await functions.updateMembers(guild,args[0]);
         if(!embed) return `An error occured while using this command.`;

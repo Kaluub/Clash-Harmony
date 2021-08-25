@@ -18,8 +18,8 @@ module.exports = {
     aliases:['s'],
     admin:false,
     desc:'This is a command for displaying the shop.',
-    usage:'!shop',
-    execute: async ({interaction,message,args}) => {
+    usage:'/shop',
+    execute: async ({interaction, message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
         let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
@@ -59,8 +59,6 @@ module.exports = {
             .setColor('#33AA33')
             .setTitle(`Shop Interface (${member.user.tag}):`)
             .setDescription(`You have ${userdata.points} points right now.\nTo select a category, use the buttons below.`)
-            .setFooter(`This message expires at:`)
-            .setTimestamp(Date.now() + 300000);
         
         let shopEmbeds = {
             current: 'menu',
@@ -83,10 +81,15 @@ module.exports = {
 
         for(const i in rewards){
             const reward = rewards[i];
+            if(!reward.shown) continue;
+            if(reward.endTime && reward.endTime < Date.now()) continue;
+            if(reward.startTime && reward.startTime > Date.now()) continue;
+
             if(shopEmbeds[reward.type].count > 14){
                 shopEmbeds[reward.type].count = 0;
                 shopEmbeds[reward.type].embeds.push(new BaseEmbed(reward.type[0].toUpperCase() + reward.type.substring(1), shopEmbeds[reward.type].embeds.length + 1))
             };
+            
             shopEmbeds[reward.type].count += 1;
             shopEmbeds[reward.type].embeds[shopEmbeds[reward.type].embeds.length - 1]
                 .setDescription(shopEmbeds[reward.type].embeds[shopEmbeds[reward.type].embeds.length - 1].description + `\n• ${reward.name} (${reward.price} points)`)
@@ -94,12 +97,11 @@ module.exports = {
         
         let msg = await message?.channel.send({embeds:[menuEmbed], components: [menuRow]});
         if(!msg) {
-            await interaction?.reply({embeds:[menuEmbed]});
+            await interaction?.reply({embeds:[menuEmbed], components: [menuRow]});
             msg = await interaction?.fetchReply();
         };
 
-        console.log(shopEmbeds)
-        let collector = msg.createMessageComponentCollector({filter: int => int.user.id == member.user.id, idle:300000});
+        let collector = msg.createMessageComponentCollector({filter: int => int.user.id == member.user.id, idle:30000});
         collector.on('collect', async int => {
             if(int.customId == 'backgrounds'){
                 shopEmbeds.current = 'backgrounds';

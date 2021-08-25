@@ -3,7 +3,7 @@ const {MessageEmbed} = require("discord.js");
 module.exports = {
     name:'embed',
     desc:'A command used to generate and send embed messages.',
-    usage:'!embed [values]',
+    usage:'/embed [values]',
     admin:true,
     execute: async ({interaction}) => {
         if(!interaction) return `This command can only be used as a slash command.`;
