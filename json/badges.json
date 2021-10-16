@@ -1,109 +1,109 @@
 {
-    "badges":{
-        "ipsissimus":{
-            "id":"ipsissimus",
-            "roles":["739371346777342032"],
-            "img":"ipsissimus_badge.png"
+    "badges": {
+        "ipsissimus": {
+            "id": "ipsissimus",
+            "roles": ["739371346777342032"],
+            "img": "ipsissimus_badge.png"
         },
-        "the_might":{
-            "id":"the_might",
-            "roles":["645370294709649429"],
-            "img":"the_might_badge.png"
+        "the_might": {
+            "id": "the_might",
+            "roles": ["645370294709649429"],
+            "img": "the_might_badge.png"
         },
-        "nitro_booster":{
-            "id":"nitro_booster",
-            "roles":["679411730748669953"],
-            "img":"nitro_booster_badge.png"
+        "nitro_booster": {
+            "id": "nitro_booster",
+            "roles": ["679411730748669953"],
+            "img": "nitro_booster_badge.png"
         },
-        "art_contest_winner":{
-            "id":"art_contest_winner",
-            "roles":["801156920106025010"],
-            "img":"art_contest_winner_badge.png"
+        "art_contest_winner": {
+            "id": "art_contest_winner",
+            "roles": ["801156920106025010"],
+            "img": "art_contest_winner_badge.png"
         },
-        "halloween_champion_2020":{
-            "id":"halloween_champion_2020",
-            "roles":["766497668238147594"],
-            "img":"halloween_champion_2020.png"
+        "halloween_champion_2020": {
+            "id": "halloween_champion_2020",
+            "roles": ["766497668238147594"],
+            "img": "halloween_champion_2020.png"
         },
-        "halloween_contender_2020":{
-            "id":"halloween_contender_2020",
-            "roles":["774083533580140564"],
-            "img":"halloween_contender_2020.png"
+        "halloween_contender_2020": {
+            "id": "halloween_contender_2020",
+            "roles": ["774083533580140564"],
+            "img": "halloween_contender_2020.png"
         },
-        "early_bird":{
-            "id":"early_bird",
-            "roles":["828077072194207834"],
-            "img":"early_bird_badge.png"
+        "early_bird": {
+            "id": "early_bird",
+            "roles": ["828077072194207834"],
+            "img": "early_bird_badge.png"
         },
-        "quadruple_zero":{
-            "id":"quadruple_zero",
-            "roles":["828079900354412574"],
-            "img":"quadruple_zero_badge.png"
+        "quadruple_zero": {
+            "id": "quadruple_zero",
+            "roles": ["828079900354412574"],
+            "img": "quadruple_zero_badge.png"
         },
-        "triple_zero":{
-            "id":"triple_zero",
-            "roles":["828079903445876776"],
-            "img":"triple_zero_badge.png"
+        "triple_zero": {
+            "id": "triple_zero",
+            "roles": ["828079903445876776"],
+            "img": "triple_zero_badge.png"
         },
-        "double_zero":{
-            "id":"double_zero",
-            "roles":["828079907203973140"],
-            "img":"double_zero_badge.png"
+        "double_zero": {
+            "id": "double_zero",
+            "roles": ["828079907203973140"],
+            "img": "double_zero_badge.png"
         },
-        "monuple_zero":{
-            "id":"monuple_zero",
-            "roles":["828079344051421184"],
-            "img":"monuple_zero_badge.png"
+        "monuple_zero": {
+            "id": "monuple_zero",
+            "roles": ["828079344051421184"],
+            "img": "monuple_zero_badge.png"
         },
-        "palindrome":{
-            "id":"palindrome",
-            "roles":["828081364505985074"],
-            "img":"palindrome_badge.png"
+        "palindrome": {
+            "id": "palindrome",
+            "roles": ["828081364505985074"],
+            "img": "palindrome_badge.png"
         },
-        "proactive":{
-            "id":"proactive",
-            "roles":["828078924940312606"],
-            "img":"proactive_badge.png"
+        "proactive": {
+            "id": "proactive",
+            "roles": ["828078924940312606"],
+            "img": "proactive_badge.png"
         },
-        "clash_coleader":{
-            "id":"clash_coleader",
-            "roles":["636987868874670100"],
-            "img":"clash_coleader_badge.png"
+        "clash_coleader": {
+            "id": "clash_coleader",
+            "roles": ["636987868874670100"],
+            "img": "clash_coleader_badge.png"
         },
-        "harmony_coleader":{
-            "id":"harmony_coleader",
-            "roles":["813850172219326484"],
-            "img":"harmony_coleader_badge.png"
+        "harmony_coleader": {
+            "id": "harmony_coleader",
+            "roles": ["813850172219326484"],
+            "img": "harmony_coleader_badge.png"
         },
-        "clash_elder":{
-            "id":"clash_elder",
-            "roles":["644620634575601714"],
-            "img":"clash_elder_badge.png"
+        "clash_elder": {
+            "id": "clash_elder",
+            "roles": ["644620634575601714"],
+            "img": "clash_elder_badge.png"
         },
-        "harmony_elder":{
-            "id":"harmony_elder",
-            "roles":["813849026343600235"],
-            "img":"harmony_elder_badge.png"
+        "harmony_elder": {
+            "id": "harmony_elder",
+            "roles": ["813849026343600235"],
+            "img": "harmony_elder_badge.png"
         },
-        "clash_veteran":{
-            "id":"clash_veteran",
-            "roles":["644620616669986817"],
-            "img":"clash_veteran_badge.png"
+        "clash_veteran": {
+            "id": "clash_veteran",
+            "roles": ["644620616669986817"],
+            "img": "clash_veteran_badge.png"
         },
-        "harmony_veteran":{
-            "id":"harmony_veteran",
-            "roles":["813848188741353492"],
-            "img":"harmony_veteran_badge.png"
+        "harmony_veteran": {
+            "id": "harmony_veteran",
+            "roles": ["813848188741353492"],
+            "img": "harmony_veteran_badge.png"
         },
-        "clash_members":{
-            "id":"clash_members",
-            "roles":["636987578125647923"],
-            "img":"clash_badge.png"
+        "clash_members": {
+            "id": "clash_members",
+            "roles": ["636987578125647923"],
+            "img": "clash_badge.png"
         },
-        "harmony_members":{
-            "id":"harmony_members",
-            "roles":["813870575453077504"],
-            "img":"harmony_badge.png"
+        "harmony_members": {
+            "id": "harmony_members",
+            "roles": ["813870575453077504"],
+            "img": "harmony_badge.png"
         }
     }
 }

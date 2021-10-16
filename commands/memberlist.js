@@ -1,12 +1,30 @@
 const functions = require('../functions.js');
-const {readJSON, writeJSON} = require('../json.js');
+const { readJSON, writeJSON } = require('../json.js');
 
 module.exports = {
-    name:'memberlist',
-    aliases:['ml'],
-    admin:true,
-    desc:'This command is used to generate a new member list. To update any previous member list, use `!ul [clash/harmony]`',
-    usage:'/ml [clash/harmony]',
+    name: 'memberlist',
+    aliases: ['ml'],
+    admin: true,
+    desc: 'This command is used to generate a new member list.',
+    usage: '/ml [clash/harmony]',
+    options: [
+        {
+            "name": "clan",
+            "description": "Choose which clan to generate the member list for.",
+            "type": "STRING",
+            "required": true,
+            "choices": [
+                {
+                    "name": "clash",
+                    "value": "clash"
+                },
+                {
+                    "name": "harmony",
+                    "value": "harmony"
+                }
+            ]
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${module.exports.usage}`;
         if(args[0] != 'clash' && args[0] != 'harmony') return `Usage: ${module.exports.usage}`;

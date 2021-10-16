@@ -1,6 +1,8 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const Data = require('./classes/data.js');
 
+// Set to false if harmony is not required before applying for clash.
+const harmonyRequired = true;
 const categories = {
     'category-harmony-application': 'Harmony Application',
     'category-clash-application': 'Clash Application',
@@ -85,6 +87,10 @@ module.exports = async (message, modMailChannelId) => {
         if(interaction.customId.startsWith('category')){
             if(!categories[interaction.customId]) return await interaction.reply({content: '🤨', ephemeral: true});
             category = categories[interaction.customId];
+            const member = await interaction.client.guilds.cache.get('636986136283185172').members.fetch(interaction.user.id);
+            if(member)
+                if(harmonyRequired && category == categories['category-clash-application'] && !member.roles.cache.has('813870575453077504'))
+                    return await interaction.reply({content: `Hey there! I see that you want to join Clash! That's cool and all, but at least right now, you need to be in the Harmony clan before applying for Clash. Apologies for the inconvenience!`, ephemeral: true})
             await interaction.update({embeds: [dmEmbed], components: [dmMainRow]});
             return await interaction.followUp({content: `You set the category to "${category}".`, ephemeral: true});
         };

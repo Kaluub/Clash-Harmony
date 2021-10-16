@@ -1,4 +1,4 @@
-const {MessageEmbed, MessageButton, MessageActionRow} = require("discord.js");
+const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
 const { readJSON } = require('../json.js');
 const Data = require('../classes/data.js');
 

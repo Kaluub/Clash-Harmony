@@ -7,6 +7,20 @@ module.exports = {
     admin:true,
     desc:'This command is used to add rewards directly to users from the shop.',
     usage:'/add [@user] [reward name]',
+    options: [
+        {
+            "name": "user",
+            "description": "The user to give the reward to.",
+            "type": "USER",
+            "required": true
+        },
+        {
+            "name": "reward",
+            "description": "The reward name to give to the user.",
+            "type": "STRING",
+            "required": true
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
         let member = message?.mentions.members.first() ?? interaction?.options.getMember('user');
@@ -28,7 +42,8 @@ module.exports = {
         args.shift();
         let itemname = args.join(' ');
         let item = null;
-        for(const i of rewards){
+        for(const n in rewards){
+            const i = rewards[n];
             if(i.name.toLowerCase() == itemname.toLowerCase()){
                 item = i;
                 break;

@@ -1,13 +1,31 @@
 const Data = require('../classes/data.js');
-const {readJSON} = require('../json.js');
-const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
+const { readJSON } = require('../json.js');
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports = {
-    name:'list',
-    aliases:['l'],
-    admin:false,
-    desc:`This is a command for viewing your owned frames and backgrounds.`,
-    usage:'/list [frames/backgrounds]',
+    name: 'list',
+    aliases: ['l'],
+    admin: false,
+    desc: `This is a command for viewing your owned frames and backgrounds.`,
+    usage:  '/list [frames/backgrounds]',
+    options: [
+        {
+            "name": "filter",
+            "description": "Show only frames or backgrounds.",
+            "type": "STRING",
+            "required": false,
+            "choices": [
+                {
+                    "name": "frames",
+                    "value": "frames"
+                },
+                {
+                    "name": "backgrounds",
+                    "value": "backgrounds"
+                }
+            ]
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;

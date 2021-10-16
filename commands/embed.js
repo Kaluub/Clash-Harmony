@@ -1,10 +1,66 @@
-const {MessageEmbed} = require("discord.js");
+const { MessageEmbed } = require("discord.js");
 
 module.exports = {
-    name:'embed',
-    desc:'A command used to generate and send embed messages.',
-    usage:'/embed [values]',
-    admin:true,
+    name: 'embed',
+    desc: 'A command used to generate and send embed messages.',
+    usage: '/embed [values]',
+    admin: true,
+    options: [
+        {
+            "name": "description",
+            "description": "The description of the embed.",
+            "type": "STRING",
+            "required": true
+        },
+        {
+            "name": "title",
+            "description": "The title of the embed.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "color",
+            "description": "The hex color code for the embed.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "image",
+            "description": "The image URL for the embed.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "url",
+            "description": "The URL of the title for the embed.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "author",
+            "description": "The author of the embed (JSON object).",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "footer",
+            "description": "The footer of the embed (JSON object).",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "fields",
+            "description": "The fields to add to the embed (JSON array).",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "timestamp",
+            "description": "The time of the embed. Valid Date number. If the number '0' is provided, the curent time is used.",
+            "type": "STRING",
+            "required": false
+        }
+    ],
     execute: async ({interaction}) => {
         if(!interaction) return `This command can only be used as a slash command.`;
         const embed = new MessageEmbed();

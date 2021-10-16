@@ -60,6 +60,14 @@ module.exports = {
     admin:false,
     desc:'This command is used to purchase rewards from the shop.',
     usage:'/buy [reward name]',
+    options: [
+        {
+            "name": "reward",
+            "description": "The reward name to purchase.",
+            "type": "STRING",
+            "required": true
+        }
+    ],
     execute: async ({interaction, message, args}) => {
         if(!args[0]) return `Usage: ${module.exports.usage}`;
         const member = interaction?.member ?? message?.member;

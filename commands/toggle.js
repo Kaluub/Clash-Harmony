@@ -1,9 +1,31 @@
-const {readJSON} = require('../json.js');
+const { readJSON } = require('../json.js');
 
 module.exports = {
-    name:'toggle',
-    desc:`A command for toggling some specific roles, used for pings.`,
-    usage:'/toggle [trivia/qotd/polls]',
+    name: 'toggle',
+    desc: `A command for toggling some specific roles, used for pings.`,
+    usage: '/toggle [trivia/qotd/polls]',
+    options: [
+        {
+            "name": "role",
+            "description": "Choose which role to toggle.",
+            "type": "STRING",
+            "required": true,
+            "choices": [
+                {
+                    "name": "Trivia",
+                    "value": "trivia"
+                },
+                {
+                    "name": "Question of the Day",
+                    "value": "qotd"
+                },
+                {
+                    "name": "Polls",
+                    "value": "polls"
+                }
+            ]
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${module.exports.usage}`;
         const guild = interaction?.guild ?? message?.guild;

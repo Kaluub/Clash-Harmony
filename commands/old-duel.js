@@ -1,3 +1,5 @@
+// This is an archived file. It has been "replaced" by the former "group duels".
+
 const {createCanvas, loadImage} = require('canvas');
 const {readJSON} = require('../json.js');
 const {MessageAttachment, MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
@@ -144,11 +146,11 @@ async function updateDuel(battle, {canvas, ctx, encoder}, channel, {self, selfda
 };
 
 module.exports = {
-    name:'duel',
-    aliases:['d'],
-    desc:'This is a command for dueling other users.',
-    usage:'/duel [stats/@user] [amount]',
     admin: true,
+    name:'old-duel',
+    aliases:['od'],
+    desc:'This is a command for dueling other users.',
+    usage:'/old-duel [stats/@user] [amount]',
     execute: async ({interaction,message,args}) => {
         const guild = interaction?.guild ?? message?.guild;
         const self = interaction?.member ?? message?.member;

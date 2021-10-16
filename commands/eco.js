@@ -3,11 +3,25 @@ const Keyv = require('keyv');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
 
 module.exports = {
-    name:'eco',
-    aliases:['pointadmin','pa'],
-    admin:true,
-    desc:'This command is used to manage point distribution.',
-    usage:'/eco [@user/user ID] [points]',
+    name: 'eco',
+    aliases: ['pointadmin','pa'],
+    admin: true,
+    desc: 'This command is used to manage point distribution.',
+    usage: '/eco [@user/user ID] [points]',
+    options: [
+        {
+            "name": "member",
+            "description": "The member to give the points to.",
+            "type": "USER",
+            "required": true
+        },
+        {
+            "name": "points",
+            "description": "The amount of points to give this member.",
+            "type": "INTEGER",
+            "required": true
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
         const guild = interaction?.guild ?? message?.guild;

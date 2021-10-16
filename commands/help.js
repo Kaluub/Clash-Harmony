@@ -13,7 +13,6 @@ function baseEmbed(id,args,admins){
 module.exports = {
     name:'help',
     aliases:['?'],
-    admin:false,
     desc:'A list of every command.',
     usage:'/help [command]',
     execute: async ({interaction,message,args}) => {

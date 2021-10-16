@@ -1,7 +1,6 @@
 const {readJSON} = require('../json.js');
 const {MessageEmbed, MessageActionRow, MessageButton} = require('discord.js');
-const Keyv = require('keyv');
-const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+const Data = require('../classes/data.js');
 
 class BaseEmbed extends MessageEmbed {
     constructor(type, num){
@@ -10,19 +9,27 @@ class BaseEmbed extends MessageEmbed {
             .setColor('DARK_ORANGE')
             .setTitle(`Shop Interface (${type} #${num})`)
             .setDescription(`To purchase an item, use \`!buy [name]\`.\n`)
-    }
-}
+    };
+};
 
 module.exports = {
-    name:'shop',
-    aliases:['s'],
-    admin:false,
-    desc:'This is a command for displaying the shop.',
-    usage:'/shop',
+    name: 'shop',
+    aliases: ['mart'],
+    admin: false,
+    desc: 'This is a command for displaying the shop.',
+    usage: '/shop',
+    options: [
+        {
+            "name": "filter",
+            "description": "The text filter to apply to the shop.",
+            "type": "STRING",
+            "required": false
+        }
+    ],
     execute: async ({interaction, message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
-        let userdata = await userdb.get(`${guild.id}/${member.user.id}`);
+        let userdata = await Data.get(guild.id, member.user.id);
         let rewards = await readJSON('json/rewards.json');
 
         const menuRow = new MessageActionRow().addComponents(

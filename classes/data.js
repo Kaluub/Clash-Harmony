@@ -121,7 +121,7 @@ class Data {
 
     static async set(guildID, userID, data){
         await userdb.set(`${guildID}/${userID}`, data);
-        return true;
+        return new Data(data);
     };
 
     static lockIds(ids){

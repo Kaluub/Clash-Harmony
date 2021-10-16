@@ -7,14 +7,14 @@ module.exports = function(){
     rpc.on('ready', () => {
         setInterval(function(){
             rpc.setActivity({
-                details: `Hi (test)`,
+                details: `https://discord.gg/meahSsA`,
                 state: 'Running a bot, maybe',
                 startTimestamp: date,
                 largeImageKey: 'clash_large',
-                largeImageText: 'Still a test',
+                largeImageText: 'Boo',
                 instance: false
             });
-        }, 15000)
+        }, 15000);
     });
     
     rpc.login({clientId:rpcClient});

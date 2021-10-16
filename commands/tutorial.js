@@ -1,10 +1,10 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
 
 module.exports = {
-    name:'tutorial',
-    aliases:['tut'],
-    desc:'This command is used to view the tutorial.',
-    usage:'/tutorial',
+    name: 'tutorial',
+    aliases: ['tut'],
+    desc: 'This command is used to view the tutorial.',
+    usage: '/tutorial',
     noGuild: true,
     execute: async ({interaction,message}) => {
         const embeds = [

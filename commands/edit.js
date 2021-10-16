@@ -1,11 +1,31 @@
-const {MessageEmbed} = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 module.exports = {
-    name:'edit',
-    admin:true,
-    noGuild:true,
-    desc:'This is a command for editing any message the bot has sent.',
-    usage:'/edit [channel ID] [message ID] [new message]',
+    name: 'edit',
+    admin: true,
+    noGuild: true,
+    desc: 'This is a command for editing any message the bot has sent.',
+    usage: '/edit [channel ID] [message ID] [new message]',
+    options: [
+        {
+            "name": "channel-id",
+            "description": "The channel ID of the channel where the message is stored.",
+            "type": "STRING",
+            "required": true
+        },
+        {
+            "name": "message-id",
+            "description": "The message ID of the message to edit.",
+            "type": "STRING",
+            "required": true
+        },
+        {
+            "name": "content",
+            "description": "The content to use for the edited message.",
+            "type": "STRING",
+            "required": true
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         if(!args[0] || !args[1] || !args[2]) return `Usage: ${module.exports.usage}`;
         const client = interaction?.client ?? message?.client;

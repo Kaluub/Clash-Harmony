@@ -1,0 +1,98 @@
+{
+    "messages": {
+        "dudUsernames": [
+            "i'm a dud user",
+            "hi adolpo",
+            "hi sirgy",
+            "hi kalub",
+            "basselm"
+        ],
+        "error": [
+            "This shouldn't happen! Some error occured and we'll get about fixin' it. Apologies for the inconvenience!"
+        ],
+        "signedUp": [
+            "You're in, bud! You'll be a {faction} member!",
+            "Signed up and ready to go as a {faction} soldier!",
+            "Go for glory, bud! Show them that {faction} soldiers are the best!",
+            "You've got this! You're a {faction} member! Get them good!",
+            "Yeah, you're signed up! As a {faction} member!"
+        ],
+        "alreadySignedUp": [
+            "You want to sign up again?? You've gotta calm down, bud!",
+            "You're already enrolled, no backing out now!",
+            "Seriously?! You want to mess me up like that?!",
+            "Ain't no foolin' me! You're already signed up, bud!",
+            "We do not approve.",
+            "You need to calm down! I wouldn't want you dead twice!",
+            "Hey now, keep the greed down! The rewards aren't going to you twice!",
+            "Get out of here!",
+            "Back for more? This isn't a buffet!"
+        ],
+        "fewJoined": [
+            "Not enough people joined, what the hell?! You're trying to kill me?",
+            "Not enough people joined!! I'll report this to the higher ups, you scramps!",
+            "Not enough people joined, are you insane?! We're going to die out here!",
+            "Not enough people joined... Deeply disappointed, I thought you had my back!"
+        ],
+        "battleStarted": [
+            "The adventure begins!",
+            "War entails!",
+            "A battle commences!"
+        ],
+        "battleHitText": [
+            "{attacker} hit {defender}!"
+        ],
+        "battleCritText": [
+            "{attacker} destroyed {defender}!"
+        ],
+        "battleMissText": [
+            "{attacker} missed {defender}!"
+        ],
+        "battleKillText": [
+            "{attacker} killed {defender}."
+        ],
+        "notInQuiz": [
+            "You aren't a part of this quiz!",
+            "Can't mess with me so easily!",
+            "We do not approve.",
+            "Your answer is invalid!",
+            "Run while you can, scramp!"
+        ],
+        "alreadyRespondedQuiz": [
+            "You've already responded! Ain't no backing out now."
+        ],
+        "firstAnswerQuiz": [
+            "You got the first answer! You got {points} points for it. Nice one!"
+        ],
+        "correctAnswerQuiz": [
+            "You got it right! {points} points earned for your response."
+        ],
+        "wrongAnswerQuiz": [
+            "You were wrong! Unfortunate."
+        ]
+    },
+    "questions": [
+        {
+            "title": "Who created the Clash Clan originally?",
+            "answer": 1,
+            "options": [
+                "LMO",
+                "Sieggy",
+                "Citrina",
+                "Quqqo",
+                "Bassem"
+            ]
+        },
+        {
+            "title": "When was the Mining Update for Pixel Worlds released?",
+            "answer": 3,
+            "options": [
+                "September 2nd, 2020",
+                "August 25th, 2020",
+                "May 5th, 2020",
+                "August 31st, 2020",
+                "September 16th, 2020"
+            ]
+        }
+    ]
+}

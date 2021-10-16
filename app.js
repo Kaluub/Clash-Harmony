@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const cron = require('node-cron');
 const Keyv = require('keyv');
 const Data = require('./classes/data.js');
 const {readJSON} = require('./json.js');
@@ -57,15 +58,15 @@ client.on('ready', async () => {
     console.log("\x1b[34m\x1b[1m%s\x1b[0m",'Bot started successfully.');
     readline.prompt();
 
-    setInterval(function(){
+    setInterval(() => {
         if(maintenance) return;
         client.user.setActivity(statuses[statusNum].name,statuses[statusNum].options);
         statusNum += 1;
         if(statusNum >= statuses.length) statusNum = 0;
-    },30000);
+    }, 30000);
 
     for(const event of commands.events){
-        const now = new Date();
+        cron.schedule(`1 0 */${event.hourTimer.toString()} * * *`, async () => await event.execute({channel: client.channels.cache.get(event.channel)}));
     };
 });
 
@@ -81,14 +82,13 @@ client.on('messageCreate', async (msg) => {
         if(!command) return;
         if(Data.isLocked(msg.author.id) && !config.admins.includes(msg.author.id)) return msg.channel.send('Unable to use this command: Your data is locked, are you in a trade?');
         let userdata = await Data.get(msg.guild.id, msg.author.id);
-        if((maintenance && command.name != 'maintenance'))
-            if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.')
+        if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
         if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send('This command requires admin permission.');
         if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(msg.author.id))) return msg.channel.send(`This command needs a special feature available from the shop.`);
         userdata.addStatistic('commandsUsed');
         await Data.set(msg.guild.id, msg.author.id, userdata);
         try{
-            await command.execute({message:msg,args:args}).then(async res => {
+            await command.execute({message:msg, args:args}).then(async res => {
                 if(res) await msg.channel.send(res);
                 readline.prompt(true);
             });
@@ -104,11 +104,10 @@ client.on('interactionCreate', async (interaction) => {
     if(interaction.isCommand()){
         const config = await readJSON('config.json');
         let userdata = await Data.get(interaction.guildId, interaction.user.id);
-        if(!userdata && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
+        if(Data.isLocked(msg.author.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
         const command = commands.commands.get(interaction.commandName.toLowerCase()) || commands.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName.toLowerCase()));
         if(!command) return interaction.reply('Command error: This command could not be handled as it does not exist.');
-        if((maintenance && command.name != 'maintenance'))
-            if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
+        if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
         if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply('This command requires admin permission.');
         if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(interaction.user.id))) return interaction.reply(`This command needs a special feature available from the shop.`);
         if(!interaction.guild && !command.noGuild) return interaction.reply(`This command can not be used in DMs.`);
@@ -118,6 +117,29 @@ client.on('interactionCreate', async (interaction) => {
         await Data.set(interaction.guildId, interaction.user.id, userdata);
         try{
             await command.execute({interaction:interaction,args:args}).then(async res => {
+                if(res && !interaction.replied) await interaction.reply(res);
+                else if(!interaction.replied) interaction.reply(`No message was returned. This is probably a bug.`);
+                readline.prompt(true);
+            });
+        } catch(error){
+            console.error(error);
+            readline.prompt(true);
+            return interaction.reply('An error occured while running this command.', {ephemeral: true});
+        };
+    } else if(interaction.isContextMenu()) {
+        const config = await readJSON('config.json');
+        let userdata = await Data.get(interaction.guildId, interaction.user.id);
+        if(Data.isLocked(msg.author.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
+        const command = commands.contexts.get(interaction.commandName) || commands.contexts.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
+        if(!command) return interaction.reply('Command error: This command could not be handled as it does not exist.');
+        if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
+        if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'This command requires admin permission.', ephemeral: true});
+        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(interaction.user.id))) return interaction.reply(`This command needs a special feature available from the shop.`);
+        if(!interaction.guild && !command.noGuild) return interaction.reply(`This command can not be used in DMs.`);
+        userdata.addStatistic('commandsUsed');
+        await Data.set(interaction.guildId, interaction.user.id, userdata);
+        try{
+            await command.execute({interaction}).then(async res => {
                 if(res && !interaction.replied) await interaction.reply(res);
                 else if(!interaction.replied) interaction.reply(`No message was returned. This is probably a bug.`);
                 readline.prompt(true);
@@ -206,5 +228,6 @@ readline.on('line', async line => { // Console commands:
 });
 
 client.login(token);
+
 // require('./interface/interface.js')(client); // Uncomment this line to run the web interface.
-// require('./rpc.js')(); // Uncomment this line to run the RPC client.
+require('./rpc.js')(); // Uncomment this line to run the RPC client.

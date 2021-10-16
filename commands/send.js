@@ -1,13 +1,34 @@
 module.exports = {
-    name:'send',
-    admin:true,
-    noGuild:true,
-    desc:'This is a command for sending any message to a channel.',
-    usage:'/send [channel/user ID] [message]',
+    name: 'send',
+    admin: true,
+    noGuild: true,
+    desc: 'This is a command for sending any message to a channel.',
+    usage: '/send [channel/user ID] [message]',
+    options: [
+        {
+            "name": "id",
+            "description": "The channel/user ID to send a message to.",
+            "type": "STRING",
+            "required": true
+        },
+        {
+            "name": "content",
+            "description": "The content to use for the message.",
+            "type": "STRING",
+            "required": true
+        },
+        {
+            "name": "hide-response",
+            "description": "Whether or not to hide the response.",
+            "type": "BOOLEAN",
+            "required": false
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
         const client = interaction?.client ?? message?.client;
         let channel;
+        let ephemeral = interaction?.options.getBoolean('hide-response') ?? false;
         let success = true;
 
         try{
@@ -20,18 +41,18 @@ module.exports = {
             try{
                 channel = await client.users.fetch(args[0]);
             } catch {
-                return `Could not fetch this channel/user.`;
+                return {content: `Could not fetch this channel/user.`, ephemeral};
             };
         };
 
         args.shift();
-        let msg = args.join(' ');
+        let msg = interaction?.options.getString('content') ?? args.join(' ');
         try{
             await channel.send(msg);
         } catch {
-            return `Couldn't send a message to this channel/user.`;
+            return {content: `Couldn't send a message to this channel/user.`, ephemeral};
         };
         
-        return `Sent a message to ${channel}.`;
+        return {content: `Sent a message to ${channel}.`, ephemeral};
     }
 };

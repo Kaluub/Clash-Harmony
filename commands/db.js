@@ -10,6 +10,46 @@ module.exports = {
     admin:true,
     desc:'This is a dangerous but useful command for managing user data.',
     usage:'/db [get/set] [guild ID + / + user ID]',
+    options: [
+        {
+            "name": "get",
+            "description": "Get a users data.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "guild-id",
+                    "description": "Guild ID to use.",
+                    "type": "STRING",
+                    "required": true
+                },
+                {
+                    "name": "user-id",
+                    "description": "User ID to use.",
+                    "type": "STRING",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "set",
+            "description": "Set a users data.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "guild-id",
+                    "description": "Guild ID to use.",
+                    "type": "STRING",
+                    "required": true
+                },
+                {
+                    "name": "user-id",
+                    "description": "User ID to use.",
+                    "type": "STRING",
+                    "required": true
+                }
+            ]
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         if(message){
             if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;

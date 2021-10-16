@@ -10,7 +10,106 @@ module.exports = {
     aliases: ['suggest'],
     desc: 'Suggestions.',
     usage: '/suggestion [create/remove/note]',
-    admin: true,
+    options: [
+        {
+            "name": "create",
+            "description": "Create a suggestion.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "suggestion",
+                    "description": "The suggestion itself. 20 character minimum.",
+                    "type": "STRING",
+                    "required": true
+                },
+                {
+                    "name": "category",
+                    "description": "The category of your suggestion.",
+                    "type": "STRING",
+                    "choices": [
+                        {
+                            "name": "Server",
+                            "value": "Server"
+                        },
+                        {
+                            "name": "Clan",
+                            "value": "Clan"
+                        }
+                    ],
+                    "required": true
+                },
+                {
+                    "name": "title",
+                    "description": "The title of the suggestion, optional. 4 character minimum.",
+                    "type": "STRING",
+                    "required": false
+                },
+                {
+                    "name": "example",
+                    "description": "An example of the suggestion, optional. 20 character minimum.",
+                    "type": "STRING",
+                    "required": false
+                },
+                {
+                    "name": "image",
+                    "description": "An image demonstrating the suggestion, optional.",
+                    "type": "STRING",
+                    "required": false
+                }
+            ]
+        },
+        {
+            "name": "remove",
+            "description": "Remove a previous suggestion.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "message-id",
+                    "description": "The message ID of your suggestion to remove.",
+                    "type": "STRING",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "note",
+            "description": "Add a note to your suggestion.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "message-id",
+                    "description": "The message ID of your suggestion to add a note to.",
+                    "type": "STRING",
+                    "required": true
+                },
+                {
+                    "name": "note",
+                    "description": "The note itself. 10 character minimum.",
+                    "type": "STRING",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "staffnote",
+            "description": "Add a staff note to a suggestion.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "message-id",
+                    "description": "The message ID of the suggestion to add a note to.",
+                    "type": "STRING",
+                    "required": true
+                },
+                {
+                    "name": "note",
+                    "description": "The note itself. 10 character minimum.",
+                    "type": "STRING",
+                    "required": true
+                }
+            ]
+        }
+    ],
     execute: async ({interaction}) => {
         if(!interaction) return 'You can only use this as a slash command.';
         const { suggestionsChannel, admins } = await readJSON('config.json');

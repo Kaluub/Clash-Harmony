@@ -1,12 +1,20 @@
-const {readJSON} = require('../json.js');
-const {guessRewards} = require('../functions.js');
-const {MessageEmbed, MessageAttachment} = require('discord.js');
+const { readJSON } = require('../json.js');
+const { guessRewards } = require('../functions.js');
+const { MessageEmbed, MessageAttachment } = require('discord.js');
 
 module.exports = {
-    name:'info',
-    aliases:['i'],
-    desc:`This is a command for viewing the info of a reward.`,
-    usage:'/info [reward name]',
+    name: 'info',
+    aliases: ['i'],
+    desc: `This is a command for viewing the info of a reward.`,
+    usage: '/info [reward name]',
+    options: [
+        {
+            "name": "reward",
+            "description": "The reward name to view the info for.",
+            "type": "STRING",
+            "required": true
+        }
+    ],
     execute: async ({interaction,message,args}) => {
         if(!args[0]) return `Usage: ${module.exports.usage}`;
         const member = interaction?.member ?? message?.member;

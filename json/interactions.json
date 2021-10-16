@@ -18,24 +18,20 @@
         ]
     },
     {
+        "name": "Add to Clash",
+        "type": "USER"
+    },
+    {
+        "name": "Add to Harmony",
+        "type": "USER"
+    },
+    {
         "name": "buy",
         "description": "This command is used to purchase rewards from the shop.",
         "options": [
             {
                 "name": "reward",
                 "description": "The reward name to purchase.",
-                "type": "STRING",
-                "required": true
-            }
-        ]
-    },
-    {
-        "name": "custom",
-        "description": "This is a command for customizing your profile card.",
-        "options": [
-            {
-                "name": "reward",
-                "description": "The name of the reward you would like to use.",
                 "type": "STRING",
                 "required": true
             }
@@ -86,24 +82,6 @@
                         "required": true
                     }
                 ]
-            }
-        ]
-    },
-    {
-        "name": "duel",
-        "description": "This is a command for dueling other users.",
-        "options": [
-            {
-                "name": "member",
-                "description": "The member you'd like to duel.",
-                "type": "USER",
-                "required": true
-            },
-            {
-                "name": "points",
-                "description": "The amount of points duel for.",
-                "type": "INTEGER",
-                "required": false
             }
         ]
     },
@@ -285,6 +263,24 @@
         ]
     },
     {
+        "name": "fight",
+        "description": "This is a command for fighting other users.",
+        "options": [
+            {
+                "name": "member",
+                "description": "The member you'd like to duel.",
+                "type": "USER",
+                "required": true
+            },
+            {
+                "name": "points",
+                "description": "The amount of points duel for.",
+                "type": "INTEGER",
+                "required": false
+            }
+        ]
+    },
+    {
         "name": "help",
         "description": "A list of every command.",
         "options": [
@@ -307,6 +303,10 @@
                 "required": true
             }
         ]
+    },
+    {
+        "name": "Info",
+        "type": "USER"
     },
     {
         "name": "list",
@@ -399,6 +399,14 @@
         ]
     },
     {
+        "name": "Remove from Clash",
+        "type": "USER"
+    },
+    {
+        "name": "Remove from Harmony",
+        "type": "USER"
+    },
+    {
         "name": "send",
         "description": "This is a command for sending any message to a channel.",
         "options": [
@@ -413,8 +421,18 @@
                 "description": "The content to use for the message.",
                 "type": "STRING",
                 "required": true
+            },
+            {
+                "name": "hide-response",
+                "description": "Whether or not to hide the response.",
+                "type": "BOOLEAN",
+                "required": false
             }
         ]
+    },
+    {
+        "name": "set",
+        "description": "This is a command for customizing your profile card."
     },
     {
         "name": "shop",

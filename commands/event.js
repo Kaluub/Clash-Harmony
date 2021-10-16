@@ -1,4 +1,4 @@
-const {MessageEmbed, MessageButton, MessageActionRow} = require("discord.js");
+const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
 const Keyv = require('keyv');
 const db = new Keyv('sqlite://data/users.sqlite', {namespace:'guilds'});
 
@@ -32,10 +32,81 @@ async function amaEvent(client, event){
 };
 
 module.exports = {
-    name:'event',
-    desc:'A command for starting and managing events.',
-    usage:'/event [TODO]',
-    admin:true,
+    name: 'event',
+    desc: 'A command for starting and managing events.',
+    usage: '/event [TODO]',
+    admin: true,
+    options: [
+        {
+            "name": "create",
+            "description": "A command to create & start an event.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "name",
+                    "description": "The name/theme of the event.",
+                    "type": "STRING",
+                    "required": true
+                },
+                {
+                    "name": "type",
+                    "description": "The type of the event.",
+                    "type": "STRING",
+                    "required": true,
+                    "choices": [
+                        {
+                            "name": "Art Contest",
+                            "value": "artcontest"
+                        },
+                        {
+                            "name": "Build Contest",
+                            "value": "buildcontest"
+                        },
+                        {
+                            "name": "AMA Event",
+                            "value": "ama"
+                        },
+                        {
+                            "name": "Karaoke Event",
+                            "value": "karaoke"
+                        },
+                        {
+                            "name": "PW Game Event",
+                            "value": "pixelworldsevent"
+                        },
+                        {
+                            "name": "Poll",
+                            "value": "poll"
+                        }
+                    ]
+                },
+                {
+                    "name": "channel",
+                    "description": "The channel to post the event message in. If none is provided, the current channel is used.",
+                    "type": "CHANNEL",
+                    "required": false
+                },
+                {
+                    "name": "length",
+                    "description": "The length of the event, in hours. If not provided, it'll default to 3 days.",
+                    "type": "INTEGER",
+                    "required": false
+                },
+                {
+                    "name": "points",
+                    "description": "The reward of the event.",
+                    "type": "INTEGER",
+                    "required": false
+                },
+                {
+                    "name": "poll-options",
+                    "description": "The options of a poll event, if applicable. Example: 'Option 1; Option 2; Option 3'. Max 5 options.",
+                    "type": "STRING",
+                    "required": false
+                }
+            ]
+        }
+    ],
     execute: async ({interaction}) => {
         if(!interaction) return `This command can only be used as a slash command.`;
 
