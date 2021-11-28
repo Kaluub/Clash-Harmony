@@ -1,4 +1,5 @@
 const { Client, Intents } = require('discord.js');
+const StatusLogger = require('./classes/statusLogger.js');
 const { readJSON } = require('./json.js');
 const { token } = readJSON('config.json');
 const { readdirSync } = require('fs');
@@ -9,11 +10,11 @@ const contextInteractionFiles = readdirSync('./contexts').filter(file => file.en
 
 for (const file of channelCommandFiles) {
     const command = require(`./commands/${file}`);
-    if(command.hidden || !command.options) continue;
+    if(command.hidden || command.archived) continue;
     interactions.push({
         name: command.name,
         description: command.desc,
-        options: command.options ? command.options : []
+        options: command.options ? command.options : undefined
     });
 };
 
@@ -33,7 +34,7 @@ client.on('ready', async () => {
     if(!client.application?.owner) await client.application.fetch();
     console.log(interactions);
     await client.application.commands.set(interactions).catch(err => console.error(err));
-    const commands =
+    StatusLogger.logStatus({type: "update-interactions", detail: "All interactions were updated"});
     console.log('Done!');
     client.destroy();
     process.exit(0);

@@ -1,5 +1,5 @@
-const {writeJSON} = require('../json.js');
-const {MessageAttachment} = require('discord.js');
+const { writeJSON } = require('../json.js');
+const { MessageAttachment } = require('discord.js');
 const fetch = require('node-fetch');
 const Keyv = require('keyv');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
@@ -50,7 +50,7 @@ module.exports = {
             ]
         }
     ],
-    execute: async ({interaction,message,args}) => {
+    execute: async ({interaction, message, args}) => {
         if(message){
             if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
             if(args[0] == 'get'){

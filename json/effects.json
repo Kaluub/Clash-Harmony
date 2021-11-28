@@ -1,0 +1,26 @@
+{
+    "snowflake": {
+        "id": "snowflake",
+        "img": "Snowflake.png"
+    },
+    "snowflake_2": {
+        "id": "snowflake_2",
+        "img": "Snowflake2.png"
+    },
+    "gold_shine": {
+        "id": "gold_shine",
+        "img": "GoldShine.png"
+    },
+    "rain": {
+        "id": "rain",
+        "img": "Rain.png"
+    },
+    "heat": {
+        "id": "heat",
+        "img": "Heat.png"
+    },
+    "sand_wind": {
+        "id": "sand_wind",
+        "img": ""
+    }
+}

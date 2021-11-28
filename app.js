@@ -2,9 +2,11 @@ const Discord = require('discord.js');
 const cron = require('node-cron');
 const Keyv = require('keyv');
 const Data = require('./classes/data.js');
-const {readJSON} = require('./json.js');
-const {updateSuggestion} = require('./functions.js');
-const {token} = readJSON('config.json');
+const UsageLogger = require('./classes/usageLogger.js');
+const StatusLogger = require('./classes/statusLogger.js');
+const { readJSON } = require('./json.js');
+const { updateSuggestion } = require('./functions.js');
+const { token } = readJSON('config.json');
 const commands = require('./commands.js');
 const modMail = require('./modmail.js');
 
@@ -29,7 +31,7 @@ client.commands = commands.commands;
 
 function completer(line){
     const completions = [];
-    for(const [key,cmd] of commands.consoleCommands.entries()){
+    for(const [key, cmd] of commands.consoleCommands.entries()){
         if(!cmd) continue;
         completions.push(cmd.name);
     };
@@ -43,6 +45,8 @@ const readline = require('readline').createInterface({
     completer:completer
 });
 
+UsageLogger.init();
+StatusLogger.init();
 const guilddb = new Keyv('sqlite://data/users.sqlite', {namespace:'guilds'});
 
 let statusNum = 0;
@@ -55,8 +59,9 @@ const statuses = [
 client.on('ready', async () => {
     await require('./commands/event.js').initEvents(client);
     process.title = "Clash & Harmony console";
-    console.log("\x1b[34m\x1b[1m%s\x1b[0m",'Bot started successfully.');
+    console.log("\x1b[34m\x1b[1m%s\x1b[0m", 'Bot started successfully.');
     readline.prompt();
+    StatusLogger.logStatus({type: "start", detail: "The bot was started"});
 
     setInterval(() => {
         if(maintenance) return;
@@ -74,27 +79,35 @@ client.on('messageCreate', async (msg) => {
     if(msg.author.bot) return;
     const config = await readJSON('config.json');
 
-    if(!msg.guild) await modMail(msg, config.modMailChannel);
-    else if(msg.content.startsWith(config.prefix)){ // Discord commands:
+    if(!msg.guild) return await modMail(msg, config.modMailChannel);
+    if(msg.channel.id == "688515917683884054") { // Art contest:
+        if(msg.attachments.size) {
+            await msg.react('<:Upvote:913866271609720882>');
+            await msg.react('<:Downvote:913866286432387113>');
+        };
+    } if(msg.content.startsWith(config.prefix)){ // Discord commands:
         const args = msg.content.slice(config.prefix.length).split(/ +/);
         const commandName = args.shift().toLowerCase();
         const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if(!command) return;
         if(Data.isLocked(msg.author.id) && !config.admins.includes(msg.author.id)) return msg.channel.send('Unable to use this command: Your data is locked, are you in a trade?');
         let userdata = await Data.get(msg.guild.id, msg.author.id);
+        if(userdata.blocked) return message.reply('You are blocked.');
         if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
         if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send('This command requires admin permission.');
         if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(msg.author.id))) return msg.channel.send(`This command needs a special feature available from the shop.`);
         userdata.addStatistic('commandsUsed');
         await Data.set(msg.guild.id, msg.author.id, userdata);
+        UsageLogger.logAction({guildId: msg.guild.id, channelId: msg.channel.id, userId: msg.author.id, actionName: `${config.prefix}${commandName}`});
         try{
-            await command.execute({message:msg, args:args}).then(async res => {
+            await command.execute({message:msg, args, userdata}).then(async res => {
                 if(res) await msg.channel.send(res);
                 readline.prompt(true);
             });
         } catch(error){
             console.error(error);
             readline.prompt(true);
+            StatusLogger.logStatus({type: "command-error", detail: error});
             return msg.channel.send('An error occured while running this command.');
         };
     };
@@ -103,8 +116,9 @@ client.on('messageCreate', async (msg) => {
 client.on('interactionCreate', async (interaction) => {
     if(interaction.isCommand()){
         const config = await readJSON('config.json');
-        let userdata = await Data.get(interaction.guildId, interaction.user.id);
-        if(Data.isLocked(msg.author.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
+        let userdata = await Data.get(interaction.guild.id, interaction.user.id);
+        if(userdata.blocked) return interaction.reply('You are blocked.');
+        if(Data.isLocked(interaction.user.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
         const command = commands.commands.get(interaction.commandName.toLowerCase()) || commands.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName.toLowerCase()));
         if(!command) return interaction.reply('Command error: This command could not be handled as it does not exist.');
         if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
@@ -115,21 +129,23 @@ client.on('interactionCreate', async (interaction) => {
         interaction?.options?.data.forEach((option) => args.push(option.value ? option.value.toString() : option));
         userdata.addStatistic('commandsUsed');
         await Data.set(interaction.guildId, interaction.user.id, userdata);
+        UsageLogger.logAction({guildId: interaction.guildId, channelId: interaction.channelId, userId: interaction.user.id, actionName: interaction.commandName});
         try{
-            await command.execute({interaction:interaction,args:args}).then(async res => {
-                if(res && !interaction.replied) await interaction.reply(res);
-                else if(!interaction.replied) interaction.reply(`No message was returned. This is probably a bug.`);
+            await command.execute({interaction, args, userdata}).then(async res => {
+                if(res && interaction && !interaction.replied) await interaction.reply(res);
+                else if(interaction && !interaction.replied) await interaction.reply(`No message was returned. This is probably a bug.`);
                 readline.prompt(true);
             });
         } catch(error){
             console.error(error);
             readline.prompt(true);
-            return interaction.reply('An error occured while running this command.', {ephemeral: true});
+            StatusLogger.logStatus({type: "command-error", detail: error});
+            if(interaction && !interaction.replied) return await interaction.reply({content: 'An error occured while running this command.', ephemeral: true});
         };
     } else if(interaction.isContextMenu()) {
         const config = await readJSON('config.json');
         let userdata = await Data.get(interaction.guildId, interaction.user.id);
-        if(Data.isLocked(msg.author.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
+        if(Data.isLocked(interaction.user.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
         const command = commands.contexts.get(interaction.commandName) || commands.contexts.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
         if(!command) return interaction.reply('Command error: This command could not be handled as it does not exist.');
         if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
@@ -138,6 +154,7 @@ client.on('interactionCreate', async (interaction) => {
         if(!interaction.guild && !command.noGuild) return interaction.reply(`This command can not be used in DMs.`);
         userdata.addStatistic('commandsUsed');
         await Data.set(interaction.guildId, interaction.user.id, userdata);
+        UsageLogger.logAction({guildId: interaction.guildId, channelId: interaction.channelId, userId: interaction.user.id, actionName: interaction.commandName});
         try{
             await command.execute({interaction}).then(async res => {
                 if(res && !interaction.replied) await interaction.reply(res);
@@ -147,7 +164,8 @@ client.on('interactionCreate', async (interaction) => {
         } catch(error){
             console.error(error);
             readline.prompt(true);
-            return interaction.reply('An error occured while running this command.', {ephemeral: true});
+            StatusLogger.logStatus({type: "command-error", detail: error});
+            if(interaction && !interaction.replied) return interaction.reply('An error occured while running this command.', {ephemeral: true});
         };
     } else if(interaction.isMessageComponent() && interaction.isButton()){
         if(interaction.customId.startsWith('poll')){ // Poll event
@@ -187,6 +205,17 @@ client.on('interactionCreate', async (interaction) => {
             await updateSuggestion(data, interaction.message);
             await interaction.reply({content: 'Successfully voted!', ephemeral: true});
         };
+    } else if(interaction.isAutocomplete()) {
+        const value = interaction.options.getFocused();
+        const rewards = readJSON('json/rewards.json');
+        const choices = [];
+        for(const index in rewards) {
+            if(choices.length > 24) break;
+            const reward = rewards[index];
+            if(reward.name.toLowerCase().startsWith(value.toLowerCase())) choices.push({name: reward.name, value: reward.id});
+        };
+        if(interaction && !interaction.responded)
+            return await interaction.respond(choices);
     };
 });
 
@@ -196,8 +225,10 @@ readline.on('line', async line => { // Console commands:
     if(commandName == 'maintenance' || commandName == 'maint'){ // Maintenance. Needs to be in this file.
         maintenance = !maintenance;
         if(maintenance){
+            StatusLogger.logStatus({type: "maintenance", detail: "The bot was put in maintenance."});
             client.user.setPresence({activity:{name:'maintenance on-going', type:'WATCHING'}, status:'idle'});
         } else {
+            StatusLogger.logStatus({type: "maintenance", detail: "The bot was put off maintenance."});
             client.user.setPresence({activity:{name:'maintenance over', type:'PLAYING'}, status:'online'});
         };
         console.log("\x1b[32m%s\x1b[0m",`Successfully ${maintenance ? 'activated' : 'deactivated'} maintenance mode.`);
@@ -215,6 +246,7 @@ readline.on('line', async line => { // Console commands:
                 readline:readline
             });
         } catch(error) {
+            StatusLogger.logStatus({type: "console-error", detail: error.replaceAll(',', ' ')});
             console.error(error);
         };
     } else {
@@ -222,6 +254,7 @@ readline.on('line', async line => { // Console commands:
     };
     readline.prompt();
 }).on('close', () => {
+    StatusLogger.logStatus({type: "shutdown", detail: "The bot was shut down"});
     console.log("\x1b[31m\x1b[1m%s\x1b[0m",'Shutting down ClashBot.');
     client.destroy();
     process.exit(0);
@@ -230,4 +263,4 @@ readline.on('line', async line => { // Console commands:
 client.login(token);
 
 // require('./interface/interface.js')(client); // Uncomment this line to run the web interface.
-require('./rpc.js')(); // Uncomment this line to run the RPC client.
+// require('./rpc.js')(); // Uncomment this line to run the RPC client.

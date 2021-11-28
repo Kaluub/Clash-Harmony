@@ -102,21 +102,21 @@ async function updateFight(battle, {canvas, ctx, duels}, channel, {backgroundIma
 const duelPositions = [[150, 300], [850, 300]];
 
 module.exports = {
-    name: 'fight',
-    aliases: ['f', 'duel', 'duelmega', 'brawl'],
-    desc: 'This is a command for fighting other members.',
-    usage: '/fight [stats/@member(s))]',
+    name: 'brawl',
+    aliases: ['duel', 'duelmega', 'brawl'],
+    desc: 'Brawl with other members!',
+    usage: '/brawl [stats/@member(s))]',
     admin: true,
     options: [
         {
             "name": "member",
-            "description": "The member you'd like to duel.",
+            "description": "The member(s) you'd like to brawl with.",
             "type": "USER",
             "required": true
         },
         {
             "name": "points",
-            "description": "The amount of points duel for.",
+            "description": "The amount of points to brawl for.",
             "type": "INTEGER",
             "required": false
         }
@@ -127,7 +127,7 @@ module.exports = {
         if(!members) members = new Collection().set(interaction?.options.getMember('member').id, interaction?.options.getMember('member'))
         members.set(self.id, self);
 
-        if(members.size < 2) return `Ping the member(s) you'd like to fight with the command!`;
+        if(members.size < 2) return `Ping the member(s) you'd like to brawl with the command!`;
 
         let battle = {
             round: 0,

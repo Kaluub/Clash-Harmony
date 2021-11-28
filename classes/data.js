@@ -8,6 +8,7 @@ class Data {
         this.blocked = data?.blocked ?? false;
         this.points = data?.points ?? 0;
         this.status = data?.status ?? '';
+        this.locale = data?.locale ?? 'en';
         this.monthlyCooldown = data?.monthlyCooldown ?? Date.now();
         this.statistics = {
             spent: data?.statistics?.spent ?? 0,
@@ -42,6 +43,7 @@ class Data {
 
     addPoints(points = 0){
         this.points += points;
+        this.statistics.earned += points;
         return this;
     };
 
@@ -79,6 +81,11 @@ class Data {
         this.status = status;
         return this;
     };
+
+    setLocale(locale = 'en'){
+        this.locale = locale;
+        return this;
+    }
 
     setCardBackground(id = 'default_background'){
         this.card.background = id;

@@ -2,6 +2,7 @@ const { createProfileCard } = require('../functions.js');
 const { readJSON } = require('../json.js');
 const { MessageAttachment } = require('discord.js');
 const Data = require('../classes/data.js');
+const Locale = require('../classes/locale.js');
 
 module.exports = {
     name: 'profile',
@@ -11,7 +12,7 @@ module.exports = {
     options: [
         {
             "name": "member",
-            "description": "The member who's card to display.",
+            "description": "The member whos card to display.",
             "type": "USER",
             "required": false
         }
@@ -26,17 +27,17 @@ module.exports = {
         let userdata = await Data.get(guild.id, member.user.id);
         let rewards = await readJSON('json/rewards.json');
 
-        let msg = `${Math.random() < 0.05?'**TIP**: You can customize your profile card using !custom.\n':''}${Math.random() < 0.05?'**TIP**: You can set a profile status using !status.\n':''}${self.user.id == member.user.id ? 'Your' : `${member.user.username}'s`} profile card:`;
+        let msg = `${Math.random() < 0.05 ? Locale.text(selfdata.locale, "PROFILE_TIPS") : ''}${Locale.text(selfdata.locale, "PROFILE_CARD")}`;
         // Luck minigame:
-        if(msg.split(/\r\n|\r|\n/).length == 3){
+        if(Math.random < 0.005){
             if(selfdata.unlocked.frames.includes('golden_frame')){
                 let luckyPoints = Math.floor(Math.random() * (50 - 20 + 1) + 20);
-                if(luckyPoints == 50) msg = `**JACKPOT!** You got the jackpot! You earned **${luckyPoints}** points!\nHere's ${self.user.id == member.user.id ? 'your' : `${member.user.username}'s`} profile card, lucky man:`;
-                else msg = `**LUCKY!** You got really lucky! You earned ${luckyPoints} points!\nHere's ${self.user.id == member.user.id ? 'your' : `${member.user.username}'s`} profile card, by the way:`;
+                if(luckyPoints == 50) msg = Locale.text(selfdata.locale, "PROFILE_JACKPOT", luckyPoints);
+                else msg = Locale.text(selfdata.locale, "PROFILE_LUCKY", luckyPoints);
                 selfdata.points += luckyPoints;
                 selfdata.statistics.earned += luckyPoints;
             } else {
-                msg = `**LUCKY!** You got lucky! You earned the Golden Frame!\nHere's ${self.user.id == member.user.id ? 'your' : `${member.user.username}'s`} profile card, by the way:`;
+                msg = Locale.text(selfdata.locale, "PROFILE_GOLDEN_FRAME");
                 selfdata.unlocked.frames.push('golden_frame');
             };
             await Data.set(guild.id, self.user.id, selfdata);

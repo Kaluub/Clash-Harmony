@@ -76,6 +76,7 @@
         "desc": "Festive background for celebration and appreciation of the Clash clan's first anniversary! Design by Aldople.",
         "img": "clash_one_year_anniversary_background.png",
         "colour": "#FFD700",
+        "endTime": 1640995200000,
         "price": 30,
         "shown": true
     },
@@ -271,7 +272,17 @@
         "name": "Winter Background",
         "desc": "One of the four seasonal backgrounds. Capture winter with this one! Design by Aldople.",
         "img": "WinterBackground.png",
-        "colour": "#333333",
+        "colour": "#DDDDFF",
+        "effects": [
+            {
+                "type": "snowflake",
+                "count": 50
+            },
+            {
+                "type": "snowflake_2",
+                "count": 50
+            }
+        ],
         "price": 50,
         "startTime": 1640044800000,
         "endTime": 1647820800000,
@@ -284,17 +295,45 @@
         "desc": "You went through quite a lot to get this. An ever-increasing chance. But how do you get the frame? Designed by Kaluub.",
         "img": "golden_background.png",
         "colour": "#000000",
+        "effects": [
+            {
+                "type": "gold_shine",
+                "count": 70
+            }
+        ],
         "price": 0,
         "shown": false
     },
-    "melting_ice_cream_background": {
-        "id": "melting_ice_cream_background",
+    "effect_test": {
+        "id": "effect_test",
         "type": "backgrounds",
-        "name": "Melting Ice Cream Background",
-        "desc": "Perhaps the most delicious background available. Wouldn't want to try it myself, though. Designed by SpicyBee.",
-        "img": "MeltingIceCreamBackground.png",
-        "colour": "#000000",
-        "price": 31,
+        "name": "Effect Test",
+        "desc": "Made for testing the effects. Not for the public eye! And is there really a designer for the work here...",
+        "img": "default_background.png",
+        "colour": "#FFFFFF",
+        "effects": [
+            {
+                "type": "gold_shine",
+                "count": 5
+            },
+            {
+                "type": "snowflake",
+                "count": 5
+            },
+            {
+                "type": "snowflake_2",
+                "count": 5
+            },
+            {
+                "type": "rain",
+                "count": 5
+            },
+            {
+                "type": "heat",
+                "count": 5
+            }
+        ],
+        "price": -1,
         "shown": false
     },
     "default_frame": {
@@ -348,6 +387,7 @@
         "name": "Clash 1 Year Anniversary Frame",
         "desc": "Festive frame for celebration and appreciation of the Clash clan's first anniversary! Design by Aldople.",
         "img": "clash_one_year_anniversary_frame.png",
+        "endTime": 1640995200000,
         "price": 35,
         "shown": true
     },

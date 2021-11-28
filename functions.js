@@ -64,15 +64,42 @@ async function createProfileCard(member, rewards, userdata){
     const canvas = createCanvas(1000,350);
     const ctx = canvas.getContext('2d');
 
+    const backgroundData = rewards[userdata.card.background];
+    const frameData = rewards[userdata.card.frame];
+
     // Load images:
     const avatar = await loadImage(member.user.displayAvatarURL({format:'png',size:256}));
-    const background = await loadImage(`./img/backgrounds/${rewards[userdata.card.background].img}`);
-    const frame = await loadImage(`./img/frames/${rewards[userdata.card.frame].img}`);
+    const background = await loadImage(`./img/backgrounds/${backgroundData.img}`);
+    const frame = await loadImage(`./img/frames/${frameData.img}`);
 
-    let colour = rewards[userdata.card.background].colour;
-
+    // Draw background:
     ctx.drawImage(background, 0, 0);
 
+    // Draw PFP in a circle:
+    ctx.save(); ctx.beginPath();
+    ctx.arc(175, 175, 128, 0, Math.PI * 2, true);
+    ctx.closePath(); ctx.clip();
+    ctx.drawImage(avatar, 47, 47, avatar.width * (256/avatar.width), avatar.height * (256/avatar.height));
+    ctx.restore();
+
+    // Draw frame:
+    ctx.drawImage(frame, 25, 25);
+
+    // Effects? Draw them:
+    if(backgroundData.effects) {
+        const effects = await readJSON('json/effects.json');
+        for (const effect of backgroundData.effects) {
+            const effectData = effects[effect.type];
+            const effectImage = await loadImage(`./img/effects/${effectData.img}`);
+            for (let i = 1; i <= effect.count; i++) {
+                const x = randInt(0, 1000 - effectImage.width);
+                const y = randInt(0, 350 - effectImage.height);
+                ctx.drawImage(effectImage, x, y);
+            };
+        };
+    };
+
+    // Draw text:
     ctx.font = 'bold 40px "Noto Sans"';
     ctx.fillStyle = member.displayHexColor == '#000000' ? '#FFFFFF' : member.displayHexColor;
     ctx.fillText(`${member.user.tag}`, 336, 42, 636);
@@ -86,9 +113,9 @@ async function createProfileCard(member, rewards, userdata){
     ctx.fillRect(336, 158, 552, 140); // Badges
     
     ctx.font = '32px "Noto Sans"';
-    ctx.fillStyle = colour;
-    ctx.fillText(`Points: ${userdata.points}`, 344, 140, 310);
-    ctx.fillText(`Total earned: ${userdata.statistics.earned}`, 666, 140, 310);
+    ctx.fillStyle = backgroundData.colour;
+    ctx.fillText(`Points: ${userdata.points > 999999999 ? '∞' : userdata.points}`, 344, 140, 310);
+    ctx.fillText(`Total earned: ${userdata.statistics.earned > 999999999 ? '∞' : userdata.statistics.earned}`, 666, 140, 310);
 
     if(userdata.status.length > 0) ctx.fillText(`${userdata.status}`, 344, 90, 636);
     else ctx.fillText(`No custom status.`, 344, 90, 636);
@@ -106,16 +133,6 @@ async function createProfileCard(member, rewards, userdata){
             if(bx >= 544) bx = 0, by += 68;
         };
     };
-
-    // Cut pfp to circle:
-    ctx.save(); ctx.beginPath();
-    ctx.arc(175, 175, 128, 0, Math.PI * 2, true);
-    ctx.closePath(); ctx.clip();
-    ctx.drawImage(avatar, 47, 47, avatar.width * (256/avatar.width), avatar.height * (256/avatar.height));
-    ctx.restore();
-
-    // Draw users pfp border:
-    ctx.drawImage(frame, 25, 25);
 
     // Return buffer:
     return canvas.toBuffer();

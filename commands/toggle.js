@@ -1,4 +1,5 @@
 const { readJSON } = require('../json.js');
+const Locale = require('../classes/locale.js');
 
 module.exports = {
     name: 'toggle',
@@ -26,10 +27,10 @@ module.exports = {
             ]
         }
     ],
-    execute: async ({interaction,message,args}) => {
-        if(!args[0]) return `Usage: ${module.exports.usage}`;
+    execute: async ({interaction, message, args, userdata}) => {
+        if(!args[0]) return `${Locale.text(userdata.locale, "USAGE")} ${module.exports.usage}`;
         const guild = interaction?.guild ?? message?.guild;
-        if(guild.id !== '636986136283185172') return `This command is only useable in the Clash & Harmony Discord server.`;
+        if(guild.id !== '636986136283185172') return Locale.text(userdata.locale, "SERVER_ERROR");
         const roles = await readJSON('json/toggles.json');
         let roletoggle;
         for(const roleinfo of roles){
@@ -38,10 +39,10 @@ module.exports = {
                 break;
             };
         };
-        if(!roletoggle) return `Usage: ${module.exports.usage}`;
+        if(!roletoggle) return `${Locale.text(userdata.locale, "USAGE")} ${module.exports.usage}`;
         const member = interaction?.member ?? message?.member;
         if(member.roles.cache.has(roletoggle.id)) await member.roles.remove(roletoggle.id);
         else await member.roles.add(roletoggle.id);
-        return `You toggled your ${roletoggle.name} role.`;
+        return Locale.text(userdata.locale, "TOGGLE_SUCCESS", roletoggle.name);
     }
 };

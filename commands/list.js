@@ -1,4 +1,4 @@
-const Data = require('../classes/data.js');
+const Locale = require('../classes/locale.js');
 const { readJSON } = require('../json.js');
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 
@@ -6,111 +6,57 @@ module.exports = {
     name: 'list',
     aliases: ['l'],
     admin: false,
-    desc: `This is a command for viewing your owned frames and backgrounds.`,
-    usage:  '/list [frames/backgrounds]',
-    options: [
-        {
-            "name": "filter",
-            "description": "Show only frames or backgrounds.",
-            "type": "STRING",
-            "required": false,
-            "choices": [
-                {
-                    "name": "frames",
-                    "value": "frames"
-                },
-                {
-                    "name": "backgrounds",
-                    "value": "backgrounds"
-                }
-            ]
-        }
-    ],
-    execute: async ({interaction,message,args}) => {
-        const guild = interaction?.guild ?? message?.guild;
+    desc: `This is a command for viewing your owned backgrounds and frames.`,
+    usage: '/list',
+    execute: async ({interaction, message, userdata}) => {
         const member = interaction?.member ?? message?.member;
-        let userdata = await Data.get(guild.id, member.user.id);
         let rewards = await readJSON('json/rewards.json');
-        if(args[0]){
-            const fText = ['frames','frame','f','fr'];
-            if(fText.includes(args[0].toLowerCase())){
-                let embed = new MessageEmbed()
-                    .setTitle('Owned frames:')
-                    .setColor('#838383')
-                    .setDescription('')
-                for(const i in userdata.unlocked.frames){
-                    let id = userdata.unlocked.frames[i]
-                    let frame = rewards[id];
-                    embed.setDescription(embed.description + `\n• ${frame.name}`);
-                };
-                return {embeds:[embed]};
-            };
-    
-            const bText = ['backgrounds','background','b','bg','bgs','backg'];
-            if(bText.includes(args[0].toLowerCase())){
-                let embed = new MessageEmbed()
-                    .setTitle('Owned backgrounds:')
-                    .setColor('#838383')
-                    .setDescription('')
-                for(const i in userdata.unlocked.backgrounds){
-                    let id = userdata.unlocked.backgrounds[i]
-                    let background = rewards[id];
-                    embed.setDescription(embed.description + `\n• ${background.name}`);
-                };
-                return {embeds:[embed]};
-            };
-        };
 
         const embed = new MessageEmbed()
             .setColor('#33AA33')
-            .setTitle(`Owned rewards:`)
-            .setDescription(`To select a category, use the buttons below.`)
-            .setFooter(`This message expires at:`)
-            .setTimestamp(Date.now() + 30000);
+            .setTitle(Locale.text(userdata.locale, "LIST_TITLE"))
+            .setDescription(Locale.text(userdata.locale, "LIST_DESC"))
         
         const row = new MessageActionRow().addComponents(
             new MessageButton()
-                .setCustomId('frames')
-                .setLabel('Frames')
+                .setCustomId('backgrounds')
+                .setLabel(Locale.text(userdata.locale, "BUTTON_BACKGROUNDS"))
                 .setStyle('SECONDARY'),
             new MessageButton()
-                .setCustomId('backgrounds')
-                .setLabel('Backgrounds')
+                .setCustomId('frames')
+                .setLabel(Locale.text(userdata.locale, "BUTTON_FRAMES"))
                 .setStyle('SECONDARY')
         );
         
-        let msg = await message?.channel.send({embeds:[embed], components:[row]});
-        if(!msg) {
-            await interaction?.reply({embeds:[embed], components:[row]});
-            msg = await interaction?.fetchReply();
-        };
+        const msg = await interaction?.reply({embeds: [embed], components: [row], fetchReply: true}) ?? await message?.reply({embeds: [embed], components: [row]});
 
-        let collector = msg.createMessageComponentCollector({filter: int => int.user.id == member.user.id, idle:30000});
+        let collector = msg.createMessageComponentCollector({idle: 30000});
+    
         collector.on('collect', async int => {
+            if(int.user.id !== member.id) return await int.reply({content: Locale.text(userdata.locale, "NOT_FOR_YOU"), ephemeral: true});
+
             if(int.customId == 'backgrounds'){ // Backgrounds:
-                embed.setDescription('**Backgrounds**:\n');
-                for(const i in userdata.unlocked.backgrounds){
-                    let id = userdata.unlocked.backgrounds[i];
-                    let background = rewards[id];
-                    embed.setDescription(embed.description + `\n• ${background.name}`);
+                embed.setDescription(Locale.text(userdata.locale, "LIST_BACKGROUNDS"));
+                for(const id of userdata.unlocked.backgrounds){
+                    const background = rewards[id];
+                    embed.setDescription(embed.description + Locale.text(userdata.locale, "LIST_REWARD", background.name));
                 };
             };
 
             if(int.customId == 'frames'){ // Frames:
-                embed.setDescription('**Frames**:\n');
-                for(const i in userdata.unlocked.frames){
-                    let id = userdata.unlocked.frames[i];
-                    let frame = rewards[id];
-                    embed.setDescription(embed.description + `\n• ${frame.name}`);
+                embed.setDescription(Locale.text(userdata.locale, "LIST_FRAMES"));
+                for(const id of userdata.unlocked.frames){
+                    const frame = rewards[id];
+                    embed.setDescription(embed.description + Locale.text(userdata.locale, "LIST_REWARD", frame.name));
                 };
             };
 
-            embed.setDescription(embed.description + '\n\nTo select a frame or background, use `!custom [reward name]`.');
+            embed.setDescription(embed.description + Locale.text(userdata.locale, "LIST_CONCLUSION"));
             embed.setTimestamp(Date.now() + 30000);
             await int.update({embeds:[embed]});
         });
         collector.on('end', async () => {
-            embed.setFooter('This message has expired.');
+            embed.setFooter(Locale.text(userdata.locale, "EXPIRED"));
             if(!msg.deleted) await msg.edit({embeds:[embed], components:[]});
         });
     }

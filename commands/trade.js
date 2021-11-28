@@ -1,8 +1,9 @@
 const { MessageEmbed, MessageButton, MessageSelectMenu, MessageActionRow, Collection } = require("discord.js");
 const { readJSON } = require('../json.js');
 const Data = require('../classes/data.js');
+const Locale = require('../classes/locale.js');
 
-async function trade(msg, member, partner) {
+async function trade(msg, member, partner, locale) {
     Data.lockIds([member.user.id, partner.user.id]);
 
     const rewards = await readJSON('json/rewards.json');
@@ -14,41 +15,41 @@ async function trade(msg, member, partner) {
     const row = new MessageActionRow().addComponents(
         new MessageButton()
             .setCustomId('add-item')
-            .setLabel('Add Item')
+            .setLabel(Locale.text(locale, "TRADE_BUTTON_ADD_ITEM"))
             .setStyle('PRIMARY'),
         new MessageButton()
             .setCustomId('remove-item')
-            .setLabel('Remove Item')
+            .setLabel(Locale.text(locale, "TRADE_BUTTON_REMOVE_ITEM"))
             .setStyle('PRIMARY'),
         new MessageButton()
             .setCustomId('set-points')
-            .setLabel('Set Points')
+            .setLabel(Locale.text(locale, "TRADE_BUTTON_SET_POINTS"))
             .setStyle('PRIMARY'),
         new MessageButton()
             .setCustomId('confirm-trade')
-            .setLabel('Confirm')
+            .setLabel(Locale.text(locale, "BUTTON_CONFIRM"))
             .setStyle('SUCCESS'),
         new MessageButton()
             .setCustomId('cancel-trade')
-            .setLabel('Cancel')
+            .setLabel(Locale.text(locale, "BUTTON_CANCEL"))
             .setStyle('DANGER')
     );
 
-    const embed = await updateTradeEmbed({trade, rewards});
+    const embed = await updateTradeEmbed({trade, rewards, locale});
 
     await msg.edit({embeds: [embed], components: [row]});
 
     const collector = msg.createMessageComponentCollector({idle: 120000});
 
     collector.on('collect', async int => {
-        if(!trade.has(int.user.id)) return int.reply(`This isn't your trade!`);
+        if(!trade.has(int.user.id)) return int.reply(Locale.text(locale, "TRADE_NOT_FOR_YOU"));
 
         if(int.customId === 'add-item') {
             const data = await Data.get(int.guild.id, int.user.id);
             const tradeData = trade.get(int.user.id);
-            if(tradeData.items.length >= 8) return await int.reply({content: 'There is a maximum of 8 items in a trade!', ephemeral: true})
+            if(tradeData.items.length >= 8) return await int.reply({content: Locale.text(locale, "TRADE_MAX_ITEMS"), ephemeral: true})
 
-            const menu = new MessageSelectMenu().setCustomId('items').setPlaceholder('Select items to add here!');
+            const menu = new MessageSelectMenu().setCustomId('items').setPlaceholder(Locale.text(locale, "TRADE_SELECT_ADD_ITEMS"));
             const options = [];
             const allItems = data.unlocked.backgrounds.concat(data.unlocked.frames);
 
@@ -59,25 +60,25 @@ async function trade(msg, member, partner) {
                 options.push({label: item.name, value: item.id});
             };
 
-            if(!options.length) return await int.reply({content: 'You have no more items!', ephemeral: true});
+            if(!options.length) return await int.reply({content: Locale.text(locale, "TRADE_NO_MORE_ITEMS"), ephemeral: true});
 
             menu.addOptions(options).setMinValues(1).setMaxValues(options.length > 8 ? 8 : options.length);
 
-            const reply = await int.reply({content: 'Please select the item(s) you\'d like to add to the trade:', components: [new MessageActionRow().addComponents(menu)], fetchReply: true});
+            const reply = await int.reply({content: Locale.text(locale, "TRADE_ADD_ITEMS"), components: [new MessageActionRow().addComponents(menu)], fetchReply: true});
             const menuCollector = reply.createMessageComponentCollector({time: 60000});
 
             menuCollector.on('collect', async sInt => {
-                if(int.user.id !== sInt.user.id) return sInt.reply(`This isn't your trade!`);
+                if(int.user.id !== sInt.user.id) return sInt.reply(Locale.text(locale, "TRADE_NOT_FOR_YOU"));
 
                 tradeData.items.push(...sInt.values);
                 trade.set(sInt.user.id, tradeData);
 
                 trade.forEach(d => d.confirmed = false);
 
-                const update = await updateTradeEmbed({trade, rewards});
+                const update = await updateTradeEmbed({trade, rewards, locale});
                 await msg.edit({embeds: [update]});
 
-                await sInt.reply({content: 'Added the items to the trade!', ephemeral: true});
+                await sInt.reply({content: Locale.text(locale, "TRADE_ITEMS_ADDED"), ephemeral: true});
                 menuCollector.stop();
             });
 
@@ -89,7 +90,7 @@ async function trade(msg, member, partner) {
         if(int.customId === 'remove-item') {
             let tradeData = trade.get(int.user.id);
 
-            const menu = new MessageSelectMenu().setCustomId('items').setPlaceholder('Select items to remove here!');
+            const menu = new MessageSelectMenu().setCustomId('items').setPlaceholder(Locale.text(locale, "TRADE_SELECT_REMOVE_ITEMS"));
             const options = [];
 
             for(const id of tradeData.items) {
@@ -97,24 +98,24 @@ async function trade(msg, member, partner) {
                 options.push({label: item.name, value: item.id});
             };
 
-            if(!options.length) return await int.reply({content: 'You have no items to remove!', ephemeral: true});
+            if(!options.length) return await int.reply({content: Locale.text(locale, "TRADE_NO_REMOVE_ITEMS"), ephemeral: true});
 
             menu.addOptions(options).setMinValues(1).setMaxValues(tradeData.items.length);
 
-            const reply = await int.reply({content: 'Please select the item(s) you\'d like to remove from the trade:', components: [new MessageActionRow().addComponents(menu)], fetchReply: true});
+            const reply = await int.reply({content: Locale.text(locale, "TRADE_REMOVE_ITEMS"), components: [new MessageActionRow().addComponents(menu)], fetchReply: true});
             const menuCollector = reply.createMessageComponentCollector({time: 60000});
 
             menuCollector.on('collect', async sInt => {
-                if(int.user.id !== sInt.user.id) return sInt.reply(`This isn't your trade!`);
+                if(int.user.id !== sInt.user.id) return sInt.reply(Locale.text(locale, "TRADE_NOT_FOR_YOU"));
                 tradeData.items = tradeData.items.filter(id => !sInt.values.includes(id));
                 trade.set(sInt.user.id, tradeData);
 
                 trade.forEach(d => d.confirmed = false);
 
-                const update = await updateTradeEmbed({trade, rewards});
+                const update = await updateTradeEmbed({trade, rewards, locale});
                 await msg.edit({embeds: [update]});
 
-                await sInt.reply({content: 'Removed the items from the trade!', ephemeral: true});
+                await sInt.reply({content: Locale.text(locale, "TRADE_ITEMS_REMOVED"), ephemeral: true});
                 menuCollector.stop();
             });
 
@@ -125,25 +126,25 @@ async function trade(msg, member, partner) {
 
         if(int.customId === 'set-points') {
             let tradeData = trade.get(int.user.id);
-            await int.reply({content: 'Please type the amount of points for the trade.', ephemeral: true});
+            await int.reply({content: Locale.text(locale, "TRADE_POINTS_PROMPT"), ephemeral: true});
             const mCol = int.channel.createMessageCollector({filter: m => m.author.id == int.user.id, time: 30000});
             
             mCol.on('collect', async m => {
                 const userdata = await Data.get(m.guild.id, m.author.id);
                 let points = parseInt(m.content);
                 if(isNaN(points) || points < 0 || userdata.points < points){
-                    await int.followUp({content: `Invalid points amount. You must have enough points, the points must be above zero or you didn't type a number.`, ephemeral: true});
+                    await int.followUp({content: Locale.text(locale, "TRADE_POINTS_INVALID"), ephemeral: true});
                     await m.delete();
                     return mCol.stop();
                 };
                 tradeData.points = points;
                 trade.set(int.user.id, tradeData);
                 trade.forEach(d => d.confirmed = false);
-                await int.followUp({content: `${points} points will be added with the trade.`, ephemeral: true});
+                await int.followUp({content: Locale.text(locale, "TRADE_POINTS_SET", points), ephemeral: true});
                 await m.delete();
                 mCol.stop();
 
-                const update = await updateTradeEmbed({trade, rewards});
+                const update = await updateTradeEmbed({trade, rewards, locale});
                 await msg.edit({embeds: [update]});
             });
         };
@@ -154,18 +155,18 @@ async function trade(msg, member, partner) {
             trade.set(int.user.id, data);
 
             if(trade.every(u => u.confirmed)) {
-                const update = await updateTradeEmbed({trade, rewards}, true);
+                const update = await updateTradeEmbed({trade, rewards, locale}, true);
                 await int.update({components: [], embeds: [update]});
                 await endTrade({trade, rewards, member, partner});
                 return collector.stop();
             } else {
-                const update = await updateTradeEmbed({trade, rewards});
+                const update = await updateTradeEmbed({trade, rewards, locale});
                 await int.update({embeds: [update]});
             };
         };
 
         if(int.customId == 'cancel-trade') {
-            await int.update({content: `${int.user.tag} cancelled the trade.`, components: [], embeds: []});
+            await int.update({content: Locale.text(locale, "TRADE_CANCELLED", int.user.tag), components: [], embeds: []});
             collector.stop();
         };
     });
@@ -176,9 +177,9 @@ async function trade(msg, member, partner) {
     });
 };
 
-async function updateTradeEmbed({trade, rewards}, closing = false) {
+async function updateTradeEmbed({trade, rewards, locale}, closing = false) {
     const embed = new MessageEmbed()
-        .setTitle(closing ? `Completed Trade` : `Trade Interface`)
+        .setTitle(closing ? Locale.text(locale, "TRADE_TITLE_COMPLETED") : Locale.text(locale, "TRADE_TITLE"))
         .setColor(closing ? `#22DDAA` : `#AA3322`)
         .setTimestamp()
     
@@ -187,10 +188,10 @@ async function updateTradeEmbed({trade, rewards}, closing = false) {
 
     await trade.forEach(async data => {
         tags.push(`**${data.tag}**`);
-        string += `\n\n${data.confirmed ? '✅' : '⛔'} | **${data.tag}**'s offer:`;
-        if(!data.items.length && !data.points) string += `\nNo items!`;
+        string += Locale.text(locale, "TRADE_CONTENTS", data.confirmed ? '✅' : '⛔', data.tag);
+        if(!data.items.length && !data.points) string += Locale.text(locale, "TRADE_NO_ITEMS");
         else {
-            if(data.points) string += `\nPoints: ${data.points}`;
+            if(data.points) string += Locale.text(locale, "POINTS") + `: ${data.points}`;
             if(data.items.length) data.items.forEach(async id => {
                 const item = rewards[id];
                 string += `\n${item.name}`;
@@ -198,8 +199,8 @@ async function updateTradeEmbed({trade, rewards}, closing = false) {
         };
     });
 
-    if(closing) embed.setDescription(`Items traded between ${tags.join(' and ')}:` + string);
-    else embed.setDescription(`Trade between ${tags.join(' and ')}:` + string);
+    if(closing) embed.setDescription(`${Locale.text(locale, "TRADE_DESC_COMPLETED")} ${tags.join(Locale.text(locale, "TRADE_DESC_JOINER"))}:` + string);
+    else embed.setDescription(`${Locale.text(locale, "TRADE_DESC")} ${tags.join(Locale.text(locale, "TRADE_DESC_JOINER"))}:` + string);
     return embed;
 };
 
@@ -259,18 +260,18 @@ module.exports = {
             required: true
         }
     ],
-    execute: async ({interaction, message}) => {
+    execute: async ({interaction, message, userdata}) => {
         const member = interaction?.member ?? message?.member;
         const partner = interaction?.options.getMember('member') ?? message?.mentions.members.first();
         const channel = interaction?.channel ?? message?.channel;
 
         if(!partner) return `Usage: ${module.exports.usage}`;
-        if(partner.user.bot) return {content: `You can't trade with a bot.`, ephemeral: true};
-        if(member.user.id == partner.user.id) return {content: `You can't trade with yourself.`, ephemeral: true};
+        if(partner.user.bot) return {content: Locale.text(userdata.locale, "NO_TRADE_BOT"), ephemeral: true};
+        if(member.user.id == partner.user.id) return {content: Locale.text(userdata.locale, "NO_TRADE_SELF"), ephemeral: true};
 
         const inviteEmbed = new MessageEmbed()
-            .setTitle('Trade request:')
-            .setDescription(`Press the "accept" button below to accept the trade request.\nYou got 60 seconds to accept or deny the request.`)
+            .setTitle(Locale.text(userdata.locale, "TRADE_REQUEST_TITLE"))
+            .setDescription(Locale.text(userdata.locale, "TRADE_REQUEST_TITLE"))
             .setColor('#664400')
             .setTimestamp()
         
@@ -278,34 +279,34 @@ module.exports = {
             new MessageButton()
                 .setCustomId('accept')
                 .setStyle('SUCCESS')
-                .setLabel('Accept'),
+                .setLabel(Locale.text(userdata.locale, "BUTTON_ACCEPT")),
             new MessageButton()
                 .setCustomId('deny')
                 .setStyle('DANGER')
-                .setLabel('Deny')
+                .setLabel(Locale.text(userdata.locale, "BUTTON_DENY"))
         );
 
-        if(interaction) interaction.reply({content: `We'll start your trade once your partner accepts!`, ephemeral: true});
+        if(interaction) interaction.reply({content: Locale.text(userdata.locale, "TRADE_REQUEST_NOTE"), ephemeral: true});
 
         const msg = await channel.send({embeds: [inviteEmbed], components: [inviteRow]});
         const collector = await msg.createMessageComponentCollector({time: 60000});
 
         collector.on('collect', async int => {
-            if(int.user.id !== partner.user.id) return int.reply({content: `This trade wasn't meant for you, it was sent to ${partner.user.tag}!`, ephemeral: true});
+            if(int.user.id !== partner.user.id) return int.reply({content: Locale.text(userdata.locale, "TRADE_NOT_FOR_YOU"), ephemeral: true});
             if(int.customId == 'accept') {
-                await int.reply({content: 'The trade was accepted!', ephemeral: true, embeds: [], components: []});
-                await trade(msg, member, partner);
+                await int.reply({content: Locale.text(userdata.locale, "TRADE_ACCEPTED"), ephemeral: true, embeds: [], components: []});
+                await trade(msg, member, partner, userdata.locale);
                 collector.stop('accepted');
             };
             if(int.customId == 'deny') {
-                await int.update({content: 'Your partner denied the trade.', embeds: [], components: []});
+                await int.update({content: Locale.text(userdata.locale, "TRADE_DENIED"), embeds: [], components: []});
                 collector.stop('denied');
             };
         });
 
         collector.on('end', (col, reason) => {
             if(reason === 'accepted' || reason === 'denied') return;
-            else msg.edit({content: 'Ran out of time to accept/deny the trade!', embeds: [], components: []});
+            else msg.edit({content: Locale.text(userdata.locale, "TRADE_TIMED_OUT"), embeds: [], components: []});
         });
     }
 };

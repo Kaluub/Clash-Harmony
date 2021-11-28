@@ -1,6 +1,6 @@
 const Data = require('../classes/data.js');
+const Locale = require('../classes/locale.js');
 const { readJSON } = require('../json.js');
-const functions = require(`../functions.js`);
 
 module.exports = {
     name: 'pay',
@@ -22,41 +22,32 @@ module.exports = {
         }
     ],
     execute: async ({interaction,message,args}) => {
-        if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
+        const self = interaction?.member ?? message?.member;
+        const guild = interaction?.guild ?? message?.guild;
+        let userdata = await Data.get(guild.id, self.user.id);
+        if(!args[0] || !args[1]) return `${Locale.text(userdata.locale, "USAGE")} ${module.exports.usage}`;
         const config = await readJSON('config.json');
         let count = message ? parseInt(args[0]) : interaction?.options.getInteger("points");
         let member = message?.mentions.members.first() ?? interaction?.options.getMember("member");
         args.shift();
-        member ??= await message?.guild.members.fetch({query:args.join(' '), limit:1}).then(col => col.first());
-        if(!member) return `Please provide a valid @user mention or username.`;
-        if(member.user.bot) return `You can't give your points to a bot.`;
+        if(!member) return Locale.text(userdata.locale, "PAY_INVALID_USER");
+        if(member.user.bot) return Locale.text(userdata.locale, "PAY_NO_BOT");
 
         if(isNaN(count) || count < 1)
             if(!config.admins.includes(member.user.id))
-                return `You need to provide a valid number!`;
+                return Locale.text(userdata.locale, "PAY_INVALID_NUMBER");
 
-        const self = interaction?.member ?? message?.member;
-        const guild = interaction?.guild ?? message?.guild;
-        if(self.user.id == member.user.id) return `You can't give yourself points.`;
+        if(self.user.id == member.user.id) return Locale.text(userdata.locale, "PAY_NO_SELF");
 
-        let userdata = await Data.get(guild.id, self.user.id);
-        if(Date.now() - userdata.statistics.age < 1210000000) return 'You need to wait at least 2 weeks between your first interaction with this bot and now in order to send points.';
-        if(userdata.points < count) return `You don't have enough points! You would need ${count - userdata.points} more points to confirm this transaction.`;
+        if(Date.now() - userdata.statistics.age < 1210000000) return Locale.text(userdata.locale, "PAY_COOLDOWN");
+        if(userdata.points < count) return Locale.text(userdata.locale, "PAY_USER_BROKE", count - userdata.points);
         
         let userdata2 = await Data.get(guild.id, member.user.id);
-        if(!userdata2) return 'This user has no data! They need to send a simple message and this issue will be fixed.';
         
-        if(userdata == userdata2){
-            console.log(`Duplicated userdata found at [${guild.id}/${self.user.id}] and [${guild.id}/${member.user.id}].`);
-            functions.resetLog(guild.id,self.user.id,member.user.id,userdata,userdata2);
-            await userdb.set(`${guild.id}/${self.user.id}`, new Data('user',{}));
-            await userdb.set(`${guild.id}/${member.user.id}`, new Data('user',{}));
-            return `You and the user you are paying have duplicated data. This has been logged & will be investigated later. For the time being, your data will be backed up and reset to avoid any more issues.`;
-        };
         userdata.points -= count;
         userdata2.points += count;
         await Data.set(guild.id, self.user.id, userdata);
         await Data.set(guild.id, member.user.id, userdata2);
-        return `You gave ${count} points to ${member.user.username} (${userdata.points} points left).`;
+        return Locale.text(userdata.locale, "PAY_SUCCESS", count, member.user.username, userdata.points);
     }
 };
