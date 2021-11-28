@@ -1,4 +1,4 @@
-const {readFileSync, writeFileSync} = require('fs');
+const { readFileSync, writeFileSync } = require('fs');
 
 function readJSON(path){
     let rawJson = readFileSync(`./${path}`);
@@ -6,9 +6,12 @@ function readJSON(path){
 };
 
 function writeJSON(path,json){
-    let data = JSON.stringify(json,null,4);
-    writeFileSync(`./${path}`,data);
+    let data = JSON.stringify(json, null, 4);
+    writeFileSync(`./${path}`, data);
     return true;
 };
 
-module.exports = {readJSON:readJSON,writeJSON:writeJSON};
+module.exports = {
+    readJSON:readJSON,
+    writeJSON:writeJSON
+};

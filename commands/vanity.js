@@ -1,35 +1,34 @@
-const {MessageEmbed, MessageButton, MessageActionRow} = require("discord.js");
+const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
 const { readJSON } = require('../json.js');
-const Data = require('../classes/data.js');
+const Locale = require('../classes/locale.js');
+const Data = require("../classes/data.js");
 
 module.exports = {
     name:'vanity',
     desc:`Manage your vanity roles.`,
     usage:'/vanity',
-    execute: async ({interaction, message}) => {
+    execute: async ({interaction, message, userdata}) => {
         const guild = interaction?.guild || message?.guild;
-        if(!guild) return `This isn't usable outside of a guild.`;
-        if(guild.id !== "636986136283185172") return `This command can only be used in the Clash & Harmony Discord server.`;
+        if(guild.id !== "636986136283185172") return Locale.text(userdata.locale, "SERVER_ERROR");
         
         let member = interaction?.member || message?.member;
         await member.fetch();
-        const data = await Data.get(guild.id, member.user.id);
 
         const roles = readJSON('json/vanityroles.json');
         member.roles.cache.each(role => {
-            if(roles.includes(role.id) && !data.unlocked.roles.includes(role.id)) data.unlocked.roles.push(role.id);
+            if(roles.includes(role.id) && !userdata.unlocked.roles.includes(role.id)) userdata.unlocked.roles.push(role.id);
         });
-        await Data.set(guild.id, member.user.id, data);
-        if(data.unlocked.roles.length < 1) return `You have no vanity roles!`;
+        await Data.set(guild.id, member.user.id, userdata);
+        if(userdata.unlocked.roles.length < 1) return Locale.text(userdata.locale, "NO_VANITY_ROLES");
 
-        let desc = `Here is a list of all your purchased roles.\nA red circle indicates the role is inactive, a green circle the opposite.\n`;
-        for(const id of data.unlocked.roles){
+        let desc = Locale.text(userdata.locale, "VANITY_DESC");
+        for(const id of userdata.unlocked.roles){
             const role = await guild.roles.fetch(id);
             desc += `\n${member.roles.cache.has(id) ? `🟢` : `🔴`} ${role.name}`;
         };
 
         let embed = new MessageEmbed()
-            .setTitle(`Vanity roles:`)
+            .setTitle(Locale.text(userdata.locale, "VANITY_TITLE"))
             .setDescription(desc)
             .setColor(`#228866`)
             .setTimestamp()
@@ -37,16 +36,20 @@ module.exports = {
         const row = new MessageActionRow().addComponents(
             new MessageButton()
                 .setCustomId('up')
-                .setLabel('Up')
+                .setLabel(Locale.text(userdata.locale, "BUTTON_UP"))
                 .setStyle('SECONDARY'),
             new MessageButton()
                 .setCustomId('select')
-                .setLabel('Toggle')
-                .setStyle('DANGER'),
+                .setLabel(Locale.text(userdata.locale, "BUTTON_SELECT"))
+                .setStyle('SUCCESS'),
             new MessageButton()
                 .setCustomId('down')
-                .setLabel('Down')
-                .setStyle('SECONDARY')
+                .setLabel(Locale.text(userdata.locale, "BUTTON_DOWN"))
+                .setStyle('SECONDARY'),
+            new MessageButton()
+                .setCustomId('clean')
+                .setLabel(Locale.text(userdata.locale, "BUTTON_CLEAN"))
+                .setStyle('DANGER')
         );
 
         let sel = 0;
@@ -58,31 +61,45 @@ module.exports = {
             msg = await interaction.fetchReply();
         };
 
-        const collector = msg.createMessageComponentCollector({filter: interaction => interaction.user.id == member.user.id, idle:30000});
+        const collector = msg.createMessageComponentCollector({idle:30000});
         collector.on('collect', async (interaction) => {
+            if(interaction.user.id !== member.user.id) return interaction.reply({content: Locale.text(userdata.locale, "NOT_FOR_YOU"), ephemeral: true});
             if(interaction.customId == 'up'){
                 sel -= 1;
                 if(sel < 0) sel = embed.description.split('\n').length - 4;
             };
+
             if(interaction.customId == 'down'){
                 sel += 1;
                 if(sel >= embed.description.split('\n').length - 3) sel = 0;
             };
+
             if(interaction.customId == 'select'){
                 // Toggle role:
-                const id = data.unlocked.roles[sel];
+                const id = userdata.unlocked.roles[sel];
                 if(member.roles.cache.has(id)) await member.roles.remove(id, 'Role toggled.');
                 else await member.roles.add(id, 'Role toggled.');
                 member = await member.fetch(true);
+
                 // Update desc:
-                desc = `Here is a list of all your purchased roles.\nA red circle indicates the role is inactive, a green circle the opposite.\n`;
-                for(const rid of data.unlocked.roles){
+                desc = Locale.text(userdata.locale, "VANITY_DESC");
+                for(const rid of userdata.unlocked.roles){
                     const role = await guild.roles.fetch(rid);
                     desc += `\n${member.roles.cache.has(rid) ? `🟢` : `🔴`} ${role.name}`;
                 };
                 embed.setDescription(desc);
             };
-            descArr = embed.description.replace('➡️ ', '').split('\n');
+
+            if(interaction.customId == 'clean') {
+                const roles = [];
+                for(const rid of userdata.unlocked.roles){
+                    roles.push(rid);
+                };
+                await member.roles.remove(roles, 'Roles cleaned.');
+                embed.setDescription(desc.replaceAll(`🟢`, `🔴`));
+            };
+
+            descArr = embed.description.replaceAll('➡️ ', '').split('\n');
             descArr[sel + 3] = "➡️ " + descArr[sel + 3];
             await interaction.update({embeds:[embed.setDescription(descArr.join('\n'))]});
         });

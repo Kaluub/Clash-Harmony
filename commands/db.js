@@ -1,5 +1,5 @@
-const {writeJSON} = require('../json.js');
-const {MessageAttachment} = require('discord.js');
+const { writeJSON } = require('../json.js');
+const { MessageAttachment } = require('discord.js');
 const fetch = require('node-fetch');
 const Keyv = require('keyv');
 const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
@@ -10,7 +10,47 @@ module.exports = {
     admin:true,
     desc:'This is a dangerous but useful command for managing user data.',
     usage:'/db [get/set] [guild ID + / + user ID]',
-    execute: async ({interaction,message,args}) => {
+    options: [
+        {
+            "name": "get",
+            "description": "Get a users data.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "guild-id",
+                    "description": "Guild ID to use.",
+                    "type": "STRING",
+                    "required": true
+                },
+                {
+                    "name": "user-id",
+                    "description": "User ID to use.",
+                    "type": "STRING",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "set",
+            "description": "Set a users data.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "guild-id",
+                    "description": "Guild ID to use.",
+                    "type": "STRING",
+                    "required": true
+                },
+                {
+                    "name": "user-id",
+                    "description": "User ID to use.",
+                    "type": "STRING",
+                    "required": true
+                }
+            ]
+        }
+    ],
+    execute: async ({interaction, message, args}) => {
         if(message){
             if(!args[0] || !args[1]) return `Usage: ${module.exports.usage}`;
             if(args[0] == 'get'){

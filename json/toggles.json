@@ -1,17 +1,17 @@
 [
     {
-        "id":"847225115765637120",
-        "name":"Trivia",
-        "toggle":["trivia", "triv"]
+        "id": "847225115765637120",
+        "name": "Trivia",
+        "toggle": ["trivia", "triv"]
     },
     {
-        "id":"847225246594367519",
-        "name":"QOTD",
-        "toggle":["qotd", "questions"]
+        "id": "847225246594367519",
+        "name": "QOTD",
+        "toggle": ["qotd", "questions"]
     },
     {
-        "id":"847225515559223316",
-        "name":"Polls",
-        "toggle":["polls", "poll"]
+        "id": "847225515559223316",
+        "name": "Polls",
+        "toggle": ["polls", "poll"]
     }
 ]

@@ -1,31 +1,18 @@
-const {economyLog} = require(`../functions.js`);
-const Keyv = require(`keyv`);
-const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+const { economyLog } = require(`../functions.js`);
+const Data = require('../classes/data.js');
+const Keyv = require('keyv')
 const guilddb = new Keyv('sqlite://data/users.sqlite', {namespace:'guilds'});
 
 module.exports = {
-    name:'daily',
-    admin:false,
-    hidden:true,
-    desc:`This is a (probably) satire command regarding daily rewards.`,
-    usage:'/daily',
+    name: 'daily',
+    hidden: true,
+    desc: `This is a (probably) satire command regarding daily rewards.`,
+    usage: '/daily',
     execute: async ({interaction,message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
-        let collected = await guilddb.get(`${guild.id}/GoldenBackgrounds`);
-        const userdata = await userdb.get(`${guild.id}/${member.user.id}`);
-
-        if(collected == undefined){
-            // Due to how this system worked in the past, this block needs to exist.
-            collected = await userdb.get(`${guild.id}/GoldenBackgrounds`);
-            if(collected){
-                await guilddb.set(`${guild.id}/GoldenBackgrounds`, collected);
-                await userdb.delete(`${guild.id}/GoldenBackgrounds`);
-            } else {
-                collected = 0;
-                await guilddb.set(`${guild.id}/GoldenBackgrounds`, collected);
-            };
-        };
+        let collected = await guilddb.get(`${guild.id}/GoldenBackgrounds`) ?? 0;
+        let userdata = await Data.get(guild.id, member.user.id);
 
         const messages = [
             `You got absolutely nothing. Try again later!`,
@@ -65,8 +52,8 @@ module.exports = {
             };
             userdata.unlocked.backgrounds.push('golden_background');
             userdata.card.background = 'golden_background';
-            await userdb.set(`${guild.id}/${member.user.id}`, userdata);
-            await userdb.set(`${guild.id}/${member.user.id}`, collected + 1);
+            await Data.set(guild.id, member.user.id, userdata);
+            await guilddb.set(`${guild.id}/GoldenBackgrounds`, collected + 1);
             return `**LUCKY**: ...But something finally happened.`;
         } else return messages[Math.floor(Math.random() * messages.length)];
     }

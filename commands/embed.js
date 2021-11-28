@@ -1,14 +1,79 @@
-const {MessageEmbed} = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
+const Locale = require('../classes/locale.js');
 
 module.exports = {
-    name:'embed',
-    desc:'A command used to generate and send embed messages.',
-    usage:'/embed [values]',
-    admin:true,
-    execute: async ({interaction}) => {
-        if(!interaction) return `This command can only be used as a slash command.`;
+    name: 'embed',
+    desc: 'A command used to generate and send embed messages.',
+    usage: '/embed [values]',
+    admin: true,
+    options: [
+        {
+            "name": "description",
+            "description": "The description of the embed.",
+            "type": "STRING",
+            "required": true
+        },
+        {
+            "name": "title",
+            "description": "The title of the embed.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "color",
+            "description": "The hex color code for the embed.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "image",
+            "description": "The image URL for the embed.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "url",
+            "description": "The URL of the title for the embed.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "author",
+            "description": "The author of the embed (JSON object).",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "footer",
+            "description": "The footer of the embed (JSON object).",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "fields",
+            "description": "The fields to add to the embed (JSON array).",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "timestamp",
+            "description": "The time of the embed. Valid Date number. If the number '0' is provided, the curent time is used.",
+            "type": "STRING",
+            "required": false
+        },
+        {
+            "name": "links",
+            "description": "Up to 5 links can be included as buttons. Format: 'title,url;title2,url2'.",
+            "type": "STRING",
+            "required": false
+        }
+    ],
+    execute: async ({interaction, userdata}) => {
+        if(!interaction) return Locale.text(userdata.locale, "SLASH_COMMAND_ONLY");
         const embed = new MessageEmbed();
-        for(const [name, option] of interaction.options){
+        const row = new MessageActionRow();
+        for(const id in interaction.options.data){
+            const option = interaction.options.data[id];
             try {
                 if(option.name == 'title') embed.setTitle(option.value);
                 if(option.name == 'description') embed.setDescription(option.value);
@@ -19,15 +84,33 @@ module.exports = {
                 if(option.name == 'footer') embed.setFooter(JSON.parse(option.value)?.text, JSON.parse(option.value)?.iconURL);
                 if(option.name == 'fields') embed.addFields(JSON.parse(option.value));
                 if(option.name == 'timestamp') embed.setTimestamp(parseInt(option.value) == 0 ? Date.now() : parseInt(option.value));
+                if(option.name == 'links') {
+                    const links = option.value.split(';');
+                    if (links.length > 5 || links.length < 1) throw Locale.text(userdata.locale, "EMBED_LINK_ERROR");
+                    for (const i of links) {
+                        const data = i.split(',');
+                        if (data.length !== 2) throw Locale.text(userdata.locale, "EMBED_LINK_FORMAT_ERROR");
+                        row.addComponents(
+                            new MessageButton()
+                                .setStyle("LINK")
+                                .setLabel(data[0])
+                                .setURL(data[1])
+                        );
+                    };
+                };
             } catch(err) {
-                return {content: `The option '${option.name}' has some error.\n\nExact error:\n\`\`\`${err}\`\`\``, ephemeral: true};
+                return {content: Locale.text(userdata.locale, "EMBED_OPTION_ERROR", option.name, err), ephemeral: true};
             };
         };
+
+        let send = {embeds: [embed]};
+        if(row.components.length) send.components = [row];
+
         try {
-            await interaction.channel.send({embeds:[embed]});
-        } catch {
-            return {content: `There was an error with your embed.`, ephemeral: true};
+            await interaction.channel.send(send);
+        } catch(err) {
+            return {content: Locale.text(userdata.locale, "EMBED_ERROR", err), ephemeral: true};
         };
-        return {content: `Successfully made an embed using your parameters.`, ephemeral: true};
+        return {content: Locale.text(userdata.locale, "EMBED_SUCCESS"), ephemeral: true};
     }
 };

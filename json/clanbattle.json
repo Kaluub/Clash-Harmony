@@ -1,0 +1,377 @@
+{
+    "modifiers": [
+        {
+            "displayName": "Normal",
+            "description": "It's the default set-up, normal everything!",
+            "colour": "#335533",
+            "weight": 100,
+            "modifiers": {
+                "quizPlayersAllowed": 11,
+                "defaultHp": 50,
+                "normalDamage": 10,
+                "critDamage": 15,
+                "critOdds": 10,
+                "missOdds": 20,
+                "quizRoundTime": 10000,
+                "quizPointModifier": 1,
+                "quizRounds": 10,
+                "freeReward": 5,
+                "winningFactionReward": 10,
+                "topThreeReward": 20,
+                "rewardModifier": 1
+            }
+        },
+        {
+            "displayName": "Gold Rush",
+            "description": "Money! You have less time to answer the quiz, but get 2x the rewards!",
+            "colour": "#FFD700",
+            "weight": 15,
+            "modifiers": {
+                "quizPlayersAllowed": 11,
+                "defaultHp": 50,
+                "normalDamage": 10,
+                "critDamage": 15,
+                "critOdds": 10,
+                "missOdds": 20,
+                "quizRoundTime": 5000,
+                "quizPointModifier": 2,
+                "quizRounds": 10,
+                "freeReward": 5,
+                "winningFactionReward": 10,
+                "topThreeReward": 20,
+                "rewardModifier": 2
+            }
+        },
+        {
+            "displayName": "Warrior",
+            "description": "You won't miss! You'll crit a whole lot more! And everyone is stronger!",
+            "colour": "#22DDAA",
+            "weight": 25,
+            "modifiers": {
+                "quizPlayersAllowed": 11,
+                "defaultHp": 75,
+                "normalDamage": 15,
+                "critDamage": 25,
+                "critOdds": 50,
+                "missOdds": 0,
+                "quizRoundTime": 10000,
+                "quizPointModifier": 1,
+                "quizRounds": 10,
+                "freeReward": 5,
+                "winningFactionReward": 10,
+                "topThreeReward": 20,
+                "rewardModifier": 1.2
+            }
+        },
+        {
+            "displayName": "Clan Co-operation",
+            "description": "Your faction needs to work toghether! The reward for being in the winning faction is doubled!",
+            "colour": "#335533",
+            "weight": 30,
+            "modifiers": {
+                "quizPlayersAllowed": 11,
+                "defaultHp": 50,
+                "normalDamage": 10,
+                "critDamage": 15,
+                "critOdds": 10,
+                "missOdds": 20,
+                "quizRoundTime": 10000,
+                "quizPointModifier": 1,
+                "quizRounds": 10,
+                "freeReward": 5,
+                "winningFactionReward": 20,
+                "topThreeReward": 20,
+                "rewardModifier": 1
+            }
+        },
+        {
+            "displayName": "Solo",
+            "description": "The rewards for being in the top three are tripled!",
+            "colour": "#335533",
+            "weight": 30,
+            "modifiers": {
+                "quizPlayersAllowed": 11,
+                "defaultHp": 50,
+                "normalDamage": 10,
+                "critDamage": 15,
+                "critOdds": 10,
+                "missOdds": 20,
+                "quizRoundTime": 10000,
+                "quizPointModifier": 1,
+                "quizRounds": 10,
+                "freeReward": 5,
+                "winningFactionReward": 10,
+                "topThreeReward": 60,
+                "rewardModifier": 1
+            }
+        },
+        {
+            "displayName": "???",
+            "description": "Things are looking rather... grim.",
+            "colour": "#000000",
+            "weight": 1,
+            "modifiers": {
+                "quizPlayersAllowed": 6,
+                "defaultHp": 5,
+                "normalDamage": 1,
+                "critDamage": 2,
+                "critOdds": 10,
+                "missOdds": 20,
+                "quizRoundTime": 6666,
+                "quizPointModifier": 6,
+                "quizRounds": 7,
+                "freeReward": 5,
+                "winningFactionReward": 15,
+                "topThreeReward": 22,
+                "rewardModifier": 1.6
+            }
+        },
+        {
+            "displayName": "One-hit Mist",
+            "description": "It'll be hard to hit you... but you're already so weak!",
+            "colour": "#EEDDFF",
+            "weight": 5,
+            "modifiers": {
+                "quizPlayersAllowed": 10,
+                "defaultHp": 1,
+                "normalDamage": 1,
+                "critDamage": 1,
+                "critOdds": 0,
+                "missOdds": 90,
+                "quizRoundTime": 10000,
+                "quizPointModifier": 1,
+                "quizRounds": 10,
+                "freeReward": 10,
+                "winningFactionReward": 15,
+                "topThreeReward": 25,
+                "rewardModifier": 1
+            }
+        }
+    ],
+    "messages": {
+        "dudUsernames": [
+            "i'm a dud user",
+            "hi adolpo",
+            "hi sirgy",
+            "hi kalub",
+            "basselm",
+            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"
+        ],
+        "error": [
+            "This shouldn't happen! Some error occured and we'll get about fixin' it. Apologies for the inconvenience!"
+        ],
+        "signedUp": [
+            "You're in, bud! You'll be a {faction} member!",
+            "Signed up and ready to go as a {faction} soldier!",
+            "Go for glory, bud! Show them that {faction} soldiers are the best!",
+            "You've got this! You're a {faction} member! Get them good!",
+            "Yeah, you're signed up! As a {faction} member!"
+        ],
+        "alreadySignedUp": [
+            "You want to sign up again?? You've gotta calm down, bud!",
+            "You're already enrolled, no backing out now!",
+            "Seriously?! You want to mess me up like that?!",
+            "Ain't no foolin' me! You're already signed up, bud!",
+            "We do not approve.",
+            "You need to calm down! I wouldn't want you dead twice!",
+            "Hey now, keep the greed down! The rewards aren't going to you twice!",
+            "Get out of here!",
+            "Back for more? This isn't a buffet!"
+        ],
+        "fewJoined": [
+            "Not enough people joined, what the hell?! You're trying to kill me?",
+            "Not enough people joined!! I'll report this to the higher ups, you scramps!",
+            "Not enough people joined, are you insane?! We're going to die out here!",
+            "Not enough people joined... Deeply disappointed, I thought you had my back!",
+            "Not enough people joined. I've been completely abandoned!",
+            "Not enough people joined! How will I test your strength now?!",
+            "Not enough people joined... The recruitment can't end here!"
+        ],
+        "battleStarted": [
+            "The adventure begins!",
+            "War entails!",
+            "A battle commences!"
+        ],
+        "battleHitText": [
+            "{attacker} hit {defender}!"
+        ],
+        "battleCritText": [
+            "{attacker} destroyed {defender}!"
+        ],
+        "battleMissText": [
+            "{attacker} missed {defender}!"
+        ],
+        "battleKillText": [
+            "{attacker} killed {defender}."
+        ],
+        "notInQuiz": [
+            "You aren't a part of this quiz!",
+            "Can't mess with me so easily!",
+            "We do not approve.",
+            "Your answer is invalid!",
+            "Run while you can, scramp!"
+        ],
+        "alreadyRespondedQuiz": [
+            "You've already responded! Ain't no backing out now."
+        ],
+        "firstAnswerQuiz": [
+            "You got the first answer! You got {points} points for it. Nice one!"
+        ],
+        "correctAnswerQuiz": [
+            "You got it right! {points} points earned for your response."
+        ],
+        "wrongAnswerQuiz": [
+            "You were wrong! Unfortunate."
+        ]
+    },
+    "questions": [
+        {
+            "title": "Who created the Clash Clan originally?",
+            "answer": 1,
+            "options": [
+                "LMO",
+                "Sieggy",
+                "Citrina",
+                "Quqqo",
+                "Bassem"
+            ]
+        },
+        {
+            "title": "When was the Mining Update for Pixel Worlds released?",
+            "answer": 3,
+            "options": [
+                "September 2nd, 2020",
+                "August 25th, 2020",
+                "May 65th, 2020",
+                "August 31st, 2020",
+                "September 16th, 2020"
+            ]
+        },
+        {
+            "title": "How many planets are between the Sun & Mars?",
+            "answer": 0,
+            "options": [
+                "3",
+                "2",
+                "4"
+            ]
+        },
+        {
+            "title": "How many countries are there in Africa?",
+            "answer": 1,
+            "options": [
+                "42",
+                "54",
+                "35",
+                "22"
+            ]
+        },
+        {
+            "title": "Which oceans does Russia border?",
+            "answer": 3,
+            "options": [
+                "Atlantic & Arctic",
+                "Pacific & Indian",
+                "Arctic & Indian",
+                "Pacific & Arctic",
+                "Atlantic & Indian"
+            ]
+        },
+        {
+            "title": "Which is incorrect about Discord Nitro subscriptions?",
+            "answer": 0,
+            "options": [
+                "Up to 1080p streaming resolution",
+                "Double the message length",
+                "2 free server boosts",
+                "Ability to join up to 200 servers",
+                "Use custom emoji in other servers"
+            ]
+        },
+        {
+            "title": "What is the Superhero Event set during the month of January?",
+            "answer": 3,
+            "options": [
+                "Sir Laser",
+                "Captain Grit",
+                "Sup-a-Fly",
+                "Blackbird",
+                "Gloomy Clubber"
+            ]
+        },
+        {
+            "title": "How many times does the Earth fully rotate in a day?",
+            "answer": 1,
+            "options": [
+                "24 times",
+                "1 time",
+                "12 times",
+                "48 times",
+                "6 times"
+            ]
+        },
+        {
+            "title": "How many countries are bordering Cambodia?",
+            "answer": 0,
+            "options": [
+                "3",
+                "5",
+                "1",
+                "2"
+            ]
+        },
+        {
+            "title": "In what year did Ukraine become independant?",
+            "answer": 3,
+            "options": [
+                "1987",
+                "2003",
+                "1997",
+                "1991"
+            ]
+        },
+        {
+            "title": "When is Independance Day for the United States of America?",
+            "answer": 4,
+            "options": [
+                "August 4th",
+                "January 1st",
+                "February 31st",
+                "July 1st",
+                "July 4th",
+                "November 7th"
+            ]
+        },
+        {
+            "title": "Test",
+            "answer": 0,
+            "options": [
+                "Test"
+            ]
+        },
+        {
+            "title": "Test 2",
+            "answer": 7,
+            "options": [
+                "Test1",
+                "Test2",
+                "Test3",
+                "Test4",
+                "Test5",
+                "Test6",
+                "Test7",
+                "This one is the answer"
+            ]
+        },
+        {
+            "title": "This is a test.",
+            "answer": 3,
+            "options": [
+                "Hi!",
+                "Hi!!",
+                "Hi!!!",
+                "The correct option."
+            ]
+        }
+    ]
+}

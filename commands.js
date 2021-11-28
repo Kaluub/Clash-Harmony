@@ -1,19 +1,19 @@
 const {readdirSync} = require('fs');
 const {Collection} = require('discord.js');
 
-const commands = new Collection();
-const commandFiles = readdirSync('./commands').filter(file => file.endsWith('.js'));
-for(const file of commandFiles){
-    const command = require(`./commands/${file}`);
-    commands.set(command.name,command);
+function dirToCollection(path) {
+    const col = new Collection();
+    const files = readdirSync(path).filter(file => file.endsWith('.js'));
+    files.forEach(file => {
+        const data = require(`./${path}/${file}`);
+        if(!data.archived) col.set(data.name, data);
+    });
+    return col;
 };
 
-const consoleCommands = new Collection();
-const consoleCommandFiles = readdirSync('./console').filter(file => file.endsWith('.js'));
-for(const file of consoleCommandFiles){
-    const command = require(`./console/${file}`);
-    consoleCommands.set(command.name,command);
-};
+const commands = dirToCollection('./commands');
+const contexts = dirToCollection('./contexts');
+const consoleCommands = dirToCollection('./console');
 
 const events = [];
 const eventFiles = readdirSync('./events').filter(file => file.endsWith('.js'));
@@ -22,4 +22,4 @@ for(const file of eventFiles){
     events.push(event);
 };
 
-module.exports = { commands, consoleCommands, events };
+module.exports = { commands, contexts, consoleCommands, events };

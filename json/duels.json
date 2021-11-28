@@ -20,8 +20,10 @@
     ],
     "missText": [
         "{attacker} kicked too far from {defender}!",
+        "{attacker} made a fool of himself in front of {defender}."
+    ],
+    "dodgeText": [
         "{defender} jumped out of {attacker}'s way.",
-        "{attacker} made a fool of himself in front of {defender}.",
         "A wild {attacker} fell into {defender}'s single-use trap!"
     ],
     "killText": [
