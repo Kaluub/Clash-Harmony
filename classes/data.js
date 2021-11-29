@@ -1,5 +1,19 @@
 const Keyv = require('keyv');
-const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+const oldDb = new Keyv('sqlite://data/users.sqlite', {namespace: "users"});
+
+const { MongoClient } = require('mongodb');
+const dbclient = new MongoClient('mongodb://localhost:27017');
+
+(async () => {
+    try {
+        await dbclient.connect();
+    } catch {
+        throw 'Database error!';
+    };
+})();
+
+const db = dbclient.db("ClashBotBeta");
+const users = db.collection("users");
 
 let lockedIds = [];
 
@@ -122,12 +136,18 @@ class Data {
     };
 
     static async get(guildID, userID){
-        const data = await userdb.get(`${guildID}/${userID}`);
+        let data = await oldDb.get(`${guildID}/${userID}`);
+        if(data) {
+            console.log(`Migration from old DB for: ${guildID}/${userID}`);
+            await oldDb.delete(`${guildID}/${userID}`);
+        } else {
+            data = await users.findOne({_id: `${guildID}/${userID}`});
+        };
         return new Data(data);
     };
 
     static async set(guildID, userID, data){
-        await userdb.set(`${guildID}/${userID}`, data);
+        await users.updateOne({_id: `${guildID}/${userID}`}, {$set: data}, {upsert: true});
         return new Data(data);
     };
 
