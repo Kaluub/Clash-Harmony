@@ -9,11 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@keyv/sqlite": "^2.0.3",
     "canvas": "^2.8.0",
     "discord-rpc": "^4.0.1",
-    "discord.js": "^13.3.1",
-    "keyv": "^4.0.4",
+    "discord.js": "^13.6.0",
     "mongodb": "^4.2.0",
     "node-cron": "^3.0.0",
     "node-fetch": "^2.6.1"

@@ -283,6 +283,19 @@ module.exports = {
                     ]
                 }
             ]
+        },
+        {
+            "name": "block",
+            "description": "Block or unblock a user from using the bot.",
+            "type": "SUB_COMMAND",
+            "options": [
+                {
+                    "name": "member",
+                    "description": "The member to block from using the bot.",
+                    "type": "USER",
+                    "required": true
+                }
+            ]
         }
     ],
     execute: async ({interaction}) => {

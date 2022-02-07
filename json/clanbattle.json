@@ -137,7 +137,7 @@
                 "normalDamage": 1,
                 "critDamage": 1,
                 "critOdds": 0,
-                "missOdds": 90,
+                "missOdds": 80,
                 "quizRoundTime": 10000,
                 "quizPointModifier": 1,
                 "quizRounds": 10,
@@ -343,34 +343,106 @@
             ]
         },
         {
-            "title": "Test",
+            "title": "What complexity are Spike Bombs in Pixel Worlds?",
             "answer": 0,
             "options": [
-                "Test"
+                "51",
+                "49",
+                "77",
+                "100"
             ]
         },
         {
-            "title": "Test 2",
-            "answer": 7,
+            "title": "What date was the Harmony clan publically announced?",
+            "answer": 1,
             "options": [
-                "Test1",
-                "Test2",
-                "Test3",
-                "Test4",
-                "Test5",
-                "Test6",
-                "Test7",
-                "This one is the answer"
+                "January 35th, 2025",
+                "February 26th, 2021",
+                "November 13th, 2020",
+                "March 4th, 2021"
             ]
         },
         {
-            "title": "This is a test.",
-            "answer": 3,
+            "title": "How many minutes are in a second?",
+            "answer": 1,
             "options": [
-                "Hi!",
-                "Hi!!",
-                "Hi!!!",
-                "The correct option."
+                "60",
+                "1/60",
+                "0.001",
+                "1000",
+                "16"
+            ]
+        },
+        {
+            "title": "What level did Clash get in the first 7 days?",
+            "answer": 0,
+            "options": [
+                "Level 4",
+                "Level 3",
+                "Level 2",
+                "Level 5"
+            ]
+        },
+        {
+            "title": "Which of these is a valid IP address?",
+            "answer": 0,
+            "options": [
+                "16.86.2.8",
+                "364.25.88.167",
+                "267.24.864.58",
+                "30.235.69.44.186",
+                "528.258.947"
+            ]
+        },
+        {
+            "title": "How many countries are in the arctic circle?",
+            "answer": 1,
+            "options": [
+                "5",
+                "8",
+                "3",
+                "2",
+                "4"
+            ]
+        },
+        {
+            "title": "Who was the first person to join the Harmony clan after its creation?",
+            "answer": 0,
+            "options": [
+                "Carlosboss",
+                "BubblySky",
+                "ExPotato",
+                "Testified",
+                "VanPixels"
+            ]
+        },
+        {
+            "title": "How many provinces are there in Canada?",
+            "answer": 0,
+            "options": [
+                "10 provinces",
+                "3 provinces",
+                "2 provinces",
+                "6 provinces"
+            ]
+        },
+        {
+            "title": "John has to fence his backyard. His backyard is 20m by 20m, but he only needs to fence three sides. Each fencing unit is 50cm long, and costs $14 per unit. How much would it cost to fence John's backyard?",
+            "answer": 0,
+            "options": [
+                "$1,680",
+                "$2,340",
+                "$820",
+                "$14,480",
+                "$1,920"
+            ]
+        },
+        {
+            "title": "Can a player with minor rights in a world in Pixel Worlds edit a Diploma?",
+            "answer": 0,
+            "options": [
+                "True",
+                "False"
             ]
         }
     ]

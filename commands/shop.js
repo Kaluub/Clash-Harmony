@@ -1,6 +1,6 @@
 const { readJSON } = require('../json.js');
 const { MessageEmbed, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
-const Data = require('../classes/data.js');
+const { UserData } = require('../classes/data.js');
 const Locale = require('../classes/locale.js');
 
 function BaseEmbed(type, num, locale, points) {
@@ -18,17 +18,16 @@ function BaseSelect(locale) {
 };
 
 async function purchase(int, rewards, locale) {
-    let data = await Data.get(int.guild.id, int.user.id);
+    let data = await UserData.get(int.guild.id, int.user.id);
 
     const reward = rewards[int.values[0]];
-    console.log(reward)
     if(data.hasReward(reward)) return await int.reply({content: Locale.text(locale, "SHOP_ITEM_OWNED"), ephemeral: true});
     if(data.points < reward.price) return await int.reply({content: Locale.text(locale, "SHOP_USER_BROKE"), ephemeral: true});
     data.addReward(reward);
     data.points -= reward.price;
-    await Data.set(int.guild.id, int.user.id, data);
+    await UserData.set(int.guild.id, int.user.id, data);
     if(reward.type == 'roles') await int.member.roles.add(reward.id, 'Delivering purchase reward.');
-    return await int.reply({content: Locale.text(locale, "SHOP_TRANSACTION"), ephemeral: true});
+    return await int.reply({content: Locale.text(locale, "SHOP_TRANSACTION", reward.name), ephemeral: true});
 };
 
 module.exports = {
@@ -51,30 +50,30 @@ module.exports = {
         const menuRow = new MessageActionRow().addComponents(
             new MessageButton()
                 .setCustomId('backgrounds')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_BACKGROUNDS"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_BACKGROUNDS"))
                 .setStyle('PRIMARY'),
             new MessageButton()
                 .setCustomId('frames')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_FRAMES"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_FRAMES"))
                 .setStyle('PRIMARY'),
             new MessageButton()
                 .setCustomId('roles')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_ROLES"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_ROLES"))
                 .setStyle('PRIMARY')
         );
 
         const categoryRow = new MessageActionRow().addComponents(
             new MessageButton()
                 .setCustomId('back')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_BACK"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_BACK"))
                 .setStyle('SECONDARY'),
             new MessageButton()
                 .setCustomId('previous')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_PREVIOUS"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_PREVIOUS"))
                 .setStyle('PRIMARY'),
             new MessageButton()
                 .setCustomId('next')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_NEXT"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_NEXT"))
                 .setStyle('PRIMARY')
         );
 
@@ -82,28 +81,28 @@ module.exports = {
 
         const menuEmbed = new MessageEmbed()
             .setColor('#33AA33')
-            .setTitle(`${Locale.text(userdata.locale, "SHOP_TITLE")} (${member.user.tag}):`)
-            .setDescription(Locale.text(userdata.locale, "SHOP_DESC", userdata.points))
+            .setTitle(`${Locale.text(userdata.settings.locale, "SHOP_TITLE")} (${member.user.tag}):`)
+            .setDescription(Locale.text(userdata.settings.locale, "SHOP_DESC", userdata.points))
         
         let shop = {
             current: 'menu',
             backgrounds: {
                 pageNum: 1,
                 count: 0,
-                embeds: [BaseEmbed(Locale.text(userdata.locale, "BUTTON_BACKGROUNDS"), '1', userdata.locale, userdata.points)],
-                selects: [BaseSelect(userdata.locale)]
+                embeds: [BaseEmbed(Locale.text(userdata.settings.locale, "BUTTON_BACKGROUNDS"), '1', userdata.settings.locale, userdata.points)],
+                selects: [BaseSelect(userdata.settings.locale)]
             },
             frames: {
                 pageNum: 1,
                 count: 0,
-                embeds: [BaseEmbed(Locale.text(userdata.locale, "BUTTON_FRAMES"), '1', userdata.locale, userdata.points)],
-                selects: [BaseSelect(userdata.locale)]
+                embeds: [BaseEmbed(Locale.text(userdata.settings.locale, "BUTTON_FRAMES"), '1', userdata.settings.locale, userdata.points)],
+                selects: [BaseSelect(userdata.settings.locale)]
             },
             roles: {
                 pageNum: 1,
                 count: 0,
-                embeds: [BaseEmbed(Locale.text(userdata.locale, "BUTTON_ROLES"), '1', userdata.locale, userdata.points)],
-                selects: [BaseSelect(userdata.locale)]
+                embeds: [BaseEmbed(Locale.text(userdata.settings.locale, "BUTTON_ROLES"), '1', userdata.settings.locale, userdata.points)],
+                selects: [BaseSelect(userdata.settings.locale)]
             }
         };
 
@@ -116,8 +115,8 @@ module.exports = {
 
             if(shop[reward.type].count > 14){
                 shop[reward.type].count = 0;
-                shop[reward.type].embeds.push(BaseEmbed(reward.type[0].toUpperCase() + reward.type.substring(1), shop[reward.type].embeds.length + 1, userdata.locale, userdata.points));
-                shop[reward.type].selects.push(BaseSelect(userdata.locale));
+                shop[reward.type].embeds.push(BaseEmbed(reward.type[0].toUpperCase() + reward.type.substring(1), shop[reward.type].embeds.length + 1, userdata.settings.locale, userdata.points));
+                shop[reward.type].selects.push(BaseSelect(userdata.settings.locale));
             };
             
             shop[reward.type].count += 1;
@@ -168,11 +167,11 @@ module.exports = {
             };
 
             if(int.customId == 'purchase') {
-                await purchase(int, rewards, userdata.locale);
+                await purchase(int, rewards, userdata.settings.locale);
             };
         });
         collector.on('end', async () => {
-            if(!msg.deleted) await msg.edit({embeds: [new MessageEmbed().setDescription(Locale.text(userdata.locale, "EXPIRED"))], components: []});
+            if(msg.editable) await msg.edit({embeds: [new MessageEmbed().setDescription(Locale.text(userdata.settings.locale, "EXPIRED"))], components: []});
         });
     }
 };

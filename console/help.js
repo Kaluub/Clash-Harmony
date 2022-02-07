@@ -7,7 +7,7 @@ module.exports = {
         if(args[0]){
             const command = commands.get(args[0]) || commands.find(cmd => cmd.aliases && cmd.aliases.includes(args[0]));
             if(!command) return console.log("\x1b[32m%s\x1b[0m", 'No command found!');
-            msg = `Help menu:\nName: ${command.name}\nUsage: ${command.usage}\nAliases: ${command.aliases.join('; ')}`;
+            msg = `Help menu:\nName: ${command.name}\nUsage: ${command.usage}`;
         } else {
             msg = `List of commands:`;
             for(const [key,cmd] of commands.entries()){
@@ -15,6 +15,6 @@ module.exports = {
                 msg = msg + `\n- ${cmd.name}`;
             };
         };
-        return console.log("\x1b[32m%s\x1b[0m",msg);
+        return console.log("\x1b[32m%s\x1b[0m", msg);
     }
 };

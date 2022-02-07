@@ -1,11 +1,11 @@
 module.exports = {
     name:'guilds',
     async run({client, res}){
-        let guilds = [];
+        const guilds = [];
         await client.guilds.cache.forEach(guild => {
-            guilds.push({name:guild.name, id:guild.id})
+            guilds.push({name: guild.name, id: guild.id, members: guild.memberCount});
         });
         res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify({count: guilds.length, guilds: guilds}, null, 4));
+        res.end(JSON.stringify({guildCount: guilds.length, guilds: guilds}, null, 4));
     }
 };

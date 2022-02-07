@@ -5,12 +5,17 @@ module.exports = {
     name: 'Toggle Clash',
     admin: true,
     execute: async ({interaction}) => {
-        const member = interaction.options.getMember('user');
-        if(!member.manageable) return {content: `Role hierarchy denies your operation.`, ephemeral: true};
-
         const config = await readJSON('config.json');
         const channel = await interaction.guild.client.channels.fetch(config['clashMembersMessageChannel']);
         const msg = await channel.messages.fetch(config['clashMembersMessage']);
+        const member = interaction.options.getMember('user');
+
+        if(!member) {
+            const embed = await updateMembers(interaction.guild, 'clash');
+            await msg.edit({embeds: [embed]});
+            return {content: `This member has left the server, so the member list was updated to reflect that.`, ephemeral: true};
+        };
+        if(!member.manageable) return {content: `Role hierarchy denies your operation.`, ephemeral: true};
 
         if(member.roles.cache.hasAny('636987578125647923', '644846211429433344')) {
             try {

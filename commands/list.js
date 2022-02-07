@@ -14,17 +14,17 @@ module.exports = {
 
         const embed = new MessageEmbed()
             .setColor('#33AA33')
-            .setTitle(Locale.text(userdata.locale, "LIST_TITLE"))
-            .setDescription(Locale.text(userdata.locale, "LIST_DESC"))
+            .setTitle(Locale.text(userdata.settings.locale, "LIST_TITLE"))
+            .setDescription(Locale.text(userdata.settings.locale, "LIST_DESC"))
         
         const row = new MessageActionRow().addComponents(
             new MessageButton()
                 .setCustomId('backgrounds')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_BACKGROUNDS"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_BACKGROUNDS"))
                 .setStyle('SECONDARY'),
             new MessageButton()
                 .setCustomId('frames')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_FRAMES"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_FRAMES"))
                 .setStyle('SECONDARY')
         );
         
@@ -33,31 +33,31 @@ module.exports = {
         let collector = msg.createMessageComponentCollector({idle: 30000});
     
         collector.on('collect', async int => {
-            if(int.user.id !== member.id) return await int.reply({content: Locale.text(userdata.locale, "NOT_FOR_YOU"), ephemeral: true});
+            if(int.user.id !== member.id) return await int.reply({content: Locale.text(userdata.settings.locale, "NOT_FOR_YOU"), ephemeral: true});
 
             if(int.customId == 'backgrounds'){ // Backgrounds:
-                embed.setDescription(Locale.text(userdata.locale, "LIST_BACKGROUNDS"));
+                embed.setDescription(Locale.text(userdata.settings.locale, "LIST_BACKGROUNDS"));
                 for(const id of userdata.unlocked.backgrounds){
                     const background = rewards[id];
-                    embed.setDescription(embed.description + Locale.text(userdata.locale, "LIST_REWARD", background.name));
+                    embed.setDescription(embed.description + Locale.text(userdata.settings.locale, "LIST_REWARD", background.name));
                 };
             };
 
             if(int.customId == 'frames'){ // Frames:
-                embed.setDescription(Locale.text(userdata.locale, "LIST_FRAMES"));
+                embed.setDescription(Locale.text(userdata.settings.locale, "LIST_FRAMES"));
                 for(const id of userdata.unlocked.frames){
                     const frame = rewards[id];
-                    embed.setDescription(embed.description + Locale.text(userdata.locale, "LIST_REWARD", frame.name));
+                    embed.setDescription(embed.description + Locale.text(userdata.settings.locale, "LIST_REWARD", frame.name));
                 };
             };
 
-            embed.setDescription(embed.description + Locale.text(userdata.locale, "LIST_CONCLUSION"));
+            embed.setDescription(embed.description + Locale.text(userdata.settings.locale, "LIST_CONCLUSION"));
             embed.setTimestamp(Date.now() + 30000);
             await int.update({embeds:[embed]});
         });
         collector.on('end', async () => {
-            embed.setFooter(Locale.text(userdata.locale, "EXPIRED"));
-            if(!msg.deleted) await msg.edit({embeds:[embed], components:[]});
+            embed.setFooter({name: Locale.text(userdata.settings.locale, "EXPIRED")});
+            if(msg.editable) await msg.edit({embeds:[embed], components:[]});
         });
     }
 };

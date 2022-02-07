@@ -1,0 +1,117 @@
+[
+    {
+        "date": "25/12/",
+        "name": "DAILY_EVENT_CHRISTMAS",
+        "rewards": ["xmas_background", "919076222280024084"]
+    },
+    {
+        "date": "1/1/",
+        "name": "DAILY_EVENT_NEW_YEARS",
+        "rewards": [10, "new_years_background", "919079022024089621"]
+    },
+    {
+        "date": "14/2/",
+        "name": "DAILY_EVENT_VALENTINES",
+        "rewards": [5]
+    },
+    {
+        "date": "26/12/",
+        "name": "DAILY_EVENT_BOXING_DAY",
+        "rewards": [3, "DISCOUNT_5"]
+    },
+    {
+        "date": "31/10/",
+        "name": "DAILY_EVENT_HALLOWEEN",
+        "rewards": [10, "halloween_background", "919079239435825252"]
+    },
+    {
+        "date": "2/",
+        "name": "DAILY_EVENT_RANDOM",
+        "rewards": [3]
+    },
+    {
+        "date": "8/",
+        "name": "DAILY_EVENT_RANDOM",
+        "rewards": [3]
+    },
+    {
+        "date": "11/",
+        "name": "DAILY_EVENT_RANDOM",
+        "rewards": [3]
+    },
+    {
+        "date": "14/",
+        "name": "DAILY_EVENT_RANDOM",
+        "rewards": [3]
+    },
+    {
+        "date": "18/",
+        "name": "DAILY_EVENT_RANDOM",
+        "rewards": [3]
+    },
+    {
+        "date": "22/",
+        "name": "DAILY_EVENT_RANDOM",
+        "rewards": [3]
+    },
+    {
+        "date": "25/",
+        "name": "DAILY_EVENT_RANDOM",
+        "rewards": [3]
+    },
+    {
+        "date": "29/",
+        "name": "DAILY_EVENT_RANDOM",
+        "rewards": [3]
+    },
+    {
+        "date": "17/1/2022",
+        "name": "DAILY_EVENT_FULL_MOON",
+        "rewards": [3]
+    },
+    {
+        "date": "16/2/2022",
+        "name": "DAILY_EVENT_FULL_MOON",
+        "rewards": [3]
+    },
+    {
+        "date": "18/3/2022",
+        "name": "DAILY_EVENT_FULL_MOON",
+        "rewards": [3]
+    },
+    {
+        "date": "16/4/2022",
+        "name": "DAILY_EVENT_FULL_MOON",
+        "rewards": [3]
+    },
+    {
+        "date": "16/5/2022",
+        "name": "DAILY_EVENT_FULL_MOON",
+        "rewards": [3]
+    },
+    {
+        "date": "26/1/",
+        "name": "DAILY_EVENT_ALDOPLE_BIRTHDAY",
+        "rewards": ["aldople_frame", "aldople_background"]
+    },
+    {
+        "date": "25/11/",
+        "name": "DAILY_EVENT_KALUUB_BIRTHDAY",
+        "rewards": ["kaluub_frame", "kaluub_background"]
+    },
+    {
+        "date": "8/2/",
+        "name": "DAILY_EVENT_CITRINA_BIRTHDAY",
+        "rewards": ["citrina_frame", "citrina_background"]
+    },
+    {
+        "date": "25/10/",
+        "name": "DAILY_EVENT_GHUSTIE_BIRTHDAY",
+        "rewards": ["quqqo_frame", "quqqo_background"]
+    },
+    {
+        "date": "21/3/",
+        "name": "DAILY_EVENT_SIEGGY_BIRTHDAY",
+        "rewards": ["sieggy_frame", "sieggy_background"]
+    }
+]

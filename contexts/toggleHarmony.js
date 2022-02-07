@@ -5,12 +5,17 @@ module.exports = {
     name: 'Toggle Harmony',
     admin: true,
     execute: async ({interaction}) => {
-        const member = interaction.options.getMember('user');
-        if(!member.manageable) return {content: `Role hierarchy denies your operation.`, ephemeral: true};
-
         const config = await readJSON('config.json');
         const channel = await interaction.guild.client.channels.fetch(config['harmonyMembersMessageChannel']);
         const msg = await channel.messages.fetch(config['harmonyMembersMessage']);
+        const member = interaction.options.getMember('user');
+
+        if(!member) {
+            const embed = await updateMembers(interaction.guild, 'harmony');
+            await msg.edit({embeds: [embed]});
+            return {content: `This member has left the server, so the member list was updated to reflect that.`, ephemeral: true};
+        };
+        if(!member.manageable) return {content: `Role hierarchy denies your operation.`, ephemeral: true};
 
         if(member.roles.cache.hasAny('813870575453077504', '813847814412042280')) {
             try {

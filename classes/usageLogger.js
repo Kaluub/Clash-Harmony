@@ -29,7 +29,7 @@ class UsageLogger {
             guildId ? item.guildId === guildId : true &&
             channelId ? item.channelId === channelId : true &&
             userId ? item.userId === userId : true &&
-            actionName ? item.actionName === actionName : true
+            actionName ? item.actionName.includes(actionName) : true
         );
     };
 

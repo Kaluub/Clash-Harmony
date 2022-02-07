@@ -25,13 +25,12 @@ function interface(client){
 
     http.createServer(async (req, res) => {
         const address = req.socket.remoteAddress;
-        console.log(address);
         let data = receivedData.get(address) ?? new WebData(address);
         data.connections.push({time: Date.now()});
         data.connections = data.connections.filter(conn => conn.time > Date.now() - 600000);
         receivedData.set(address, data);
 
-        if(data.connections.filter(conn => conn.time > Date.now() - 60000).length > 60) { // more than 60 requests in the last minute
+        if(data.connections.length > 60) { // more than 60 requests in the last minute
             res.writeHead(400, {'Content-Type': 'text/html'});
             return res.end("400 Ratelimit");
         };
@@ -42,7 +41,7 @@ function interface(client){
             const methodName = parsed.pathname.slice(5).slice(0, -1);
             const method = methods.get(methodName);
             if(method){
-                try{
+                try {
                     await method.run({client:client, parsed:parsed, req:req, res:res});
                 } catch(error){
                     console.error(error);

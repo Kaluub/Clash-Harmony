@@ -1,7 +1,7 @@
 const { MessageEmbed, MessageButton, MessageActionRow } = require("discord.js");
 const { readJSON } = require('../json.js');
 const Locale = require('../classes/locale.js');
-const Data = require("../classes/data.js");
+const { UserData } = require("../classes/data.js");
 
 module.exports = {
     name:'vanity',
@@ -9,7 +9,7 @@ module.exports = {
     usage:'/vanity',
     execute: async ({interaction, message, userdata}) => {
         const guild = interaction?.guild || message?.guild;
-        if(guild.id !== "636986136283185172") return Locale.text(userdata.locale, "SERVER_ERROR");
+        if(guild.id !== "636986136283185172") return Locale.text(userdata.settings.locale, "SERVER_ERROR");
         
         let member = interaction?.member || message?.member;
         await member.fetch();
@@ -18,17 +18,17 @@ module.exports = {
         member.roles.cache.each(role => {
             if(roles.includes(role.id) && !userdata.unlocked.roles.includes(role.id)) userdata.unlocked.roles.push(role.id);
         });
-        await Data.set(guild.id, member.user.id, userdata);
-        if(userdata.unlocked.roles.length < 1) return Locale.text(userdata.locale, "NO_VANITY_ROLES");
+        await UserData.set(guild.id, member.user.id, userdata);
+        if(userdata.unlocked.roles.length < 1) return Locale.text(userdata.settings.locale, "NO_VANITY_ROLES");
 
-        let desc = Locale.text(userdata.locale, "VANITY_DESC");
+        let desc = Locale.text(userdata.settings.locale, "VANITY_DESC");
         for(const id of userdata.unlocked.roles){
             const role = await guild.roles.fetch(id);
             desc += `\n${member.roles.cache.has(id) ? `🟢` : `🔴`} ${role.name}`;
         };
 
         let embed = new MessageEmbed()
-            .setTitle(Locale.text(userdata.locale, "VANITY_TITLE"))
+            .setTitle(Locale.text(userdata.settings.locale, "VANITY_TITLE"))
             .setDescription(desc)
             .setColor(`#228866`)
             .setTimestamp()
@@ -36,19 +36,19 @@ module.exports = {
         const row = new MessageActionRow().addComponents(
             new MessageButton()
                 .setCustomId('up')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_UP"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_UP"))
                 .setStyle('SECONDARY'),
             new MessageButton()
                 .setCustomId('select')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_SELECT"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_SELECT"))
                 .setStyle('SUCCESS'),
             new MessageButton()
                 .setCustomId('down')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_DOWN"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_DOWN"))
                 .setStyle('SECONDARY'),
             new MessageButton()
                 .setCustomId('clean')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_CLEAN"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_CLEAN"))
                 .setStyle('DANGER')
         );
 
@@ -63,7 +63,7 @@ module.exports = {
 
         const collector = msg.createMessageComponentCollector({idle:30000});
         collector.on('collect', async (interaction) => {
-            if(interaction.user.id !== member.user.id) return interaction.reply({content: Locale.text(userdata.locale, "NOT_FOR_YOU"), ephemeral: true});
+            if(interaction.user.id !== member.user.id) return interaction.reply({content: Locale.text(userdata.settings.locale, "NOT_FOR_YOU"), ephemeral: true});
             if(interaction.customId == 'up'){
                 sel -= 1;
                 if(sel < 0) sel = embed.description.split('\n').length - 4;
@@ -82,7 +82,7 @@ module.exports = {
                 member = await member.fetch(true);
 
                 // Update desc:
-                desc = Locale.text(userdata.locale, "VANITY_DESC");
+                desc = Locale.text(userdata.settings.locale, "VANITY_DESC");
                 for(const rid of userdata.unlocked.roles){
                     const role = await guild.roles.fetch(rid);
                     desc += `\n${member.roles.cache.has(rid) ? `🟢` : `🔴`} ${role.name}`;
@@ -104,7 +104,7 @@ module.exports = {
             await interaction.update({embeds:[embed.setDescription(descArr.join('\n'))]});
         });
         collector.on('end', async () => {
-            if(!msg.deleted) await msg.edit({embeds:[embed], components: []});
+            if(msg.editable) await msg.edit({embeds:[embed], components: []});
         });
     }
 };

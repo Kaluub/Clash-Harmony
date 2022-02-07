@@ -72,12 +72,33 @@
     "clash_one_year_anniversary_background": {
         "id": "clash_one_year_anniversary_background",
         "type": "backgrounds",
-        "name": "Clash 1 Year Anniversary Background",
+        "name": "Clash 1st Year Anniversary Background",
         "desc": "Festive background for celebration and appreciation of the Clash clan's first anniversary! Design by Aldople.",
         "img": "clash_one_year_anniversary_background.png",
         "colour": "#FFD700",
         "endTime": 1640995200000,
-        "price": 30,
+        "price": 15,
+        "shown": true
+    },
+    "clash_two_year_anniversary_background": {
+        "id": "clash_two_year_anniversary_background",
+        "type": "backgrounds",
+        "name": "Clash 2nd Year Anniversary Background",
+        "desc": "Aesthetic background created to honour the second anniversary of the Clash! A warm thank you to the many members of the Clash clan, generously funding and bankrolling our clan's endeavours. You're all truly wonderful. Have a good one! Design by Aldople.",
+        "img": "ClashAnniversary2ndBackground.png",
+        "colour": "#CBC3E3",
+        "price": 40,
+        "shown": true
+    },
+    "harmony_one_year_anniversary_background": {
+        "id": "harmony_one_year_anniversary_background",
+        "type": "backgrounds",
+        "name": "Harmony 1st Year Anniversary Background",
+        "desc": "Harmony looks better than ever! Huh. It's been a year already, Harmony? A warm thank you to the many members of the Harmony clan, generously funding and bankrolling our clan's endeavours. You're all truly wonderful. Have a good one! Design by Aldople.",
+        "img": "HarmonyAnniversary1stBackground.png",
+        "colour": "#DDDDDD",
+        "startTime": 1640995200000,
+        "price": 40,
         "shown": true
     },
     "pixel_worlds_background": {
@@ -114,7 +135,7 @@
         "id": "citrina_background",
         "type": "backgrounds",
         "name": "Citrina's Background",
-        "desc": "Custom background for Citrina, but even if you aren't them — it's solvable with a purchase from the !shop. Features everyone's favourite fruit — lemon! Design by Aldople.",
+        "desc": "Custom background for Citrina, but even if you aren't them — it's solvable with a purchase from the /shop. Features everyone's favourite fruit — lemon! Design by Aldople.",
         "img": "CitrinaBackground.png",
         "colour": "#FFFF00",
         "price": 50,
@@ -124,7 +145,7 @@
         "id": "quqqo_background",
         "type": "backgrounds",
         "name": "Ghustie's Background",
-        "desc": "Custom background for Ghustie, but even if you aren't them — it's solvable with a purchase from the !shop. Created by the one and only. Design by Ghustie.",
+        "desc": "Custom background for Ghustie, but even if you aren't them — it's solvable with a purchase from the /shop. Created by the one and only. Design by Ghustie.",
         "img": "QuqqoBackground.png",
         "colour": "#FFFFFF",
         "price": 50,
@@ -134,7 +155,7 @@
         "id": "aldople_background",
         "type": "backgrounds",
         "name": "Aldople's Background",
-        "desc": "Custom background for Aldople, but even if you aren't them — it's solvable with a purchase from the !shop. It's a piece of Ivan Marchuk's art titled Landscape, 1980. Design by the same person.",
+        "desc": "Custom background for Aldople, but even if you aren't them — it's solvable with a purchase from the /shop. It's a piece of Ivan Marchuk's art titled Landscape, 1980. Design by the same person.",
         "img": "AldopleBackground.png",
         "colour": "#FFFFFF",
         "price": 50,
@@ -144,7 +165,7 @@
         "id": "sieggy_background",
         "type": "backgrounds",
         "name": "Sieggy's Background",
-        "desc": "Custom background for Sieggy, but even if you aren't them — it's solvable with a purchase from the !shop. Sieggy & The Second Heart-themed! Design by Aldople.",
+        "desc": "Custom background for Sieggy, but even if you aren't them — it's solvable with a purchase from the /shop. Sieggy & The Second Heart-themed! Design by Aldople.",
         "img": "SieggyBackground.png",
         "colour": "#FFC0CB",
         "price": 50,
@@ -154,7 +175,7 @@
         "id": "kaluub_background",
         "type": "backgrounds",
         "name": "Kaluub's Background",
-        "desc": "Custom background for Kaluub, but even if you aren't them — it's solvable with a purchase from the !shop. Kaluub recommends. Design by Aldople.",
+        "desc": "Custom background for Kaluub, but even if you aren't them — it's solvable with a purchase from the /shop. Kaluub recommends. Design by Aldople.",
         "img": "KaluubBackground.png",
         "colour": "#00FF00",
         "price": 50,
@@ -164,7 +185,7 @@
         "id": "append_background",
         "type": "backgrounds",
         "name": "Append's Background",
-        "desc": "Custom background for Append, but even if you aren't them — it's solvable with a purchase from the !shop. It's a Takagi-san! Design by Aldople.",
+        "desc": "Custom background for Append, but even if you aren't them — it's solvable with a purchase from the /shop. It's a Takagi-san! Design by Aldople.",
         "img": "AppendBackground.png",
         "colour": "#000000",
         "price": 50,
@@ -174,7 +195,7 @@
         "id": "zithi_background",
         "type": "backgrounds",
         "name": "Zithi's Background",
-        "desc": "Custom background for Zithi, but even if you aren't them — it's solvable with a purchase from the !shop. Maeve? Design by Aldople.",
+        "desc": "Custom background for Zithi, but even if you aren't them — it's solvable with a purchase from the /shop. Maeve? Design by Aldople.",
         "img": "ZithiBackground.png",
         "colour": "#FFFFFF",
         "price": 50,
@@ -184,9 +205,19 @@
         "id": "twins_background",
         "type": "backgrounds",
         "name": "Twins' Background",
-        "desc": "Custom background for Bassem & Bassel, but even if you aren't them — it's solvable with a purchase from the !shop. Twin cats for twins. Design by Aldople.",
+        "desc": "Custom background for Bassem & Bassel, but even if you aren't them — it's solvable with a purchase from the /shop. Twin cats for twins. Design by Aldople.",
         "img": "TwinsBackground.png",
         "colour": "#77DD77",
+        "price": 50,
+        "shown": true
+    },
+    "bubblysky_background": {
+        "id": "bubblysky_background",
+        "type": "backgrounds",
+        "name": "BubblySky's Background",
+        "desc": "Custom background for BubblySky, but even if you aren't them — it's solvable with a purchase from the /shop. This time, I took it literally. Design by Aldople.",
+        "colour": "#63C5DA",
+        "img": "BubblySkyBackground.png",
         "price": 50,
         "shown": true
     },
@@ -292,7 +323,7 @@
         "id": "golden_background",
         "type": "backgrounds",
         "name": "Golden Background",
-        "desc": "You went through quite a lot to get this. An ever-increasing chance. But how do you get the frame? Designed by Kaluub.",
+        "desc": "You went through quite a lot to get this. But how do you get the frame? Design by Kaluub.",
         "img": "golden_background.png",
         "colour": "#000000",
         "effects": [
@@ -302,14 +333,58 @@
             }
         ],
         "price": 0,
-        "shown": false
+        "shown": false,
+        "tradeable": true
+    },
+    "xmas_background": {
+        "id": "xmas_background",
+        "type": "backgrounds",
+        "name": "Christmas Background",
+        "desc": "Merry Christmas! Happy holidays! Design by Aldople.",
+        "img": "Christmas_Background.png",
+        "colour": "#FF1111",
+        "effects": [
+            {
+                "type": "snowflake",
+                "count": 15
+            },
+            {
+                "type": "snowflake_2",
+                "count": 15
+            }
+        ],
+        "price": 0,
+        "shown": false,
+        "tradeable": true
+    },
+    "new_years_background": {
+        "id": "new_years_background",
+        "type": "backgrounds",
+        "name": "New Year Background",
+        "desc": "Happy New Year! Happy holidays! Design by Aldople.",
+        "img": "New_Year_Background.png",
+        "colour": "#FFFFFF",
+        "price": 0,
+        "shown": false,
+        "tradeable": true
+    },
+    "halloween_background": {
+        "id": "halloween_background",
+        "type": "backgrounds",
+        "name": "Halloween Background",
+        "desc": "TODO",
+        "img": "default_background.png",
+        "colour": "#FFFFFF",
+        "price": 0,
+        "shown": false,
+        "tradeable": true
     },
     "effect_test": {
         "id": "effect_test",
         "type": "backgrounds",
         "name": "Effect Test",
         "desc": "Made for testing the effects. Not for the public eye! And is there really a designer for the work here...",
-        "img": "default_background.png",
+        "img": "effect_test.png",
         "colour": "#FFFFFF",
         "effects": [
             {
@@ -334,7 +409,8 @@
             }
         ],
         "price": -1,
-        "shown": false
+        "shown": false,
+        "tradeable": true
     },
     "default_frame": {
         "id": "default_frame",
@@ -352,7 +428,8 @@
         "desc": "The true treasure! There's only a 0.25% chance to get this one, and originally designed as an easter egg by Kaluub.",
         "img": "golden_frame.png",
         "price": 0,
-        "shown": false
+        "shown": false,
+        "tradeable": true
     },
     "clash_frame": {
         "id": "clash_frame",
@@ -384,11 +461,30 @@
     "clash_one_year_anniversary_frame": {
         "id": "clash_one_year_anniversary_frame",
         "type": "frames",
-        "name": "Clash 1 Year Anniversary Frame",
+        "name": "Clash 1st Year Anniversary Frame",
         "desc": "Festive frame for celebration and appreciation of the Clash clan's first anniversary! Design by Aldople.",
         "img": "clash_one_year_anniversary_frame.png",
         "endTime": 1640995200000,
-        "price": 35,
+        "price": 15,
+        "shown": true
+    },
+    "clash_two_year_anniversary_frame": {
+        "id": "clash_two_year_anniversary_frame",
+        "type": "frames",
+        "name": "Clash 2nd Year Anniversary Frame",
+        "desc": "The neon frame for the second anniversary of the Clash! A warm thank you to the many members of the Clash clan, generously funding and bankrolling our clan's endeavours. You're all truly wonderful. Have a great day! Design by Aldople.",
+        "img": "ClashAnniversary2ndFrame.png",
+        "price": 40,
+        "shown": true
+    },
+    "harmony_one_year_anniversary_frame": {
+        "id": "harmony_one_year_anniversary_frame",
+        "type": "frames",
+        "name": "Harmony 1st Year Anniversary Frame",
+        "desc": "Frame. Harmony. 365. You can tell a year passed if you put it this way. A warm thank you to the many members of the Harmony clan, generously funding and bankrolling our clan's endeavours. You're all truly wonderful. Have a good one! Design by Aldople.",
+        "img": "HarmonyAnniversary1stFrame.png",
+        "startTime": 1640995200000,
+        "price": 40,
         "shown": true
     },
     "pixel_worlds_frame": {
@@ -422,7 +518,7 @@
         "id": "citrina_frame",
         "type": "frames",
         "name": "Citrina's Frame",
-        "desc": "Custom frame for Citrina, but even if you aren't them — it's solvable with a purchase from the !shop. Features everyone's favourite fruit — lemon! Design by Aldople.",
+        "desc": "Custom frame for Citrina, but even if you aren't them — it's solvable with a purchase from the /shop. Features everyone's favourite fruit — lemon! Design by Aldople.",
         "img": "CitrinaFrame.png",
         "price": 50,
         "shown": true
@@ -431,7 +527,7 @@
         "id": "quqqo_frame",
         "type": "frames",
         "name": "Ghustie's Frame",
-        "desc": "Custom frame for Ghustie, but even if you aren't them — it's solvable with a purchase from the !shop. It's haunted! Design by Aldople.",
+        "desc": "Custom frame for Ghustie, but even if you aren't them — it's solvable with a purchase from the /shop. It's haunted! Design by Aldople.",
         "img": "QuqqoFrame.png",
         "price": 50,
         "shown": true
@@ -440,7 +536,7 @@
         "id": "aldople_frame",
         "type": "frames",
         "name": "Aldople's Frame",
-        "desc": "Custom frame for Aldople, but even if you aren't them — it's solvable with a purchase from the !shop. It's nothing, or is it? Designed by nobody.",
+        "desc": "Custom frame for Aldople, but even if you aren't them — it's solvable with a purchase from the /shop. It's nothing, or is it? Designed by nobody.",
         "img": "AldopleFrame.png",
         "price": 50,
         "shown": true
@@ -449,7 +545,7 @@
         "id": "sieggy_frame",
         "type": "frames",
         "name": "Sieggy's Frame",
-        "desc": "Custom frame for Sieggy, but even if you aren't them — it's solvable with a purchase from the !shop. Executioner's axes! Design by Aldople.",
+        "desc": "Custom frame for Sieggy, but even if you aren't them — it's solvable with a purchase from the /shop. Executioner's axes! Design by Aldople.",
         "img": "SieggyFrame.png",
         "price": 50,
         "shown": true
@@ -458,7 +554,7 @@
         "id": "kaluub_frame",
         "type": "frames",
         "name": "Kaluub's Frame",
-        "desc": "Custom frame for Kaluub, but even if you aren't them — it's solvable with a purchase from the !shop. Kaluub recommends. Design by Aldople.",
+        "desc": "Custom frame for Kaluub, but even if you aren't them — it's solvable with a purchase from the /shop. Kaluub recommends. Design by Aldople.",
         "img": "KaluubFrame.png",
         "price": 50,
         "shown": true
@@ -467,7 +563,7 @@
         "id": "append_frame",
         "type": "frames",
         "name": "Append's Frame",
-        "desc": "Custom frame for Append, but even if you aren't them — it's solvable with a purchase from the !shop. As beautiful as the sky. Design by Aldople.",
+        "desc": "Custom frame for Append, but even if you aren't them — it's solvable with a purchase from the /shop. As beautiful as the sky. Design by Aldople.",
         "img": "AppendFrame.png",
         "price": 50,
         "shown": true
@@ -476,7 +572,7 @@
         "id": "zithi_frame",
         "type": "frames",
         "name": "Zithi's Frame",
-        "desc": "Custom frame for Zithi, but even if you aren't them — it's solvable with a purchase from the !shop. No Maeve here. Design by Aldople.",
+        "desc": "Custom frame for Zithi, but even if you aren't them — it's solvable with a purchase from the /shop. No Maeve here. Design by Aldople.",
         "img": "ZithiFrame.png",
         "price": 50,
         "shown": true
@@ -485,8 +581,17 @@
         "id": "twins_frame",
         "type": "frames",
         "name": "Twins' Frame",
-        "desc": "Custom frame for Bassem & Bassel, but even if you aren't them — it's solvable with a purchase from the !shop. Twin cats for twins. Design by Aldople.",
+        "desc": "Custom frame for Bassem & Bassel, but even if you aren't them — it's solvable with a purchase from the /shop. Twin cats for twins. Design by Aldople.",
         "img": "TwinsFrame.png",
+        "price": 50,
+        "shown": true
+    },
+    "bubblysky_frame": {
+        "id": "bubblysky_frame",
+        "type": "frames",
+        "name": "BubblySky's Frame",
+        "desc": "Custom frame for BubblySky, but even if you aren't them — it's solvable with a purchase from the /shop. This time, I took it literally. Design by Aldople.",
+        "img": "BubblySkyFrame.png",
         "price": 50,
         "shown": true
     },
@@ -610,5 +715,37 @@
         "name": "Quadruple Zero Role",
         "price": 10000,
         "shown": true
+    },
+    "919076222280024084": {
+        "id": "919076222280024084",
+        "type": "roles",
+        "name": "Vanity Role — 🎄",
+        "desc": "Happy holidays! A vanity role obtained if you use `/daily` on the 25th of December.",
+        "price": 0,
+        "shown": false
+    },
+    "919079239435825252": {
+        "id": "919079239435825252",
+        "type": "roles",
+        "name": "Vanity Role — 🎃",
+        "desc": "It's spooky! A vanity role obtained if you use `/daily` on the 31st of October.",
+        "price": 666,
+        "shown": false
+    },
+    "919079808644841472": {
+        "id": "919079808644841472",
+        "type": "roles",
+        "name": "Vanity Role — 🍀",
+        "desc": "Lucky day! A vanity role obtained if you use `/daily` on the 17th of March.",
+        "price": 0,
+        "shown": false
+    },
+    "919079022024089621": {
+        "id": "919079022024089621",
+        "type": "roles",
+        "name": "Vanity Role — 🎉",
+        "desc": "Another year! A vanity role obtained if you use `/daily` on the 1st of January.",
+        "price": 0,
+        "shown": false
     }
 }

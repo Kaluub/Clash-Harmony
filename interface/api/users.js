@@ -1,13 +1,11 @@
-const Keyv = require('keyv');
-const userdb = new Keyv('sqlite://data/users.sqlite', {namespace:'users'});
+const { UserData } = require('../../classes/data.js');
 
 module.exports = {
-    name:'users',
-    async run({parsed, res}){
+    name: 'users',
+    run: async ({parsed, res}) => {
         if(parsed.query.guildID && parsed.query.userID){
-            let data = await userdb.get(`${parsed.query.guildID}/${parsed.query.userID}`);
-            if(!data) data = null;
-            let userdata = JSON.stringify(data, null, 4);
+            const data = await UserData.get(parsed.query.guildID, parsed.query.userID);
+            const userdata = JSON.stringify(data, null, 4);
             res.writeHead(200, {'Content-Type': 'application/json'});
             res.end(userdata);
         } else {

@@ -69,7 +69,7 @@ module.exports = {
         }
     ],
     execute: async ({interaction, userdata}) => {
-        if(!interaction) return Locale.text(userdata.locale, "SLASH_COMMAND_ONLY");
+        if(!interaction) return Locale.text(userdata.settings.locale, "SLASH_COMMAND_ONLY");
         const embed = new MessageEmbed();
         const row = new MessageActionRow();
         for(const id in interaction.options.data){
@@ -80,16 +80,16 @@ module.exports = {
                 if(option.name == 'color') embed.setColor(option.value);
                 if(option.name == 'image') embed.setImage(option.value);
                 if(option.name == 'url') embed.setURL(option.value);
-                if(option.name == 'author') embed.setAuthor(JSON.parse(option.value)?.text, JSON.parse(option.value)?.iconURL, JSON.parse(option.value)?.url);
-                if(option.name == 'footer') embed.setFooter(JSON.parse(option.value)?.text, JSON.parse(option.value)?.iconURL);
+                if(option.name == 'author') embed.setAuthor({text: JSON.parse(option.value)?.text, iconURL: JSON.parse(option.value)?.iconURL, url: JSON.parse(option.value)?.url});
+                if(option.name == 'footer') embed.setFooter({text: JSON.parse(option.value)?.text, iconURL: JSON.parse(option.value)?.iconURL});
                 if(option.name == 'fields') embed.addFields(JSON.parse(option.value));
                 if(option.name == 'timestamp') embed.setTimestamp(parseInt(option.value) == 0 ? Date.now() : parseInt(option.value));
                 if(option.name == 'links') {
                     const links = option.value.split(';');
-                    if (links.length > 5 || links.length < 1) throw Locale.text(userdata.locale, "EMBED_LINK_ERROR");
+                    if (links.length > 5 || links.length < 1) throw Locale.text(userdata.settings.locale, "EMBED_LINK_ERROR");
                     for (const i of links) {
                         const data = i.split(',');
-                        if (data.length !== 2) throw Locale.text(userdata.locale, "EMBED_LINK_FORMAT_ERROR");
+                        if (data.length !== 2) throw Locale.text(userdata.settings.locale, "EMBED_LINK_FORMAT_ERROR");
                         row.addComponents(
                             new MessageButton()
                                 .setStyle("LINK")
@@ -99,7 +99,7 @@ module.exports = {
                     };
                 };
             } catch(err) {
-                return {content: Locale.text(userdata.locale, "EMBED_OPTION_ERROR", option.name, err), ephemeral: true};
+                return {content: Locale.text(userdata.settings.locale, "EMBED_OPTION_ERROR", option.name, err), ephemeral: true};
             };
         };
 
@@ -109,8 +109,8 @@ module.exports = {
         try {
             await interaction.channel.send(send);
         } catch(err) {
-            return {content: Locale.text(userdata.locale, "EMBED_ERROR", err), ephemeral: true};
+            return {content: Locale.text(userdata.settings.locale, "EMBED_ERROR", err), ephemeral: true};
         };
-        return {content: Locale.text(userdata.locale, "EMBED_SUCCESS"), ephemeral: true};
+        return {content: Locale.text(userdata.settings.locale, "EMBED_SUCCESS"), ephemeral: true};
     }
 };

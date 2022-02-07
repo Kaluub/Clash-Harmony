@@ -28,9 +28,9 @@ module.exports = {
         }
     ],
     execute: async ({interaction, message, args, userdata}) => {
-        if(!args[0]) return `${Locale.text(userdata.locale, "USAGE")} ${module.exports.usage}`;
+        if(!args[0]) return `${Locale.text(userdata.settings.locale, "USAGE")} ${module.exports.usage}`;
         const guild = interaction?.guild ?? message?.guild;
-        if(guild.id !== '636986136283185172') return Locale.text(userdata.locale, "SERVER_ERROR");
+        if(guild.id !== '636986136283185172') return Locale.text(userdata.settings.locale, "SERVER_ERROR");
         const roles = await readJSON('json/toggles.json');
         let roletoggle;
         for(const roleinfo of roles){
@@ -39,10 +39,10 @@ module.exports = {
                 break;
             };
         };
-        if(!roletoggle) return `${Locale.text(userdata.locale, "USAGE")} ${module.exports.usage}`;
+        if(!roletoggle) return `${Locale.text(userdata.settings.locale, "USAGE")} ${module.exports.usage}`;
         const member = interaction?.member ?? message?.member;
         if(member.roles.cache.has(roletoggle.id)) await member.roles.remove(roletoggle.id);
         else await member.roles.add(roletoggle.id);
-        return Locale.text(userdata.locale, "TOGGLE_SUCCESS", roletoggle.name);
+        return Locale.text(userdata.settings.locale, "TOGGLE_SUCCESS", roletoggle.name);
     }
 };

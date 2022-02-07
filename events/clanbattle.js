@@ -1,5 +1,5 @@
 const { MessageEmbed, MessageActionRow, MessageButton, Collection, MessageSelectMenu } = require("discord.js");
-const Data = require('../classes/data.js');
+const { UserData } = require('../classes/data.js');
 const { readJSON } = require('../json.js');
 const { randInt } = require('../functions.js');
 
@@ -117,12 +117,14 @@ async function tickQuiz({battleData, battle, msg}) {
     });
 
     collector.on('end', async () => {
-        if(!msg || msg?.deleted) return;
+        if(!msg || !msg.editable) return;
         const embed = new MessageEmbed()
             .setTitle(`Quiz round ${battle.quizRound}!`)
             .setDescription(`The correct answer was:\n${data.answer}\n\n${battle.quizRound < battle.modifiers.quizRounds ? 'The next round will start in 3 seconds!' : 'This was the last round! The results are being finalized...'}\n\n**Stats:**\nFirst answer: ${firstResponder ? firstResponder : 'Nobody!'}\nSuccess percent: ${fails+answers == 0 ? '0' : Math.floor(100*(answers/(fails+answers)))}% (${answers} correct, ${fails} wrong)`)
             .setColor(battle.colour);
-        await msg.edit({embeds: [embed], components: []});
+        try {
+            await msg.edit({embeds: [embed], components: []});
+        } catch { return null; }
 
         if(battle.quizRound < battle.modifiers.quizRounds) setTimeout(async() => await tickQuiz(...arguments), 3000);
         else setTimeout(async() => await endQuiz(...arguments), 3000);
@@ -183,9 +185,9 @@ async function endQuiz({battle, msg}) {
         let points = battle.modifiers.freeReward;
         if(member.faction == winningFaction || winningFaction == 'both') points += battle.modifiers.winningFactionReward;
         if(topThree.some(u => u.id == member.id)) points += battle.modifiers.topThreeReward;
-        const data = await Data.get(msg.guild.id, member.id);
+        const data = await UserData.get(msg.guild.id, member.id);
         data.addPoints(Math.floor(points * battle.modifiers.rewardModifier));
-        await Data.set(msg.guild.id, member.id, data);
+        await UserData.set(msg.guild.id, member.id, data);
     };
 
     let topThreeString = ``;
@@ -321,14 +323,16 @@ module.exports = {
         });
 
         collector.on('end', async (col, reason) => {
-            if(!msg || msg.deleted) return;
+            if(!msg || !msg?.editable) return;
             if(reason == 'force') return;
             if(battle.members.size < 2) return await msg.edit({content: `Clan battle summary:\n${randText(battleData.messages.fewJoined)}`, embeds: [], components: []});
             const setUpEmbed = new MessageEmbed()
                 .setTitle('Starting soon!')
                 .setColor(battle.colour)
                 .setDescription(`${battle.members.size.toString()} of you signed up!\nYour clan battle will be starting soon! Stay on your toes!`)
-            await msg.edit({embeds: [setUpEmbed], components: []});
+            try {
+                await msg.edit({embeds: [setUpEmbed], components: []});
+            } catch { return null; }
             setTimeout(async () => {
                 await tickBattle({battleData, battle, msg});
             }, 5000);

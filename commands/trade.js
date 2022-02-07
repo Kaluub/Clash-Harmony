@@ -1,10 +1,10 @@
 const { MessageEmbed, MessageButton, MessageSelectMenu, MessageActionRow, Collection } = require("discord.js");
 const { readJSON } = require('../json.js');
-const Data = require('../classes/data.js');
+const { UserData } = require('../classes/data.js');
 const Locale = require('../classes/locale.js');
 
 async function trade(msg, member, partner, locale) {
-    Data.lockIds([member.user.id, partner.user.id]);
+    UserData.lockIds([member.user.id, partner.user.id]);
 
     const rewards = await readJSON('json/rewards.json');
 
@@ -45,7 +45,7 @@ async function trade(msg, member, partner, locale) {
         if(!trade.has(int.user.id)) return int.reply(Locale.text(locale, "TRADE_NOT_FOR_YOU"));
 
         if(int.customId === 'add-item') {
-            const data = await Data.get(int.guild.id, int.user.id);
+            const data = await UserData.get(int.guild.id, int.user.id);
             const tradeData = trade.get(int.user.id);
             if(tradeData.items.length >= 8) return await int.reply({content: Locale.text(locale, "TRADE_MAX_ITEMS"), ephemeral: true})
 
@@ -55,7 +55,7 @@ async function trade(msg, member, partner, locale) {
 
             for(const id of allItems) {
                 const item = rewards[id];
-                if(!item.shown) continue;
+                if(!item.shown && !item.tradeable) continue;
                 if(tradeData.items.includes(item.id)) continue;
                 options.push({label: item.name, value: item.id});
             };
@@ -130,7 +130,7 @@ async function trade(msg, member, partner, locale) {
             const mCol = int.channel.createMessageCollector({filter: m => m.author.id == int.user.id, time: 30000});
             
             mCol.on('collect', async m => {
-                const userdata = await Data.get(m.guild.id, m.author.id);
+                const userdata = await UserData.get(m.guild.id, m.author.id);
                 let points = parseInt(m.content);
                 if(isNaN(points) || points < 0 || userdata.points < points){
                     await int.followUp({content: Locale.text(locale, "TRADE_POINTS_INVALID"), ephemeral: true});
@@ -172,8 +172,12 @@ async function trade(msg, member, partner, locale) {
     });
 
     collector.on('end', async (col, reason) => {
-        Data.unlockIds([member.user.id, partner.user.id]);
-        if(reason == 'time' && !msg.deleted) await msg.delete();
+        UserData.unlockIds([member.user.id, partner.user.id]);
+        if(reason == 'time') {
+            try {
+                await msg.delete();
+            } catch { return null; }
+        }
     });
 };
 
@@ -205,8 +209,8 @@ async function updateTradeEmbed({trade, rewards, locale}, closing = false) {
 };
 
 async function endTrade({trade, rewards, member, partner}){
-    let memberdata = await Data.get(member.guild.id, member.user.id);
-    let partnerdata = await Data.get(partner.guild.id, partner.user.id);
+    let memberdata = await UserData.get(member.guild.id, member.user.id);
+    let partnerdata = await UserData.get(partner.guild.id, partner.user.id);
 
     const memberTrade = trade.get(member.user.id);
     const partnerTrade = trade.get(partner.user.id);
@@ -242,16 +246,15 @@ async function endTrade({trade, rewards, member, partner}){
     
     memberdata.statistics.tradesCompleted += 1;
     partnerdata.statistics.tradesCompleted += 1;
-    await Data.set(member.guild.id, member.user.id, memberdata);
-    await Data.set(partner.guild.id, partner.user.id, partnerdata);
-    Data.unlockIds([member.user.id, partner.user.id]);
+    await UserData.set(member.guild.id, member.user.id, memberdata);
+    await UserData.set(partner.guild.id, partner.user.id, partnerdata);
+    UserData.unlockIds([member.user.id, partner.user.id]);
 };
 
 module.exports = {
     name: 'trade',
     desc: `Starts a trade with another member.`,
     usage: '/trade [@user]',
-    admin: true,
     options: [
         {
             name: 'member',
@@ -266,12 +269,12 @@ module.exports = {
         const channel = interaction?.channel ?? message?.channel;
 
         if(!partner) return `Usage: ${module.exports.usage}`;
-        if(partner.user.bot) return {content: Locale.text(userdata.locale, "NO_TRADE_BOT"), ephemeral: true};
-        if(member.user.id == partner.user.id) return {content: Locale.text(userdata.locale, "NO_TRADE_SELF"), ephemeral: true};
+        if(partner.user.bot) return {content: Locale.text(userdata.settings.locale, "NO_TRADE_BOT"), ephemeral: true};
+        if(member.user.id == partner.user.id) return {content: Locale.text(userdata.settings.locale, "NO_TRADE_SELF"), ephemeral: true};
 
         const inviteEmbed = new MessageEmbed()
-            .setTitle(Locale.text(userdata.locale, "TRADE_REQUEST_TITLE"))
-            .setDescription(Locale.text(userdata.locale, "TRADE_REQUEST_TITLE"))
+            .setTitle(Locale.text(userdata.settings.locale, "TRADE_REQUEST_TITLE"))
+            .setDescription(Locale.text(userdata.settings.locale, "TRADE_REQUEST_TITLE"))
             .setColor('#664400')
             .setTimestamp()
         
@@ -279,34 +282,34 @@ module.exports = {
             new MessageButton()
                 .setCustomId('accept')
                 .setStyle('SUCCESS')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_ACCEPT")),
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_ACCEPT")),
             new MessageButton()
                 .setCustomId('deny')
                 .setStyle('DANGER')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_DENY"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_DENY"))
         );
 
-        if(interaction) interaction.reply({content: Locale.text(userdata.locale, "TRADE_REQUEST_NOTE"), ephemeral: true});
+        if(interaction) interaction.reply({content: Locale.text(userdata.settings.locale, "TRADE_REQUEST_NOTE"), ephemeral: true});
 
         const msg = await channel.send({embeds: [inviteEmbed], components: [inviteRow]});
         const collector = await msg.createMessageComponentCollector({time: 60000});
 
         collector.on('collect', async int => {
-            if(int.user.id !== partner.user.id) return int.reply({content: Locale.text(userdata.locale, "TRADE_NOT_FOR_YOU"), ephemeral: true});
+            if(int.user.id !== partner.user.id) return int.reply({content: Locale.text(userdata.settings.locale, "TRADE_NOT_FOR_YOU"), ephemeral: true});
             if(int.customId == 'accept') {
-                await int.reply({content: Locale.text(userdata.locale, "TRADE_ACCEPTED"), ephemeral: true, embeds: [], components: []});
-                await trade(msg, member, partner, userdata.locale);
+                await int.reply({content: Locale.text(userdata.settings.locale, "TRADE_ACCEPTED"), ephemeral: true, embeds: [], components: []});
+                await trade(msg, member, partner, userdata.settings.locale);
                 collector.stop('accepted');
             };
             if(int.customId == 'deny') {
-                await int.update({content: Locale.text(userdata.locale, "TRADE_DENIED"), embeds: [], components: []});
+                await int.update({content: Locale.text(userdata.settings.locale, "TRADE_DENIED"), embeds: [], components: []});
                 collector.stop('denied');
             };
         });
 
         collector.on('end', (col, reason) => {
             if(reason === 'accepted' || reason === 'denied') return;
-            else msg.edit({content: Locale.text(userdata.locale, "TRADE_TIMED_OUT"), embeds: [], components: []});
+            else msg.edit({content: Locale.text(userdata.settings.locale, "TRADE_TIMED_OUT"), embeds: [], components: []});
         });
     }
 };

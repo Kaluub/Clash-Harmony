@@ -174,6 +174,6 @@ module.exports = {
             } else return 'How did you get here?';
         };
 
-        return 'How did you get here?'
+        return 'How did you get here?';
     }
 };

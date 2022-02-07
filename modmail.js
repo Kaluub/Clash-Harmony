@@ -1,5 +1,5 @@
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const Data = require('./classes/data.js');
+const { UserData } = require('./classes/data.js');
 
 // Set to false if harmony is not required before applying for clash.
 const harmonyRequired = true;
@@ -11,7 +11,7 @@ const categories = {
 };
 
 module.exports = async (message, modMailChannelId) => {
-    const userdata = await Data.get(`636986136283185172`, message.author.id);
+    const userdata = await UserData.get(`636986136283185172`, message.author.id);
     if(userdata.blocked) return msg.channel.send(`You've previously been blocked from using this system. Please directly DM a staff member to help you out if this is a mistake.`);
     
     let category;

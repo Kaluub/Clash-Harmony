@@ -17,7 +17,7 @@ async function updateMembers(guild, clan){
         .setColor(clan == 'clash' ? '#00AA00' : '#DA70D6')
         .setTitle(`${clan == 'clash' ? 'Clash' : 'Harmony'} Clan members:`)
         .setDescription(`Below is a list of every member in the ${clan == 'clash' ? 'Clash' : 'Harmony'} Clan.`)
-        .setFooter('Last updated')
+        .setFooter({name: 'Last updated'})
         .setTimestamp();
 
     let leaders = [];
@@ -73,7 +73,7 @@ async function createProfileCard(member, rewards, userdata){
     const frame = await loadImage(`./img/frames/${frameData.img}`);
 
     // Draw background:
-    ctx.drawImage(background, 0, 0);
+    ctx.drawImage(background, 0, 0, background.width * (1000/background.width), background.height * (350/background.height));
 
     // Draw PFP in a circle:
     ctx.save(); ctx.beginPath();

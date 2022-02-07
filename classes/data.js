@@ -1,6 +1,3 @@
-const Keyv = require('keyv');
-const oldDb = new Keyv('sqlite://data/users.sqlite', {namespace: "users"});
-
 const { MongoClient } = require('mongodb');
 const dbclient = new MongoClient('mongodb://localhost:27017');
 
@@ -12,18 +9,24 @@ const dbclient = new MongoClient('mongodb://localhost:27017');
     };
 })();
 
-const db = dbclient.db("ClashBotBeta");
+const db = dbclient.db("ClashBot");
 const users = db.collection("users");
+const guilds = db.collection("guilds");
 
 let lockedIds = [];
 
-class Data {
+class UserData {
     constructor(data){
         this.blocked = data?.blocked ?? false;
         this.points = data?.points ?? 0;
         this.status = data?.status ?? '';
-        this.locale = data?.locale ?? 'en';
+        this.dailyCooldown = data?.dailyCooldown ?? '0/0/0';
         this.monthlyCooldown = data?.monthlyCooldown ?? Date.now();
+        this.dailyRNGMeter = data?.dailyRNGMeter ?? 0;
+        this.settings = {
+            locale: data?.settings?.locale ?? "en-GB",
+            autoLocale: data?.settings?.autoLocale ?? true
+        };
         this.statistics = {
             spent: data?.statistics?.spent ?? 0,
             earned: data?.statistics?.earned ?? 0,
@@ -31,7 +34,8 @@ class Data {
             age: data?.statistics?.age ?? Date.now(),
             duelsWon: data?.statistics?.duelsWon ?? 0,
             duelsLost: data?.statistics?.duelsLost ?? 0,
-            tradesCompleted: data?.statistics?.tradesCompleted ?? 0
+            tradesCompleted: data?.statistics?.tradesCompleted ?? 0,
+            dailyUsed: data?.statistics?.dailyUsed ?? 0
         };
         this.unlocked = {
             backgrounds: data?.unlocked?.backgrounds ?? ['default_background'],
@@ -96,11 +100,6 @@ class Data {
         return this;
     };
 
-    setLocale(locale = 'en'){
-        this.locale = locale;
-        return this;
-    }
-
     setCardBackground(id = 'default_background'){
         this.card.background = id;
         return this;
@@ -136,19 +135,21 @@ class Data {
     };
 
     static async get(guildID, userID){
-        let data = await oldDb.get(`${guildID}/${userID}`);
-        if(data) {
-            console.log(`Migration from old DB for: ${guildID}/${userID}`);
-            await oldDb.delete(`${guildID}/${userID}`);
-        } else {
-            data = await users.findOne({_id: `${guildID}/${userID}`});
-        };
-        return new Data(data);
+        const data = await users.findOne({_id: `${guildID}/${userID}`});
+        return new UserData(data);
     };
 
     static async set(guildID, userID, data){
         await users.updateOne({_id: `${guildID}/${userID}`}, {$set: data}, {upsert: true});
-        return new Data(data);
+        return new UserData(data);
+    };
+
+    static async search(query, filter){
+        return users.find(query, filter)
+    };
+
+    static async searchCount(query){
+        return await users.find(query).count();
     };
 
     static lockIds(ids){
@@ -162,4 +163,21 @@ class Data {
     };
 };
 
-module.exports = Data;
+class GuildData {
+    constructor(data) {
+        this.suggestions = data?.suggestions ?? {};
+        this.events = data?.events ?? [];
+    };
+
+    static async get(guildID){
+        const data = await guilds.findOne({_id: guildID});
+        return new GuildData(data);
+    };
+
+    static async set(guildID, data){
+        await guilds.updateOne({_id: guildID}, {$set: data}, {upsert: true});
+        return new GuildData(data);
+    };
+};
+
+module.exports = { UserData, GuildData };

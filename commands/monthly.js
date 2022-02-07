@@ -1,4 +1,4 @@
-const Data = require('../classes/data.js');
+const { UserData } = require('../classes/data.js');
 const Locale = require('../classes/locale.js');
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     execute: async ({interaction, message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
-        let userdata = await Data.get(guild.id, member.user.id);
+        let userdata = await UserData.get(guild.id, member.user.id);
 
         if(userdata.monthlyCooldown > Date.now()){
             let timeRemaining = userdata.monthlyCooldown - Date.now();
@@ -19,42 +19,42 @@ module.exports = {
             let hours = Math.floor(totalSeconds / 3600);
             totalSeconds %= 3600;
             let minutes = Math.floor(totalSeconds / 60);
-            return Locale.text(userdata.locale, "MONTHLY_COOLDOWN", days, hours, minutes);
+            return Locale.text(userdata.settings.locale, "MONTHLY_COOLDOWN", days, hours, minutes);
         };
 
         userdata.monthlyCooldown = Date.now() + 2592000000;
         if(userdata.unlocked.features.includes('MONTHLY_COOLDOWN_10')) userdata.monthlyCooldown -= 259200000;
         if(userdata.unlocked.features.includes('DEBUG')) userdata.monthlyCooldown = 1;
 
-        let earnedPoints = 10;
-        let msg = Locale.text(userdata.locale, "MONTHLY_DEFAULT");
+        let earnedPoints = 20;
+        let msg = Locale.text(userdata.settings.locale, "MONTHLY_DEFAULT");
 
         if(member.roles.cache.has('636987578125647923') || member.roles.cache.has('813870575453077504')){
-            earnedPoints += 10;
-            msg += Locale.text(userdata.locale, "MONTHLY_CLAN_MEMBERSHIP");
+            earnedPoints += 20;
+            msg += Locale.text(userdata.settings.locale, "MONTHLY_CLAN_MEMBERSHIP");
         };
 
         if(member.roles.cache.has('679411730748669953')){
             earnedPoints += 50;
-            msg += Locale.text(userdata.locale, "MONTHLY_NITRO");
+            msg += Locale.text(userdata.settings.locale, "MONTHLY_NITRO");
         };
 
         if(Math.random() > 0.4){
-            let bonusPoints = Math.floor(Math.random() * 10 + 1);
+            let bonusPoints = Math.floor(Math.random() * 15 + 1);
             earnedPoints += bonusPoints;
-            msg += Locale.text(userdata.locale, "MONTHLY_RANDOM", bonusPoints);
+            msg += Locale.text(userdata.settings.locale, "MONTHLY_RANDOM", bonusPoints);
         };
 
         if(userdata.unlocked.features.includes('MONTHLY_20')){
             let bonusPoints = Math.floor(0.2 * earnedPoints);
             earnedPoints *= 1.2;
-            msg += Locale.text(userdata.locale, "MONTHLY_BOOST", bonusPoints);
+            msg += Locale.text(userdata.settings.locale, "MONTHLY_BOOST", bonusPoints);
         };
 
-        msg += Locale.text(userdata.locale, "MONTHLY_CONCLUSION", Math.floor(earnedPoints));
+        msg += Locale.text(userdata.settings.locale, "MONTHLY_CONCLUSION", Math.floor(earnedPoints));
         userdata.points += Math.floor(earnedPoints);
         userdata.statistics.earned += earnedPoints;
-        await Data.set(guild.id, member.user.id, userdata);
+        await UserData.set(guild.id, member.user.id, userdata);
         return msg;
     }
 };

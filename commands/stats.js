@@ -9,7 +9,7 @@ module.exports = {
     execute: async ({interaction, message, userdata}) => {
         const client = interaction?.client ?? message?.client;
         const embed = new MessageEmbed()
-            .setTitle(Locale.text(userdata.locale, "STATISTICS"))
+            .setTitle(Locale.text(userdata.settings.locale, "STATISTICS"))
             .setColor('#662211')
             .setTimestamp()
             .setDescription(`Uptime: <t:${Math.floor(client.readyTimestamp / 1000)}> (<t:${Math.floor(client.readyTimestamp / 1000)}:R>)\nPerf: ${Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) / 100} MB\nCached: ${client.guilds.cache.size} guilds, ${client.channels.cache.size} channels, ${client.users.cache.size} users\nWebSocket ping: ${client.ws.ping} ms`)

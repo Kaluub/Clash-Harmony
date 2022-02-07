@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const { UserData } = require('../classes/data.js');
 
 module.exports = {
     name:'eval',

@@ -1,60 +1,82 @@
-const { economyLog } = require(`../functions.js`);
-const Data = require('../classes/data.js');
-const Keyv = require('keyv')
-const guilddb = new Keyv('sqlite://data/users.sqlite', {namespace:'guilds'});
+const { UserData } = require('../classes/data.js');
+const Locale = require('../classes/locale.js');
+const { randInt } = require('../functions.js');
+const { readJSON } = require('../json.js');
 
 module.exports = {
     name: 'daily',
-    hidden: true,
-    desc: `This is a (probably) satire command regarding daily rewards.`,
+    desc: `Get your daily rewards here.`,
     usage: '/daily',
     execute: async ({interaction,message}) => {
         const guild = interaction?.guild ?? message?.guild;
         const member = interaction?.member ?? message?.member;
-        let collected = await guilddb.get(`${guild.id}/GoldenBackgrounds`) ?? 0;
-        let userdata = await Data.get(guild.id, member.user.id);
+        let userdata = await UserData.get(guild.id, member.user.id);
 
-        const messages = [
-            `You got absolutely nothing. Try again later!`,
-            `...But nothing happened.`,
-            `Nobody responds to your begging.`,
-            `What is there to gain?`,
-            `A response is something that could never happen.`,
-            `Only for the worthy.`,
-            `Perhaps type harder next time.`,
-            `There's a good reason this isn't listed in !help.`,
-            `Something you expect might never occur.`,
-            `You got a special nothing.`,
-            `Why bother continuing? What is there to gain?`,
-            `Can't say I didn't warn you.`,
-            `You are wasting your precious time.`,
-            `Strange. I heard the chance of getting something from this was about zero.`,
-            `But nobody came.`,
-            `Stop begging, it's futile.`,
-            `Even if there is some reward... is it really worth it?`,
-            `What do you think it might be? I think it's nothing special.`,
-            `Using !profile is probably smarter.`,
-            `I have no emotions, which is why I don't care if you waste your time.`,
-            `Be educated: This bot was first created on March 17th, 2021.`,
-            `So how's your day going?`,
-            `The reward from this command has been obtained by ${collected} users in this server, making the current chance ${(0.01/(collected + 1)) * 100}%.`,
-            `You first interacted with me at ${new Date(userdata.statistics.age).toUTCString()}... but for what cause?`,
-            `You've used ${userdata.statistics.commandsUsed} commands to date... but for what cause?`
-        ];
+        const now = new Date(Date.now());
+        const nowString = `${now.getUTCDate()}/${now.getUTCMonth() + 1}/${now.getUTCFullYear()}`;
+        if(userdata.dailyCooldown == nowString) return Locale.text(userdata.settings.locale, "DAILY_TIMEOUT");
+        userdata.dailyCooldown = nowString;
+        userdata.addStatistic("dailyUsed");
 
-        if(Math.random() <= 0.01 / (collected + 1)){
+        const dailyEvents = readJSON("json/daily.json");
+        const rewards = readJSON("json/rewards.json");
+        let text = Locale.text(userdata.settings.locale, "DAILY_BASE");
+
+        // Golden Background/Jackpot:
+        if(Math.random() - userdata.dailyRNGMeter <= 0.01){
+            userdata.dailyRNGMeter = 0;
             if(userdata.unlocked.backgrounds.includes('golden_background')){
-                userdata.points += 1;
-                userdata.statistics.earned += 1;
-                await userdb.set(`${guild.id}/${member.user.id}`, userdata);
-                economyLog(message.guild.id, message.author, null, 1);
-                return `**LUCKY**: ...Too lucky. You earned 1 point.`;
+                userdata.addPoints(10);
+                text += Locale.text(userdata.settings.locale, "DAILY_JACKPOT");
+            } else {
+                userdata.unlocked.backgrounds.push('golden_background');
+                text += Locale.text(userdata.settings.locale, "DAILY_GOLD_BACKGROUND");
             };
-            userdata.unlocked.backgrounds.push('golden_background');
-            userdata.card.background = 'golden_background';
-            await Data.set(guild.id, member.user.id, userdata);
-            await guilddb.set(`${guild.id}/GoldenBackgrounds`, collected + 1);
-            return `**LUCKY**: ...But something finally happened.`;
-        } else return messages[Math.floor(Math.random() * messages.length)];
+        } else {
+            userdata.dailyRNGMeter += 0.00005 + 0.035 * userdata.dailyRNGMeter;
+        };
+
+        if(userdata.statistics.dailyUsed % 100 == 0) { // 100 bonus
+            userdata.addPoints(20);
+            text += Locale.text(userdata.settings.locale, "DAILY_HUNDRED_BONUS", userdata.statistics.dailyUsed);
+        };
+
+        if(now.getUTCDay() == 0) { // Sunday bonus
+            userdata.addPoints(1);
+            text += Locale.text(userdata.settings.locale, "DAILY_SUNDAY_BONUS");
+        };
+
+        for(const event of dailyEvents) {
+            if(!nowString.startsWith(event.date)) continue;
+            text += Locale.text(userdata.settings.locale, event.name);
+            for(const id of event.rewards) {
+                const reward = rewards[id];
+                if(!reward && !isNaN(id)) {
+                    userdata.addPoints(id);
+                } else if(reward) {
+                    if(userdata.hasReward(reward)) continue;
+                    if(reward.type == 'roles') {
+                        await member.fetch();
+                        if(!member.roles.cache.has(reward.id)) await member.roles.add(reward.id);
+                    };
+                    userdata.addReward(reward);
+                } else { // If nothing else, it is probably a "feature"
+                    if(userdata.unlocked.features.includes(id)) continue;
+                    userdata.unlocked.features.push(id);
+                };
+            };
+        };
+
+        if(Math.random() <= 0.2) {
+            userdata.addPoints(2);
+            text += Locale.text(userdata.settings.locale, "DAILY_RANDOM");
+        };
+
+        const randomPoints = randInt(2, 4);
+        userdata.addPoints(randomPoints);
+        text += Locale.text(userdata.settings.locale, "DAILY_NORMAL", randomPoints);
+
+        await UserData.set(guild.id, member.user.id, userdata);
+        return text;
     }
 };

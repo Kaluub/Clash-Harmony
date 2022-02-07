@@ -1,6 +1,7 @@
 const { readJSON } = require('../json.js');
 const { MessageEmbed, MessageAttachment } = require('discord.js');
 const Locale = require('../classes/locale.js');
+const { UserData } = require('../classes/data.js');
 
 module.exports = {
     name: 'info',
@@ -17,17 +18,21 @@ module.exports = {
         }
     ],
     execute: async ({interaction, userdata}) => {
-        if(!interaction) return Locale.text(userdata.locale, "SLASH_COMMAND_ONLY");
+        if(!interaction) return Locale.text(userdata.settings.locale, "SLASH_COMMAND_ONLY");
         const rewards = await readJSON('json/rewards.json');
         const reward = interaction.options.getString('reward');
         const item = rewards[reward];
-
+        
         if(!item) return `No reward found with the name \`${reward}\`.`;
+
+        let query = {"_id": { $regex: new RegExp(`^${interaction.guild.id}`)}};
+        query[`unlocked.${item.type}`] = item.id;
+        const count = await UserData.searchCount(query);
 
         const embed = new MessageEmbed()
             .setColor('#662211')
-            .setTitle(Locale.text(userdata.locale, "INFO_TITLE", item.name))
-            .setDescription(Locale.text(userdata.locale, "INFO_DESC", item.name, item.desc ? item.desc : Locale.text(userdata.locale, "INFO_NO_DESC"), item.price))
+            .setTitle(Locale.text(userdata.settings.locale, "INFO_TITLE", item.name))
+            .setDescription(Locale.text(userdata.settings.locale, "INFO_DESC", item.name, item.desc ? item.desc : Locale.text(userdata.settings.locale, "INFO_NO_DESC"), item.price, count))
 
         let message = {embeds: [embed]};
 

@@ -1,10 +1,4 @@
 {
-    "backgrounds": {
-        "default_background": {
-            "id": "default_background",
-            "img": "default_background.png"
-        }
-    },
     "defaultText": [
         "{attacker} kicked {defender}!",
         "{defender} got punched by {attacker}.",

@@ -19,7 +19,7 @@ module.exports = {
         const member = interaction?.member ?? message?.member;
 
         // Construct help menu:
-        const embeds = [baseEmbed(userdata.locale)];
+        const embeds = [baseEmbed(userdata.settings.locale)];
         let currentEmbed = 0;
         let currentEmbedCommands = 0;
 
@@ -30,12 +30,12 @@ module.exports = {
             if(cmd.feature && (!userdata.unlocked.features.includes(cmd.feature) || !admins.includes(member.user.id))) continue;
 
             if(currentEmbedCommands >= 7){
-                embeds.push(baseEmbed(userdata.locale));
+                embeds.push(baseEmbed(userdata.settings.locale));
                 currentEmbed += 1;
                 currentEmbedCommands = 0;
             };
 
-            embeds[currentEmbed].setDescription(embeds[currentEmbed].description + Locale.text(userdata.locale, "HELP_ENTRY", cmd.name, cmd.desc, cmd.usage));
+            embeds[currentEmbed].setDescription(embeds[currentEmbed].description + Locale.text(userdata.settings.locale, "HELP_ENTRY", cmd.name, cmd.desc, cmd.usage));
             currentEmbedCommands += 1;
         };
 
@@ -43,17 +43,17 @@ module.exports = {
         const row = new MessageActionRow().addComponents(
             new MessageButton()
                 .setCustomId('back')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_BACK"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_BACK"))
                 .setStyle('PRIMARY'),
             new MessageButton()
                 .setCustomId('next')
-                .setLabel(Locale.text(userdata.locale, "BUTTON_NEXT"))
+                .setLabel(Locale.text(userdata.settings.locale, "BUTTON_NEXT"))
                 .setStyle('PRIMARY')
         );
 
         let page = 0;
-        const msg = await message?.channel.send({embeds:[embeds[page].setFooter(`${Locale.text(userdata.locale, "PAGE")}: ${page + 1}/${embeds.length}`)], components: [row]})
-            ?? await interaction?.reply({embeds:[embeds[page].setFooter(`${Locale.text(userdata.locale, "PAGE")}: ${page + 1}/${embeds.length}`)], components: [row], fetchReply: true});
+        const msg = await message?.channel.send({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row]})
+            ?? await interaction?.reply({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row], fetchReply: true});
 
         const collector = msg.createMessageComponentCollector({filter: interaction => interaction.user.id == member.user.id, idle: 30000});
         collector.on('collect', async (interaction) => {
@@ -65,10 +65,10 @@ module.exports = {
                 page += 1;
                 if(page >= embeds.length) page = 0;
             };
-            await interaction.update({embeds:[embeds[page].setFooter(`${Locale.text(userdata.locale, "PAGE")}: ${page + 1}/${embeds.length}`)]});
+            await interaction.update({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})]});
         });
         collector.on('end', async () => {
-            if(!msg.deleted) await msg.edit({embeds:[embeds[page].setFooter(`${Locale.text(userdata.locale, "PAGE")}: ${page + 1}/${embeds.length} | ${Locale.text(userdata.locale, "EXPIRED")}`)], components: []});
+            if(msg.editable) await msg.edit({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length} | ${Locale.text(userdata.settings.locale, "EXPIRED")}`})], components: []});
         });
     }
 };

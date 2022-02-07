@@ -14,10 +14,10 @@ module.exports = {
         const row = new MessageActionRow();
         if (linkData) {
             const links = linkData.split(';');
-            if (links.length > 5 || links.length < 1) throw 'Syntax error: Between 1 to 5 links must be included, if any.';
+            if (links.length > 5 || links.length < 1) return {content: 'Syntax error: Between 1 to 5 links must be included, if any.', ephemeral};
             for (const i of links) {
                 const data = i.split(',');
-                if (data.length !== 2) throw "Syntax error: Please use the 'title,url;title2,url2' format.";
+                if (data.length !== 2) return {content: "Syntax error: Please use the 'title,url;title2,url2' format.", ephemeral};
                 row.addComponents(
                     new MessageButton()
                         .setStyle("LINK")
