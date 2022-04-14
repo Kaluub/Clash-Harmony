@@ -68,7 +68,8 @@ client.on('ready', async () => {
     }, 30000);
 
     for(const event of commands.events){
-        cron.schedule(`1 0 */${event.hourTimer.toString()} * * *`, async () => await event.execute({channel: client.channels.cache.get(event.channel)}));
+        if(event.hourTimer) cron.schedule(`1 0 */${event.hourTimer.toString()} * * *`, async () => await event.execute({channel: client.channels.cache.get(event.channel)}));
+        if(event.cronTime) cron.schedule(event.cronTime, async () => await event.execute({channel: client.channels.cache.get(event.channel)}))
     };
 });
 
@@ -77,12 +78,7 @@ client.on('messageCreate', async (msg) => {
     const config = await readJSON('config.json');
 
     if(!msg.guild) return await modMail(msg, config.modMailChannel);
-    if(msg.channel.id == "688515917683884054") { // Art contest:
-        if(msg.attachments.size) {
-            await msg.react('<:Upvote:913866271609720882>');
-            await msg.react('<:Downvote:913866286432387113>');
-        };
-    } if(msg.content.startsWith(config.prefix)){ // Discord commands:
+    if(msg.content.startsWith(config.prefix)){ // Discord commands:
         const args = msg.content.slice(config.prefix.length).split(/ +/);
         const commandName = args.shift().toLowerCase();
         const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
@@ -138,7 +134,6 @@ client.on('interactionCreate', async (interaction) => {
             console.error(error);
             readline.prompt(true);
             StatusLogger.logStatus({type: "command-error", detail: error});
-            if(interaction && !interaction.replied) return await interaction.reply({content: 'An error occured while running this command.', ephemeral: true});
         };
     } else if(interaction.isContextMenu()) {
         const config = await readJSON('config.json');
@@ -155,7 +150,7 @@ client.on('interactionCreate', async (interaction) => {
         await UserData.set(interaction.guildId, interaction.user.id, userdata);
         UsageLogger.logAction({guildId: interaction.guildId, channelId: interaction.channelId, userId: interaction.user.id, actionName: interaction.commandName});
         try {
-            await command.execute({interaction}).then(async res => {
+            await command.execute({interaction, userdata}).then(async res => {
                 if(res && !interaction.replied) await interaction.reply(res);
                 else if(!interaction.replied) interaction.reply(`No message was returned. This is probably a bug.`);
                 readline.prompt(true);
@@ -165,6 +160,19 @@ client.on('interactionCreate', async (interaction) => {
             readline.prompt(true);
             StatusLogger.logStatus({type: "command-error", detail: error});
             if(interaction && !interaction.replied) return interaction.reply('An error occured while running this command.', {ephemeral: true});
+        };
+    } else if(interaction.isAutocomplete()) {
+        const option = interaction.options.getFocused(true);
+        const autocompleter = commands.autoCompletes.get(option.name);
+        if(!autocompleter) return await interaction.respond([]);
+        try {
+            const res = await autocompleter.execute({interaction});
+            if(res) await interaction.respond(res);
+            else await interaction.respond([]);
+        } catch(error){
+            console.error(error);
+            readline.prompt(true);
+            StatusLogger.logStatus({type: "autocomplete-error", detail: error});
         };
     } else if(interaction.isMessageComponent() && interaction.isButton()){
         if(interaction.customId.startsWith('poll')){ // Poll event
@@ -204,17 +212,6 @@ client.on('interactionCreate', async (interaction) => {
             await updateSuggestion(data.suggestions[interaction.message.id], interaction.message);
             await interaction.reply({content: 'Successfully voted!', ephemeral: true});
         };
-    } else if(interaction.isAutocomplete()) {
-        const value = interaction.options.getFocused();
-        const rewards = readJSON('json/rewards.json');
-        const choices = [];
-        for(const index in rewards) {
-            if(choices.length > 24) break;
-            const reward = rewards[index];
-            if(reward.name.toLowerCase().startsWith(value.toLowerCase())) choices.push({name: reward.name, value: reward.id});
-        };
-        if(interaction && !interaction.responded)
-            return await interaction.respond(choices);
     };
 });
 

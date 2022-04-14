@@ -80,8 +80,8 @@ module.exports = {
                 if(option.name == 'color') embed.setColor(option.value);
                 if(option.name == 'image') embed.setImage(option.value);
                 if(option.name == 'url') embed.setURL(option.value);
-                if(option.name == 'author') embed.setAuthor({text: JSON.parse(option.value)?.text, iconURL: JSON.parse(option.value)?.iconURL, url: JSON.parse(option.value)?.url});
-                if(option.name == 'footer') embed.setFooter({text: JSON.parse(option.value)?.text, iconURL: JSON.parse(option.value)?.iconURL});
+                if(option.name == 'author') embed.setAuthor(JSON.parse(option.value));
+                if(option.name == 'footer') embed.setFooter(JSON.parse(option.value));
                 if(option.name == 'fields') embed.addFields(JSON.parse(option.value));
                 if(option.name == 'timestamp') embed.setTimestamp(parseInt(option.value) == 0 ? Date.now() : parseInt(option.value));
                 if(option.name == 'links') {

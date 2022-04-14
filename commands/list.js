@@ -56,7 +56,8 @@ module.exports = {
             await int.update({embeds:[embed]});
         });
         collector.on('end', async () => {
-            embed.setFooter({name: Locale.text(userdata.settings.locale, "EXPIRED")});
+            const footer = Locale.text(userdata.settings.locale, "EXPIRED");
+            embed.setFooter({text: footer});
             if(msg.editable) await msg.edit({embeds:[embed], components:[]});
         });
     }

@@ -187,7 +187,7 @@ async function endQuiz({battle, msg}) {
         if(topThree.some(u => u.id == member.id)) points += battle.modifiers.topThreeReward;
         const data = await UserData.get(msg.guild.id, member.id);
         data.addPoints(Math.floor(points * battle.modifiers.rewardModifier));
-        await UserData.set(msg.guild.id, member.id, data);
+        if(!battle.debug) await UserData.set(msg.guild.id, member.id, data);
     };
 
     let topThreeString = ``;
@@ -206,8 +206,8 @@ async function endQuiz({battle, msg}) {
 module.exports = {
     id: 'clanbattle',
     hourTimer: 6,
-    channel: '807311206888636457',
-    async execute({channel, debug = false}){
+    channel: '962485620297576449',
+    async execute({channel, debug = false, ping = true}){
         const battleData = await readJSON('json/clanbattle.json');
 
         let battle = {
@@ -279,7 +279,9 @@ module.exports = {
                 .setStyle('DANGER')
         );
         
-        const msg = await channel.send({embeds: [embed], components: [row]});
+        let m = {embeds: [embed], components: [row]};
+        if(ping) m.content = "<@&847225115765637120>";
+        const msg = await channel.send(m);
         const collector = msg.createMessageComponentCollector({time: 60000});
 
         collector.on('collect', async int => {

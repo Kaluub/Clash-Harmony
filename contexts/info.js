@@ -6,6 +6,7 @@ function fix(num){
 
 module.exports = {
     name: 'Info',
+    type: 'USER',
     execute: async ({interaction}) => {
         const member = interaction.options.getMember('user');
         const user = interaction.options.getUser('user');

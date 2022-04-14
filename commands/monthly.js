@@ -40,7 +40,7 @@ module.exports = {
         };
 
         if(Math.random() > 0.4){
-            let bonusPoints = Math.floor(Math.random() * 15 + 1);
+            let bonusPoints = Math.floor(Math.random() * 10 + 1);
             earnedPoints += bonusPoints;
             msg += Locale.text(userdata.settings.locale, "MONTHLY_RANDOM", bonusPoints);
         };

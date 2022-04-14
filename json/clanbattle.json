@@ -146,6 +146,27 @@
                 "topThreeReward": 25,
                 "rewardModifier": 1
             }
+        },
+        {
+            "displayName": "Leprechaun's Pot",
+            "description": "The Jackpot! You'll get plenty of points from this one.",
+            "colour": "#1E4620",
+            "weight": 0,
+            "modifiers": {
+                "quizPlayersAllowed": 11,
+                "defaultHp": 50,
+                "normalDamage": 10,
+                "critDamage": 15,
+                "critOdds": 10,
+                "missOdds": 20,
+                "quizRoundTime": 10000,
+                "quizPointModifier": 10,
+                "quizRounds": 11,
+                "freeReward": 5,
+                "winningFactionReward": 10,
+                "topThreeReward": 20,
+                "rewardModifier": 3
+            }
         }
     ],
     "messages": {
@@ -158,7 +179,7 @@
             "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"
         ],
         "error": [
-            "This shouldn't happen! Some error occured and we'll get about fixin' it. Apologies for the inconvenience!"
+            "This shouldn't happen! Some error occured and we'll get about fixing it. Apologies for the inconvenience!"
         ],
         "signedUp": [
             "You're in, bud! You'll be a {faction} member!",
@@ -443,6 +464,38 @@
             "options": [
                 "True",
                 "False"
+            ]
+        },
+        {
+            "title": "On October 2nd, 2020, how many co-leaders were in the Clash clan?",
+            "answer": 1,
+            "options": [
+                "2",
+                "3",
+                "4",
+                "5"
+            ]
+        },
+        {
+            "title": "When did the Clash clan reach level 10?",
+            "answer": 0,
+            "options": [
+                "April 4th, 2022",
+                "November 6th, 2021",
+                "September 11th, 2021",
+                "November 13th, 2021",
+                "January 28th, 2022"
+            ]
+        },
+        {
+            "title": "When is Clash & Harmony's birthday?",
+            "answer": 0,
+            "options": [
+                "March 18th",
+                "April 15th",
+                "November 28th",
+                "September 11th",
+                "June 25th"
             ]
         }
     ]

@@ -88,6 +88,7 @@
         "img": "ClashAnniversary2ndBackground.png",
         "colour": "#CBC3E3",
         "price": 40,
+        "endTime": 1640995200000,
         "shown": true
     },
     "harmony_one_year_anniversary_background": {
@@ -97,7 +98,7 @@
         "desc": "Harmony looks better than ever! Huh. It's been a year already, Harmony? A warm thank you to the many members of the Harmony clan, generously funding and bankrolling our clan's endeavours. You're all truly wonderful. Have a good one! Design by Aldople.",
         "img": "HarmonyAnniversary1stBackground.png",
         "colour": "#DDDDDD",
-        "startTime": 1640995200000,
+        "endTime": 1647820800000,
         "price": 40,
         "shown": true
     },
@@ -319,6 +320,26 @@
         "endTime": 1647820800000,
         "shown": true
     },
+    "royalty_background": {
+        "id": "royalty_background",
+        "type": "backgrounds",
+        "name": "Royalty Background",
+        "desc": "An expensive royal backdrop for an expensive royal person. Or an imposter. Design by Yjust.",
+        "img": "RoyaltyBackground.png",
+        "colour": "#FFD700",
+        "price": 500,
+        "shown": true
+    },
+    "crimson_background": {
+        "id": "crimson_background",
+        "type": "backgrounds",
+        "name": "Crimson Background",
+        "desc": "Is this what the surface of the sun looks like? It's got to be be pretty warm regardless. Design by Testified.",
+        "img": "CrimsonBackground.png",
+        "colour": "#00CC00",
+        "price": 50,
+        "shown": true
+    },
     "golden_background": {
         "id": "golden_background",
         "type": "backgrounds",
@@ -474,6 +495,7 @@
         "name": "Clash 2nd Year Anniversary Frame",
         "desc": "The neon frame for the second anniversary of the Clash! A warm thank you to the many members of the Clash clan, generously funding and bankrolling our clan's endeavours. You're all truly wonderful. Have a great day! Design by Aldople.",
         "img": "ClashAnniversary2ndFrame.png",
+        "endTime": 1640995200000,
         "price": 40,
         "shown": true
     },
@@ -483,7 +505,7 @@
         "name": "Harmony 1st Year Anniversary Frame",
         "desc": "Frame. Harmony. 365. You can tell a year passed if you put it this way. A warm thank you to the many members of the Harmony clan, generously funding and bankrolling our clan's endeavours. You're all truly wonderful. Have a good one! Design by Aldople.",
         "img": "HarmonyAnniversary1stFrame.png",
-        "startTime": 1640995200000,
+        "endTime": 1647820800000,
         "price": 40,
         "shown": true
     },
@@ -666,6 +688,24 @@
         "endTime": 1647820800000,
         "shown": true
     },
+    "royalty_frame": {
+        "id": "royalty_frame",
+        "type": "frames",
+        "name": "Royalty Frame",
+        "desc": "Comes with a crown, too. Better hope it's not made out of pyrite... Design by Yjust.",
+        "img": "RoyaltyFrame.png",
+        "price": 500,
+        "shown": true
+    },
+    "crimson_frame": {
+        "id": "crimson_frame",
+        "type": "frames",
+        "name": "Crimson Frame",
+        "desc": "Might cause a mild sunburn if you keep it around for too long. Design by Testified.",
+        "img": "CrimsonFrame.png",
+        "price": 50,
+        "shown": true
+    },
     "828077072194207834": {
         "id": "828077072194207834",
         "type": "roles",
@@ -747,5 +787,16 @@
         "desc": "Another year! A vanity role obtained if you use `/daily` on the 1st of January.",
         "price": 0,
         "shown": false
+    },
+    "smile_background": {
+        "id": "smile_background",
+        "type": "backgrounds",
+        "name": "Smile Background",
+        "desc": "😀",
+        "img": "smile_background.png",
+        "colour": "#000000",
+        "price": 0,
+        "shown": false,
+        "tradeable": false
     }
 }

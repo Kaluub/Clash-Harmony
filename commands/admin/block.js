@@ -7,6 +7,6 @@ module.exports = {
         const userdata = await UserData.get(interaction.guild.id, user.id);
         userdata.setBlocked(!userdata.blocked);
         await UserData.set(interaction.guild.id, user.id, userdata);
-        return `${user.tag} was ${userdata.blocked ? "blocked" : "unblocked"}.`;
+        return {content: `${user.tag} was ${userdata.blocked ? "blocked" : "unblocked"}.`, ephemeral: true};
     }
 };

@@ -52,8 +52,8 @@ module.exports = {
         );
 
         let page = 0;
-        const msg = await message?.channel.send({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row]})
-            ?? await interaction?.reply({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row], fetchReply: true});
+        const msg = await message?.channel.send({embeds:[embeds[page].setFooter({text: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row]})
+            ?? await interaction?.reply({embeds:[embeds[page].setFooter({text: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row], fetchReply: true});
 
         const collector = msg.createMessageComponentCollector({filter: interaction => interaction.user.id == member.user.id, idle: 30000});
         collector.on('collect', async (interaction) => {
@@ -65,10 +65,10 @@ module.exports = {
                 page += 1;
                 if(page >= embeds.length) page = 0;
             };
-            await interaction.update({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})]});
+            await interaction.update({embeds:[embeds[page].setFooter({text: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})]});
         });
         collector.on('end', async () => {
-            if(msg.editable) await msg.edit({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length} | ${Locale.text(userdata.settings.locale, "EXPIRED")}`})], components: []});
+            if(msg.editable) await msg.edit({embeds:[embeds[page].setFooter({text: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length} | ${Locale.text(userdata.settings.locale, "EXPIRED")}`})], components: []});
         });
     }
 };

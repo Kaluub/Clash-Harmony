@@ -5,6 +5,7 @@ const { UserData } = require('../classes/data.js');
 
 module.exports = {
     name: 'View Profile Card',
+    type: 'USER',
     execute: async ({interaction}) => {
         const member = interaction.options.getMember('user');
         if(member.user.bot) return 'That is a bot!';

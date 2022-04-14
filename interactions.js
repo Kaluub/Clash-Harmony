@@ -22,7 +22,7 @@ for (const file of contextInteractionFiles) {
     const command = require(`./contexts/${file}`);
     if(command.hidden) continue;
     interactions.push({
-        type: "USER",
+        type: command.type,
         name: command.name
     });
 };

@@ -1,10 +1,5 @@
 [
     {
-        "date": "25/12/",
-        "name": "DAILY_EVENT_CHRISTMAS",
-        "rewards": ["xmas_background", "919076222280024084"]
-    },
-    {
         "date": "1/1/",
         "name": "DAILY_EVENT_NEW_YEARS",
         "rewards": [10, "new_years_background", "919079022024089621"]
@@ -15,14 +10,24 @@
         "rewards": [5]
     },
     {
-        "date": "26/12/",
-        "name": "DAILY_EVENT_BOXING_DAY",
-        "rewards": [3, "DISCOUNT_5"]
+        "date": "17/3/",
+        "name": "DAILY_EVENT_ST_PATRICKS",
+        "rewards": ["919079808644841472"]
     },
     {
         "date": "31/10/",
         "name": "DAILY_EVENT_HALLOWEEN",
         "rewards": [10, "halloween_background", "919079239435825252"]
+    },
+    {
+        "date": "25/12/",
+        "name": "DAILY_EVENT_CHRISTMAS",
+        "rewards": ["xmas_background", "919076222280024084"]
+    },
+    {
+        "date": "26/12/",
+        "name": "DAILY_EVENT_BOXING_DAY",
+        "rewards": [3, "DISCOUNT_5"]
     },
     {
         "date": "2/",
@@ -113,5 +118,10 @@
         "date": "21/3/",
         "name": "DAILY_EVENT_SIEGGY_BIRTHDAY",
         "rewards": ["sieggy_frame", "sieggy_background"]
+    },
+    {
+        "date": "18/3/",
+        "name": "DAILY_EVENT_BOT_BIRTHDAY",
+        "rewards": [-5]
     }
 ]

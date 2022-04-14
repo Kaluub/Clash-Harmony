@@ -1,0 +1,27 @@
+{
+    "DEBUG": {
+        "name": "Debug",
+        "desc": "For testing mostly",
+        "id": "DEBUG"
+    },
+    "CLANBATTLE_MANAGER": {
+        "name": "Clan Battle Manager",
+        "desc": "Can edit clan battle commands",
+        "id": "CLANBATTLE_MANAGER"
+    },
+    "DISCOUNT_5": {
+        "name": "Discount - 5%",
+        "desc": "Gives a 5% discount from the shop",
+        "id": "DISCOUNT_5"
+    },
+    "MONTHLY_COOLDOWN_10": {
+        "name": "Monthly Cooldown - 10%",
+        "desc": "Gives a 10% boost towards monthly cooldown timer",
+        "id": "MONTHLY_COOLDOWN_10"
+    },
+    "MONTHLY_20": {
+        "name": "Monthly Boost - 20%",
+        "desc": "Gives a 20% boost towards monthly rewards",
+        "id": "MONTHLY_20"
+    }
+}

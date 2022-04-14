@@ -1,8 +1,8 @@
 [
     {
         "id": "847225115765637120",
-        "name": "Trivia",
-        "toggle": ["trivia", "triv"]
+        "name": "Clan Battles",
+        "toggle": ["clanbattles", "cb"]
     },
     {
         "id": "847225246594367519",

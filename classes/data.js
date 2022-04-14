@@ -35,7 +35,9 @@ class UserData {
             duelsWon: data?.statistics?.duelsWon ?? 0,
             duelsLost: data?.statistics?.duelsLost ?? 0,
             tradesCompleted: data?.statistics?.tradesCompleted ?? 0,
-            dailyUsed: data?.statistics?.dailyUsed ?? 0
+            dailyUsed: data?.statistics?.dailyUsed ?? 0,
+            fountainSpent: data?.statistics?.fountainSpent ?? 0,
+            fountainGained: data?.statistics?.fountainGained ?? 0
         };
         this.unlocked = {
             backgrounds: data?.unlocked?.backgrounds ?? ['default_background'],
@@ -61,7 +63,7 @@ class UserData {
 
     addPoints(points = 0){
         this.points += points;
-        this.statistics.earned += points;
+        if(points > 0) this.statistics.earned += points;
         return this;
     };
 
@@ -167,6 +169,13 @@ class GuildData {
     constructor(data) {
         this.suggestions = data?.suggestions ?? {};
         this.events = data?.events ?? [];
+        this.clanBattles = {
+            cooldown: data?.clanBattles?.cooldown ?? 0
+        }
+        this.fountain = {
+            amountSpent: data?.fountain?.amountSpent ?? 0,
+            amountGained: data?.fountain?.amountGained ?? 0
+        };
     };
 
     static async get(guildID){

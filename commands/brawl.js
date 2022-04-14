@@ -222,7 +222,7 @@ module.exports = {
             .setTitle(`Request to fight!`)
             .setDescription(`Press the '✅' button to start the fight!${battle.amount !== 0 ? `\nPrice: ${battle.amount} points.` : ''}`)
             .setImage('attachment://startduel.png')
-            .setFooter({name: `This request expires at:`})
+            .setFooter({text: `This request expires at:`})
             .setTimestamp(Date.now() + 60000)
             .setColor(`#33AA33`);
 

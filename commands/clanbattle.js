@@ -1,10 +1,10 @@
 const { MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, MessageAttachment } = require('discord.js');
+const { GuildData } = require('../classes/data.js');
 const { readJSON, writeJSON } = require('../json.js');
-const cd =  require('../events/clanbattle.js');
+const clanbattle = require('../events/clanbattle.js');
 
 module.exports = {
     name: 'clanbattle',
-    admin: true,
     desc: 'Command used to manage clan battles.',
     usage: '/clanbattle [test/start/questions]',
     options: [
@@ -24,7 +24,7 @@ module.exports = {
         },
         {
             "name": "start",
-            "description": "Run a clan battle.",
+            "description": "Once every hour, you can start a clan battle.",
             "type": "SUB_COMMAND",
             "options": [
                 {
@@ -54,24 +54,32 @@ module.exports = {
             ]
         }
     ],
-    execute: async ({interaction}) => {
+    execute: async ({interaction, userdata}) => {
         if(!interaction) return `This command can only be used as an interaction!`;
+        const { admins } = await readJSON('config.json');
 
         if(interaction.options.getSubcommand(false) == 'test') {
+            if(!admins.includes(interaction.user.id) && !userdata.unlocked.features.includes("CLANBATTLE_MANAGER")) return "You need to be a server admin to use this command.";
             let channel = interaction.options.getChannel('channel', false);
             if(!channel) channel = interaction.channel;
-            await cd.execute({channel: channel, debug: true});
+            await clanbattle.execute({channel: channel, debug: true, ping: false});
             return {content: `Started a test battle in ${channel}!`};
         };
 
         if(interaction.options.getSubcommand(false) == 'start') {
+            const data = await GuildData.get(interaction.guild.id);
+            if(data.clanBattles.cooldown > Date.now())
+                if(!admins.includes(interaction.user.id)) return `You can use this command again <t:${Math.floor(data.clanBattles.cooldown / 1000)}:R>.`;
+            data.clanBattles.cooldown = Date.now() + 3600000;
+            await GuildData.set(interaction.guild.id, data);
             let channel = interaction.options.getChannel('channel', false);
             if(!channel) channel = interaction.channel;
-            await cd.execute({channel: channel});
+            await clanbattle.execute({channel: channel, ping: false});
             return {content: `Started a clan battle in ${channel}!`};
         };
 
         if(interaction.options.getSubcommandGroup(false) == 'questions') {
+            if(!admins.includes(interaction.user.id) && !userdata.unlocked.features.includes("CLANBATTLE_MANAGER")) return "You need to be a server admin to use this command.";
             if(interaction.options.getSubcommand(false) == 'add') {
                 let question = {
                     title: "",

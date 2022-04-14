@@ -3,6 +3,7 @@ const {readJSON} = require('../json.js');
 
 module.exports = {
     name: 'Toggle Clash',
+    type: 'USER',
     admin: true,
     execute: async ({interaction}) => {
         const config = await readJSON('config.json');

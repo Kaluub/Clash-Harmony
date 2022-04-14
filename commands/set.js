@@ -7,7 +7,6 @@ const { MessageActionRow, MessageSelectMenu, MessageAttachment } = require('disc
 module.exports = {
     name: 'set',
     aliases: ['s', 'custom', 'c'],
-    admin: false,
     desc: 'This is a command for customizing your profile card.',
     usage: '/set',
     execute: async ({interaction, message}) => {
@@ -47,8 +46,10 @@ module.exports = {
             await int.deferUpdate();
 
             if(int.customId == 'set-background') {
-                userdata.card.background = int.values[0];
-                userdata = await UserData.set(guild.id, member.user.id, userdata);
+                if(userdata.card.background != "smile_background") {
+                    userdata.card.background = int.values[0];
+                    userdata = await UserData.set(guild.id, member.user.id, userdata);
+                };
             };
 
             if(int.customId == 'set-frame') {

@@ -91,6 +91,53 @@ module.exports = {
             ]
         },
         {
+            "name": "features",
+            "description": "Manage a users features.",
+            "type": "SUB_COMMAND_GROUP",
+            "options": [
+                {
+                    "name": "add",
+                    "description": "Add a feature to a user.",
+                    "type": "SUB_COMMAND",
+                    "options": [
+                        {
+                            "name": "member",
+                            "description": "The member to give the feature to.",
+                            "type": "USER",
+                            "required": true
+                        },
+                        {
+                            "name": "feature",
+                            "description": "The feature to give the member.",
+                            "type": "STRING",
+                            "autocomplete": true,
+                            "required": true
+                        }
+                    ]
+                },
+                {
+                    "name": "remove",
+                    "description": "Remove a feature from a user.",
+                    "type": "SUB_COMMAND",
+                    "options": [
+                        {
+                            "name": "member",
+                            "description": "The member to remove the feature from.",
+                            "type": "USER",
+                            "required": true
+                        },
+                        {
+                            "name": "feature",
+                            "description": "The feature to remove from the member.",
+                            "type": "STRING",
+                            "autocomplete": true,
+                            "required": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "list",
             "description": "Manage the member lists.",
             "type": "SUB_COMMAND_GROUP",

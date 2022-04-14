@@ -1,6 +1,6 @@
 {
   "name": "clashbot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vitalets/google-translate-api": "^8.0.0",
     "canvas": "^2.8.0",
     "discord-rpc": "^4.0.1",
     "discord.js": "^13.6.0",

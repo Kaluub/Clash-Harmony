@@ -152,7 +152,7 @@ module.exports = {
                 const channel = await interaction.client.channels.fetch(suggestionsChannel);
                 if(!channel) return {content: Locale.text(userdata.settings.locale, "SUGGESTION_CHANNEL_ERROR"), ephemeral: true};
                 const message = await channel.send({embeds: [embed], components: [row]});
-                await message.edit({embeds: [embed.setFooter({name: `Message ID: ${message.id}`})], components: [row]});
+                await message.edit({embeds: [embed.setFooter({text: `Message ID: ${message.id}`})], components: [row]});
                 let data = await GuildData.get(interaction.guildId);
                 data.suggestions[message.id] = {
                     voters: [],
@@ -169,19 +169,25 @@ module.exports = {
         } else if(interaction.options.getSubcommand(false) == 'remove'){
             const channel = await interaction.client.channels.fetch(suggestionsChannel);
             if(!channel) return Locale.text(userdata.settings.locale, "INVALID_CHANNEL");
+
             const id = interaction.options.getString('message-id');
             const message = await channel.messages.fetch(id);
+
             if(!message) return Locale.text(userdata.settings.locale, "INVALID_MESSAGE");
             if(message.author.id != interaction.user.id && !admins.includes(interaction.user.id)) return Locale.text(userdata.settings.locale, "SUGGESTION_NOT_FOR_YOU");
+            
             await message.delete();
             return Locale.text(userdata.settings.locale, "SUGGESTION_REMOVED");
         } else if(interaction.options.getSubcommand(false) == 'note'){
             const channel = await interaction.client.channels.fetch(suggestionsChannel);
             if(!channel) return Locale.text(userdata.settings.locale, "INVALID_CHANNEL");
+
             const id = interaction.options.getString('message-id');
             const message = await channel.messages.fetch(id);
+
             if(!message) return Locale.text(userdata.settings.locale, "INVALID_MESSAGE");
             if(message.author.id != interaction.user.id && !admins.includes(interaction.user.id)) returnLocale.text(userdata.settings.locale, "SUGGESTION_NOT_FOR_YOU");
+            
             let data = await GuildData.get(interaction.guildId);
             data.suggestions[message.id].notes.push(interaction.options.getString('note'));
             await GuildData.set(interaction.guildId, data);
@@ -191,9 +197,11 @@ module.exports = {
             if(!admins.includes(interaction.user.id)) return Locale.text(userdata.settings.locale, "ADMIN_ERROR");
             const channel = await interaction.client.channels.fetch(suggestionsChannel);
             if(!channel) return Locale.text(userdata.settings.locale, "INVALID_CHANNEL");
+
             const id = interaction.options.getString('message-id');
             const message = await channel.messages.fetch(id);
             if(!message) return Locale.text(userdata.settings.locale, "INVALID_MESSAGE");
+            
             let data = await GuildData.get(interaction.guildId);
             data.suggestions[message.id].staffnote = interaction.options.getString('note');
             data.suggestions[message.id].staffnoteTime = Math.floor(Date.now() / 1000);

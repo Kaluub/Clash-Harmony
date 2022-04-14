@@ -19,7 +19,7 @@ function setActivity(rpc, date) {
 function startRPC() {
     const DiscordRPC = require('discord-rpc');
     const rpc = new DiscordRPC.Client({transport: 'ipc'})
-    const date = Date.now() - 1262278080;
+    const date = Date.now();
     
     rpc.on('ready', () => {
         setActivity(rpc, date);

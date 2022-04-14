@@ -6,7 +6,6 @@ module.exports = {
     aliases: ['tut'],
     desc: 'This command is used to view the tutorial.',
     usage: '/tutorial',
-    noGuild: true,
     execute: async ({interaction, message, userdata}) => {
         const embeds = [
             new MessageEmbed()
@@ -61,29 +60,30 @@ module.exports = {
                 .setStyle('PRIMARY')
         );
 
-        let msg = await message?.channel.send({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row]});
+        let msg = await message?.channel.send({embeds:[embeds[page].setFooter({text: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row]});
         if(!msg) {
-            await interaction.reply({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row]});
+            await interaction.reply({embeds:[embeds[page].setFooter({text: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})], components: [row]});
             msg = await interaction.fetchReply();
         };
 
         const member = interaction?.member ?? message?.member;
         const collector = msg.createMessageComponentCollector({idle: 300000});
         collector.on('collect', async (interaction) => {
-            if(interaction.user.id !== member.user.id) return interaction.reply({content: Locale.text(userdata.settings.locale, "NOT_FOR_YOU"), ephemeral: true})
-            if(interaction.customId == 'back'){
+            if(!interaction) return;
+            if(interaction?.user.id !== member.user.id) return interaction?.reply({content: Locale.text(userdata.settings.locale, "NOT_FOR_YOU"), ephemeral: true})
+            if(interaction?.customId == 'back'){
                 page -= 1;
                 if(page < 0) page = embeds.length - 1;
             };
-            if(interaction.customId == 'next'){
+            if(interaction?.customId == 'next'){
                 page += 1;
                 if(page >= embeds.length) page = 0;
             };
-            await interaction.update({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})]});
+            await interaction?.update({embeds:[embeds[page].setFooter({text: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length}`})]});
         });
 
         collector.on('stop', async (res) => {
-            if(msg.editable) await msg.edit({embeds:[embeds[page].setFooter({name: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length} | ${Locale.text(userdata.settings.locale, "EXPIRED")}`})], components: []});
+            if(msg.editable) await msg.edit({embeds:[embeds[page].setFooter({text: `${Locale.text(userdata.settings.locale, "PAGE")}: ${page + 1}/${embeds.length} | ${Locale.text(userdata.settings.locale, "EXPIRED")}`})], components: []});
         });
     }
 };

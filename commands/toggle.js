@@ -4,7 +4,7 @@ const Locale = require('../classes/locale.js');
 module.exports = {
     name: 'toggle',
     desc: `A command for toggling some specific roles, used for pings.`,
-    usage: '/toggle [trivia/qotd/polls]',
+    usage: '/toggle [clanbattles/qotd/polls]',
     options: [
         {
             "name": "role",
@@ -13,8 +13,8 @@ module.exports = {
             "required": true,
             "choices": [
                 {
-                    "name": "Trivia",
-                    "value": "trivia"
+                    "name": "Clan Battles",
+                    "value": "clanbattles"
                 },
                 {
                     "name": "Question of the Day",

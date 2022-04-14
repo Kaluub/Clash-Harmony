@@ -1,7 +1,6 @@
-const {MessageEmbed, MessageActionRow} = require('discord.js');
-const {createCanvas, loadImage} = require('canvas');
-const {readFileSync, writeFileSync} = require('fs');
-const {readJSON} = require('./json.js');
+const { MessageEmbed, MessageActionRow } = require('discord.js');
+const { createCanvas, loadImage } = require('canvas');
+const { readJSON } = require('./json.js');
 
 // Utility function for updating the member list for both clans.
 async function updateMembers(guild, clan){
@@ -17,7 +16,7 @@ async function updateMembers(guild, clan){
         .setColor(clan == 'clash' ? '#00AA00' : '#DA70D6')
         .setTitle(`${clan == 'clash' ? 'Clash' : 'Harmony'} Clan members:`)
         .setDescription(`Below is a list of every member in the ${clan == 'clash' ? 'Clash' : 'Harmony'} Clan.`)
-        .setFooter({name: 'Last updated'})
+        .setFooter({text: 'Last updated'})
         .setTimestamp();
 
     let leaders = [];
@@ -46,17 +45,6 @@ async function updateMembers(guild, clan){
     embed.addField('Members:',`${membersText.length > 0 ? membersText : 'N/A'}`);
 
     return embed;
-};
-
-// Utility function for "guessing" a reward based on its name
-async function guessRewards(rewards, name, roles){
-    const possibleRewards = [];
-    for(const i in rewards){
-        const item = rewards[i];
-        if(item.type == 'roles' && !roles) continue;
-        if(item.name.toLowerCase().includes(name.toLowerCase())) possibleRewards.push(item);
-    };
-    return possibleRewards;
 };
 
 // Creates the profile card:
@@ -138,29 +126,6 @@ async function createProfileCard(member, rewards, userdata){
     return canvas.toBuffer();
 };
 
-// Logging function when any economy-affecting action occurs (adding an item, earning points, etc.)
-function economyLog(guildID, user, reward, points, user2){
-    let time = new Date(Date.now());
-    let str;
-    if(!reward){
-        str = `\n[ECO] [GUILD: ${guildID}] ${user.id} earned ${points} points${user2 ? ` from ${user2.id}` : ``}. Time: ${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
-    } else {
-        str = `\n[REWARD] [GUILD: ${guildID}] ${user.id} purchased ${reward.id} for ${reward.price} points. Time: ${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
-    };
-    let currentLog = readFileSync(`./data/logs/economy.log`, {encoding:'utf-8'});
-    currentLog += str;
-    writeFileSync(`./data/logs/economy.log`, currentLog, {encoding:'utf-8'});
-};
-
-// Logging function. Not used much right now.
-function resetLog(guildID, userID, user2ID, userdata, userdata2){
-    let time = new Date(Date.now());
-    let str = `[TIME: ${time.getDate()}/${time.getMonth()}/${time.getFullYear()} ${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}]\n[${guildID}/${userID}] ${JSON.stringify(userdata)}\n[${guildID}/${user2ID}] ${JSON.stringify(userdata2)}\n=====`;
-    let currentLog = readFileSync(`./data/logs/reset.log`, {encoding:'utf-8'});
-    currentLog += str;
-    writeFileSync(`./data/logs/reset.log`, currentLog, {encoding:'utf-8'});
-};
-
 // Updates a suggestion embed (used multiple times, so a function helped)
 async function updateSuggestion(data, message){
     const net = data.positive - data.negative;
@@ -196,9 +161,6 @@ function randInt(min = 0, max = 1){
 
 module.exports = {
     updateMembers,
-    guessRewards,
-    economyLog,
-    resetLog,
     updateSuggestion,
     randInt,
     createProfileCard
