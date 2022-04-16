@@ -68,8 +68,7 @@ client.on('ready', async () => {
     }, 30000);
 
     for(const event of commands.events){
-        if(event.hourTimer) cron.schedule(`1 0 */${event.hourTimer.toString()} * * *`, async () => await event.execute({channel: client.channels.cache.get(event.channel)}));
-        if(event.cronTime) cron.schedule(event.cronTime, async () => await event.execute({channel: client.channels.cache.get(event.channel)}))
+        cron.schedule(event.cronTime, async () => await event.execute({channel: client.channels.cache.get(event.channel)}), {timezone: "UTC"})
     };
 });
 

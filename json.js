@@ -11,7 +11,4 @@ function writeJSON(path,json){
     return true;
 };
 
-module.exports = {
-    readJSON:readJSON,
-    writeJSON:writeJSON
-};
+module.exports = { readJSON, writeJSON };

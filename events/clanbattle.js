@@ -205,7 +205,7 @@ async function endQuiz({battle, msg}) {
 
 module.exports = {
     id: 'clanbattle',
-    hourTimer: 6,
+    cronTime: `1 0 */6 * * *`,
     channel: '962485620297576449',
     async execute({channel, debug = false, ping = true}){
         const battleData = await readJSON('json/clanbattle.json');
