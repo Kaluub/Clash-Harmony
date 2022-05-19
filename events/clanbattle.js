@@ -46,13 +46,13 @@ async function tickBattle({battleData, battle, msg}) {
         let lostHp = battle.modifiers.normalDamage;
         if(randomChance < battle.modifiers.critOdds) {
             lostHp = battle.modifiers.critDamage;
-            battle.log.push('✦ ' + randText(battleData.messages.battleCritText).replaceAll('{attacker}', attacker.username).replaceAll('{defender}', defender.username))
+            battle.log.push('✦ ' + randText(battleData.messages.battleCritText).replaceAll('{attacker}', attacker.toString()).replaceAll('{defender}', defender.toString()))
         } else if(randomChance < battle.modifiers.missOdds) {
             lostHp = 0;
-            battle.log.push('◊ ' + randText(battleData.messages.battleMissText).replaceAll('{attacker}', attacker.username).replaceAll('{defender}', defender.username))
+            battle.log.push('◊ ' + randText(battleData.messages.battleMissText).replaceAll('{attacker}', attacker.toString()).replaceAll('{defender}', defender.toString()))
         } else {
             lostHp = battle.modifiers.normalDamage;
-            battle.log.push('⚔ ' + randText(battleData.messages.battleHitText).replaceAll('{attacker}', attacker.username).replaceAll('{defender}', defender.username))
+            battle.log.push('⚔ ' + randText(battleData.messages.battleHitText).replaceAll('{attacker}', attacker.toString()).replaceAll('{defender}', defender.toString()))
         };
 
         defender.hp -= lostHp;

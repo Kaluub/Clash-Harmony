@@ -120,6 +120,21 @@
         "rewards": ["sieggy_frame", "sieggy_background"]
     },
     {
+        "date": "8/6/",
+        "name": "DAILY_EVENT_ZITHI_BIRTHDAY",
+        "rewards": ["zithi_frame", "zithi_background"]
+    },
+    {
+        "date": "3/6/",
+        "name": "DAILY_EVENT_BUBBLYSKY_BIRTHDAY",
+        "rewards": ["bubblysky_frame", "bubblysky_background"]
+    },
+    {
+        "date": "8/28/",
+        "name": "DAILY_EVENT_TWINS_BIRTHDAY",
+        "rewards": ["twins_frame", "twins_background"]
+    },
+    {
         "date": "18/3/",
         "name": "DAILY_EVENT_BOT_BIRTHDAY",
         "rewards": [-5]

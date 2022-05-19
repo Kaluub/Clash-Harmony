@@ -14,7 +14,8 @@ function dirToCollection(path) {
 const commands = dirToCollection('./commands');
 const contexts = dirToCollection('./contexts');
 const consoleCommands = dirToCollection('./console');
-const autoCompletes = dirToCollection('./autocompletes')
+const autoCompletes = dirToCollection('./autocompletes');
+const modals = dirToCollection('./modals');
 
 const events = [];
 const eventFiles = readdirSync('./events').filter(file => file.endsWith('.js'));
@@ -23,4 +24,4 @@ for(const file of eventFiles){
     events.push(event);
 };
 
-module.exports = { commands, contexts, consoleCommands, autoCompletes, events };
+module.exports = { commands, contexts, consoleCommands, autoCompletes, modals, events };

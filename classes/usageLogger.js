@@ -18,6 +18,7 @@ class UsageLogger {
 
     static logAction({guildId, channelId, userId, actionName}) {
         const timestamp = Date.now();
+        actionName = actionName.replaceAll(",", "☻")
         this.log.push({timestamp, guildId, channelId, userId, actionName});
         let file = readFileSync(`./data/logs/${this.file}`, { encoding: 'utf-8' });
         file += `\n${timestamp},${guildId},${channelId},${userId},${actionName}`;

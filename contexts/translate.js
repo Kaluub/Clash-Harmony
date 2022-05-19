@@ -5,6 +5,7 @@ module.exports = {
     name: 'Translate to English',
     type: 'MESSAGE',
     execute: async ({interaction, userdata}) => {
+        if(!interaction.targetMessage.content.length) return {content: Locale.text(userdata.settings.locale, "TRANSLATE_FAILED"), ephemeral: true}; 
         const res = await translate(interaction.targetMessage.content, {to: "en"});
         if(res) {
             return {

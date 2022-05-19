@@ -186,9 +186,11 @@ module.exports = {
             const message = await channel.messages.fetch(id);
 
             if(!message) return Locale.text(userdata.settings.locale, "INVALID_MESSAGE");
-            if(message.author.id != interaction.user.id && !admins.includes(interaction.user.id)) returnLocale.text(userdata.settings.locale, "SUGGESTION_NOT_FOR_YOU");
+            if(message.author.id != message.client.user.id) return Locale.text(userdata.settings.locale, "INVALID_MESSAGE");
+            if(message.author.id != interaction.user.id && !admins.includes(interaction.user.id)) return Locale.text(userdata.settings.locale, "SUGGESTION_NOT_FOR_YOU");
             
             let data = await GuildData.get(interaction.guildId);
+            if(data.suggestions[message.id])
             data.suggestions[message.id].notes.push(interaction.options.getString('note'));
             await GuildData.set(interaction.guildId, data);
             await updateSuggestion(data.suggestions[message.id], message);
@@ -206,7 +208,7 @@ module.exports = {
             data.suggestions[message.id].staffnote = interaction.options.getString('note');
             data.suggestions[message.id].staffnoteTime = Math.floor(Date.now() / 1000);
             await GuildData.set(interaction.guildId, data);
-            await updateSuggestion(data, message);
+            await updateSuggestion(data.suggestions[message.id], message);
             return Locale.text(userdata.settings.locale, "SUGGESTION_STAFFNOTE_SET");
         } else return Locale.text(userdata.settings.locale, "HOW_DID_WE_GET_HERE");
     }

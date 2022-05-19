@@ -10,7 +10,7 @@ const contextInteractionFiles = readdirSync('./contexts').filter(file => file.en
 
 for (const file of channelCommandFiles) {
     const command = require(`./commands/${file}`);
-    if(command.hidden || command.archived) continue;
+    if(command.hidden || command.archived || command.noInteraction) continue;
     interactions.push({
         name: command.name,
         description: command.desc,

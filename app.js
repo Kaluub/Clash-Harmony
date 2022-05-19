@@ -3,6 +3,7 @@ const cron = require('node-cron');
 const { UserData, GuildData } = require('./classes/data.js');
 const UsageLogger = require('./classes/usageLogger.js');
 const StatusLogger = require('./classes/statusLogger.js');
+const Locale = require('./classes/locale.js');
 const { readJSON } = require('./json.js');
 const { updateSuggestion } = require('./functions.js');
 const { token } = readJSON('config.json');
@@ -82,12 +83,12 @@ client.on('messageCreate', async (msg) => {
         const commandName = args.shift().toLowerCase();
         const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if(!command) return;
-        if(UserData.isLocked(msg.author.id) && !config.admins.includes(msg.author.id)) return msg.channel.send('Unable to use this command: Your data is locked, are you in a trade?');
+        if(UserData.isLocked(msg.author.id) && !config.admins.includes(msg.author.id)) return msg.channel.send(Locale.text(userdata.settings.locale, "DATA_LOCKED"));
         let userdata = await UserData.get(msg.guild.id, msg.author.id);
-        if(userdata.blocked) return message.reply('You are blocked.');
-        if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
-        if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send('This command requires admin permission.');
-        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(msg.author.id))) return msg.channel.send(`This command needs a special feature available from the shop.`);
+        if(userdata.blocked) return message.reply(Locale.text(userdata.settings.locale, "BLOCKED"));
+        if(maintenance && !config.admins.includes(msg.author.id)) return msg.channel.send(Locale.text(userdata.settings.locale, "MAINTENANCE"));
+        if(command.admin && !config.admins.includes(msg.author.id)) return msg.channel.send(Locale.text(userdata.settings.locale, "ADMIN_ERROR"));
+        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(msg.author.id))) return msg.channel.send(Locale.text(userdata.settings.locale, "PERMISSION_ERROR"));
         userdata.addStatistic('commandsUsed');
         await UserData.set(msg.guild.id, msg.author.id, userdata);
         UsageLogger.logAction({guildId: msg.guild.id, channelId: msg.channel.id, userId: msg.author.id, actionName: msg.content});
@@ -100,7 +101,7 @@ client.on('messageCreate', async (msg) => {
             console.error(error);
             readline.prompt(true);
             StatusLogger.logStatus({type: "command-error", detail: error});
-            return msg.channel.send('An error occured while running this command.');
+            return msg.channel.send(Locale.text(userdata.settings.locale, "ERROR"));
         };
     };
 });
@@ -109,14 +110,14 @@ client.on('interactionCreate', async (interaction) => {
     if(interaction.isCommand()){
         const config = await readJSON('config.json');
         let userdata = await UserData.get(interaction.guild?.id, interaction.user.id);
-        if(userdata.blocked) return interaction.reply('You are blocked.');
-        if(UserData.isLocked(interaction.user.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
+        if(userdata.blocked) return interaction.reply(Locale.text(userdata.settings.locale, "BLOCKED"));
+        if(UserData.isLocked(interaction.user.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: Locale.text(userdata.settings.locale, "DATA_LOCKED"), ephemeral: true});
         const command = commands.commands.get(interaction.commandName.toLowerCase()) || commands.commands.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName.toLowerCase()));
-        if(!command) return interaction.reply('Command error: This command could not be handled as it does not exist.');
-        if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
-        if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply('This command requires admin permission.');
-        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(interaction.user.id))) return interaction.reply(`This command needs a special feature available from the shop.`);
-        if(!interaction.guild && !command.noGuild) return interaction.reply(`This command can not be used in DMs.`);
+        if(!command) return interaction.reply(Locale.text(userdata.settings.locale, "COMMAND_NOT_FOUND"));
+        if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply(Locale.text(userdata.settings.locale, "MAINTENANCE"));
+        if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply(Locale.text(userdata.settings.locale, "ADMIN_ERROR"));
+        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(interaction.user.id))) return interaction.reply(Locale.text(userdata.settings.locale, "PERMISSION_ERROR"));
+        if(!interaction.guild && !command.noGuild) return interaction.reply(Locale.text(userdata.settings.locale, "DM_ERROR"));
         let args = [];
         interaction?.options?.data.forEach((option) => args.push(option.value ? option.value.toString() : option));
         userdata.addStatistic('commandsUsed');
@@ -126,7 +127,7 @@ client.on('interactionCreate', async (interaction) => {
         try{
             await command.execute({interaction, args, userdata}).then(async res => {
                 if(res && interaction && !interaction.replied) await interaction.reply(res);
-                else if(interaction && !interaction.replied) await interaction.reply(`No message was returned. This is probably a bug.`);
+                else if(interaction && !interaction.replied) await interaction.reply(Locale.text(userdata.settings.locale, "ERROR"));
                 readline.prompt(true);
             });
         } catch(error){
@@ -139,11 +140,11 @@ client.on('interactionCreate', async (interaction) => {
         let userdata = await UserData.get(interaction.guildId, interaction.user.id);
         if(UserData.isLocked(interaction.user.id) && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'Unable to use this command: Your data is locked, are you in a trade?', ephemeral: true});
         const command = commands.contexts.get(interaction.commandName) || commands.contexts.find(cmd => cmd.aliases && cmd.aliases.includes(interaction.commandName));
-        if(!command) return interaction.reply('Command error: This command could not be handled as it does not exist.');
-        if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply('There is an on-going maintenance right now. Please wait until it is over to continue using the bot.');
-        if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply({content: 'This command requires admin permission.', ephemeral: true});
-        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(interaction.user.id))) return interaction.reply(`This command needs a special feature available from the shop.`);
-        if(!interaction.guild && !command.noGuild) return interaction.reply(`This command can not be used in DMs.`);
+        if(!command) return interaction.reply(Locale.text(userdata.settings.locale, "COMMAND_NOT_FOUND"));
+        if(maintenance && !config.admins.includes(interaction.user.id)) return interaction.reply(Locale.text(userdata.settings.locale, "MAINTENANCE"));
+        if(command.admin && !config.admins.includes(interaction.user.id)) return interaction.reply({content: Locale.text(userdata.settings.locale, "ADMIN_ERROR"), ephemeral: true});
+        if(command.feature && (!userdata.unlocked.features.includes(command.feature) || !config.admins.includes(interaction.user.id))) return interaction.reply(Locale.text(userdata.settings.locale, "PERMISSION_ERROR"));
+        if(!interaction.guild && !command.noGuild) return interaction.reply(Locale.text(userdata.settings.locale, "DM_ERROR"));
         if(userdata.settings.autoLocale) userdata.settings.locale = interaction.locale;
         userdata.addStatistic('commandsUsed');
         await UserData.set(interaction.guildId, interaction.user.id, userdata);
@@ -151,14 +152,13 @@ client.on('interactionCreate', async (interaction) => {
         try {
             await command.execute({interaction, userdata}).then(async res => {
                 if(res && !interaction.replied) await interaction.reply(res);
-                else if(!interaction.replied) interaction.reply(`No message was returned. This is probably a bug.`);
+                else if(!interaction.replied) interaction.reply(Locale.text(userdata.settings.locale, "ERROR"));
                 readline.prompt(true);
             });
         } catch(error){
             console.error(error);
             readline.prompt(true);
             StatusLogger.logStatus({type: "command-error", detail: error});
-            if(interaction && !interaction.replied) return interaction.reply('An error occured while running this command.', {ephemeral: true});
         };
     } else if(interaction.isAutocomplete()) {
         const option = interaction.options.getFocused(true);
@@ -172,6 +172,17 @@ client.on('interactionCreate', async (interaction) => {
             console.error(error);
             readline.prompt(true);
             StatusLogger.logStatus({type: "autocomplete-error", detail: error});
+        };
+    } else if(interaction.isModalSubmit()) {
+        const modal = commands.modals.get(interaction.customId);
+        if(!modal) return await interaction.reply({content: Locale.text(interaction.locale, "COMMAND_NOT_FOUND"), ephemeral: true});
+        try {
+            const res = await modal.execute({interaction});
+            if(res) await interaction.reply(res);
+        } catch(error){
+            console.error(error);
+            readline.prompt(true);
+            StatusLogger.logStatus({type: "modal-error", detail: error});
         };
     } else if(interaction.isMessageComponent() && interaction.isButton()){
         if(interaction.customId.startsWith('poll')){ // Poll event
@@ -203,7 +214,8 @@ client.on('interactionCreate', async (interaction) => {
             return interaction.reply({content: `Vote submitted for option ${parts[1]}.`, ephemeral: true});
         } else if(interaction.customId.startsWith('suggestion')){ // Suggestion:
             const data = await GuildData.get(interaction.guildId);
-            if(data.suggestions[interaction.message.id].voters.includes(interaction.user.id)) return interaction.reply({content: `You've already voted for this suggestion.`, ephemeral: true});
+            if(!data.suggestions[interaction.message.id]) return await interaction.reply({content: `This suggestion is broken! Sorry for the inconvenience.`, ephemeral: true})
+            if(data.suggestions[interaction.message.id].voters.includes(interaction.user.id)) return await interaction.reply({content: `You've already voted for this suggestion.`, ephemeral: true});
             const type = interaction.customId.split('-')[1];
             data.suggestions[interaction.message.id][type] += 1;
             data.suggestions[interaction.message.id].voters.push(interaction.user.id);

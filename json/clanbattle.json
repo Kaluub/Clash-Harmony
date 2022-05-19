@@ -6,7 +6,7 @@
             "colour": "#335533",
             "weight": 100,
             "modifiers": {
-                "quizPlayersAllowed": 11,
+                "quizPlayersAllowed": 6,
                 "defaultHp": 50,
                 "normalDamage": 10,
                 "critDamage": 15,
@@ -27,7 +27,7 @@
             "colour": "#FFD700",
             "weight": 15,
             "modifiers": {
-                "quizPlayersAllowed": 11,
+                "quizPlayersAllowed": 6,
                 "defaultHp": 50,
                 "normalDamage": 10,
                 "critDamage": 15,
@@ -48,7 +48,7 @@
             "colour": "#22DDAA",
             "weight": 25,
             "modifiers": {
-                "quizPlayersAllowed": 11,
+                "quizPlayersAllowed": 6,
                 "defaultHp": 75,
                 "normalDamage": 15,
                 "critDamage": 25,
@@ -69,7 +69,7 @@
             "colour": "#335533",
             "weight": 30,
             "modifiers": {
-                "quizPlayersAllowed": 11,
+                "quizPlayersAllowed": 6,
                 "defaultHp": 50,
                 "normalDamage": 10,
                 "critDamage": 15,
@@ -90,7 +90,7 @@
             "colour": "#335533",
             "weight": 30,
             "modifiers": {
-                "quizPlayersAllowed": 11,
+                "quizPlayersAllowed": 6,
                 "defaultHp": 50,
                 "normalDamage": 10,
                 "critDamage": 15,
@@ -153,7 +153,7 @@
             "colour": "#1E4620",
             "weight": 0,
             "modifiers": {
-                "quizPlayersAllowed": 11,
+                "quizPlayersAllowed": 6,
                 "defaultHp": 50,
                 "normalDamage": 10,
                 "critDamage": 15,
@@ -171,12 +171,7 @@
     ],
     "messages": {
         "dudUsernames": [
-            "i'm a dud user",
-            "hi adolpo",
-            "hi sirgy",
-            "hi kalub",
-            "basselm",
-            "TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest"
+            "User"
         ],
         "error": [
             "This shouldn't happen! Some error occured and we'll get about fixing it. Apologies for the inconvenience!"
@@ -217,13 +212,15 @@
             "{attacker} hit {defender}!"
         ],
         "battleCritText": [
-            "{attacker} destroyed {defender}!"
+            "{attacker} destroyed {defender}!",
+            "{attacker} was crit by {defender}!"
         ],
         "battleMissText": [
             "{attacker} missed {defender}!"
         ],
         "battleKillText": [
-            "{attacker} killed {defender}."
+            "{attacker} killed {defender}.",
+            "{defender} was strangled by {attacker}."
         ],
         "notInQuiz": [
             "You aren't a part of this quiz!",
@@ -496,6 +493,83 @@
                 "November 28th",
                 "September 11th",
                 "June 25th"
+            ]
+        },
+        {
+            "title": "What complexity is Grass in Pixel Worlds?",
+            "answer": 1,
+            "options": [
+                "3",
+                "2",
+                "5",
+                "1",
+                "7"
+            ]
+        },
+        {
+            "title": "What is the price of the Crappy Pickaxe?",
+            "answer": 1,
+            "options": [
+                "2000 Byte Coins",
+                "2000 Gems",
+                "200 Gems",
+                "1000 Gems",
+                "100 Byte Coins"
+            ]
+        },
+        {
+            "title": "What is not required to make the Nether Exit Potion?",
+            "answer": 3,
+            "options": [
+                "Door",
+                "Bolt",
+                "Shiny Pebble",
+                "Snail",
+                "None of the above"
+            ]
+        },
+        {
+            "title": "What is the rarity of the Blue Long Minnow?",
+            "answer": 0,
+            "options": [
+                "Rare",
+                "Uncommon",
+                "Common",
+                "Ultra Rare"
+            ]
+        },
+        {
+            "title": "What complexity are Mannequins in Pixel Worlds?",
+            "answer": 0,
+            "options": [
+                "23",
+                "20",
+                "27",
+                "21",
+                "25"
+            ]
+        },
+        {
+            "title": "What was the population of the district of Guarda in Portugal in 2020?",
+            "answer": 0,
+            "options": [
+                "143,019",
+                "96,543",
+                "200,000",
+                "177,432",
+                "544,440"
+            ]
+        },
+        {
+            "title": "What is the velocity of an object accelerating at 3.5 m/s² with an initial velocity of 5.0 m/s after 18 seconds of travel?",
+            "answer": 0,
+            "options": [
+                "68 m/s",
+                "64 m/s",
+                "16 m/s²",
+                "62.5 m/s²",
+                "60 m",
+                "58 m"
             ]
         }
     ]

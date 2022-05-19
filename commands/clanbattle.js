@@ -1,6 +1,7 @@
-const { MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, MessageAttachment } = require('discord.js');
+const { Modal, TextInputComponent, MessageActionRow } = require('discord.js');
 const { GuildData } = require('../classes/data.js');
-const { readJSON, writeJSON } = require('../json.js');
+const { readJSON } = require("../json.js");
+const Locale = require("../classes/locale.js");
 const clanbattle = require('../events/clanbattle.js');
 
 module.exports = {
@@ -55,133 +56,73 @@ module.exports = {
         }
     ],
     execute: async ({interaction, userdata}) => {
-        if(!interaction) return `This command can only be used as an interaction!`;
+        if(!interaction) return Locale.text(userdata.settings.locale, "SLASH_COMMAND_ONLY");
         const { admins } = await readJSON('config.json');
 
         if(interaction.options.getSubcommand(false) == 'test') {
-            if(!admins.includes(interaction.user.id) && !userdata.unlocked.features.includes("CLANBATTLE_MANAGER")) return "You need to be a server admin to use this command.";
+            if(!admins.includes(interaction.user.id) && !userdata.unlocked.features.includes("CLANBATTLE_MANAGER")) return Locale.text(userdata.settings.locale, "PERMISSION_ERROR");
             let channel = interaction.options.getChannel('channel', false);
             if(!channel) channel = interaction.channel;
             await clanbattle.execute({channel: channel, debug: true, ping: false});
-            return {content: `Started a test battle in ${channel}!`};
+            return {content: Locale.text(userdata.settings.locale, "CLANBATTLE_TEST_STARTED", channel)};
         };
 
         if(interaction.options.getSubcommand(false) == 'start') {
             const data = await GuildData.get(interaction.guild.id);
             if(data.clanBattles.cooldown > Date.now())
-                if(!admins.includes(interaction.user.id)) return `You can use this command again <t:${Math.floor(data.clanBattles.cooldown / 1000)}:R>.`;
+                if(!admins.includes(interaction.user.id)) return Locale.text(userdata.settings.locale, "CLANBATTLE_COOLDOWN", Math.floor(data.clanBattles.cooldown / 1000));
             data.clanBattles.cooldown = Date.now() + 3600000;
             await GuildData.set(interaction.guild.id, data);
             let channel = interaction.options.getChannel('channel', false);
             if(!channel) channel = interaction.channel;
             await clanbattle.execute({channel: channel, ping: false});
-            return {content: `Started a clan battle in ${channel}!`};
+            return {content: Locale.text(userdata.settings.locale, "CLANBATTLE_STARTED", channel)};
         };
 
         if(interaction.options.getSubcommandGroup(false) == 'questions') {
-            if(!admins.includes(interaction.user.id) && !userdata.unlocked.features.includes("CLANBATTLE_MANAGER")) return "You need to be a server admin to use this command.";
+            if(!admins.includes(interaction.user.id) && !userdata.unlocked.features.includes("CLANBATTLE_MANAGER")) return Locale.text(userdata.settings.locale, "PERMISSION_ERROR");
             if(interaction.options.getSubcommand(false) == 'add') {
-                let question = {
-                    title: "",
-                    answer: -1,
-                    options: []
-                };
-
-                const embed = new MessageEmbed()
-                    .setColor('#22BB55')
-                    .setTitle('Add a new question!')
-                    .setDescription('This is the question builder.\n\nCould you type the question you\'d like to add? You\'ve got 2 minutes.')
-                    .setTimestamp();
+                const modal = new Modal()
+                    .setCustomId("clanbattle-add-question")
+                    .setTitle(Locale.text(userdata.settings.locale, "CLANBATTLE_ADD_QUESTION_TITLE"))
                 
-                const reply = await interaction.reply({embeds: [embed], fetchReply: true});
+                const questionInput = new TextInputComponent()
+                    .setCustomId("question-title")
+                    .setLabel(Locale.text(userdata.settings.locale, "CLANBATTLE_ADD_QUESTION_LABEL_1"))
+                    .setPlaceholder(Locale.text(userdata.settings.locale, "CLANBATTLE_ADD_QUESTION_PLACEHOLDER_1"))
+                    .setMaxLength(128)
+                    .setMinLength(4)
+                    .setStyle("SHORT")
+                    .setRequired(true)
+                
+                const optionsInput = new TextInputComponent()
+                    .setCustomId("question-options")
+                    .setLabel(Locale.text(userdata.settings.locale, "CLANBATTLE_ADD_QUESTION_LABEL_2"))
+                    .setPlaceholder(Locale.text(userdata.settings.locale, "CLANBATTLE_ADD_QUESTION_PLACEHOLDER_2"))
+                    .setStyle("PARAGRAPH")
+                    .setRequired(true)
+                
+                const answerInput = new TextInputComponent()
+                    .setCustomId("question-answer")
+                    .setLabel(Locale.text(userdata.settings.locale, "CLANBATTLE_ADD_QUESTION_LABEL_3"))
+                    .setPlaceholder(Locale.text(userdata.settings.locale, "CLANBATTLE_ADD_QUESTION_PLACEHOLDER_3"))
+                    .setMaxLength(1)
+                    .setMinLength(1)
+                    .setStyle("SHORT")
+                    .setRequired(true)
+                
+                modal.addComponents(
+                    new MessageActionRow().addComponents(questionInput),
+                    new MessageActionRow().addComponents(optionsInput),
+                    new MessageActionRow().addComponents(answerInput)
+                );
 
-                const collector1 = interaction.channel.createMessageCollector({filter: m => m.author.id == interaction.user.id, time: 120000});
-                collector1.on('collect', async m => {
-                    question.title = m.content.trim();
-                    embed.addField('Title:', question.title).setDescription('This is the question builder.\n\nCould you now type all the options? Seperate them using a new line. Make sure there is only 1 correct answer! Similarily, you have 2 minutes!').setTimestamp();
-                    await interaction.editReply({embeds: [embed]});
-                    await m.delete();
-                    collector1.stop('step1done');
-                });
-
-                collector1.on('end', async (col, reason) => {
-                    if(reason == 'step1done') {
-                        const collector2 = interaction.channel.createMessageCollector({filter: m => m.author.id == interaction.user.id, time: 120000});
-                        collector2.on('collect', async m => {
-                            const options = m.content.split('\n');
-                            if(options.length < 2 || options.length > 9) {
-                                await m.channel.send('You need at least:\n - more than 2 options\n - less than 10 options');
-                                return await m.delete();
-                            };
-                            question.options = options;
-                            embed.addField('Options:', options.join('\n')).setDescription('This is the question builder.\n\nPlease select which is the correct answer!')
-                            const menu = new MessageSelectMenu().setCustomId('correct-options').setPlaceholder('Which is the correct option?');
-                            let index = 0;
-                            for(const option of options) {
-                                menu.addOptions({label: option, value: index.toString()});
-                                index += 1;
-                            };
-                            const row = new MessageActionRow().addComponents(menu);
-                            await interaction.editReply({embeds: [embed], components: [row]});
-                            await m.delete();
-                            collector2.stop('step2done');
-                        });
-
-                        collector2.on('end', async (col, reason) => {
-                            if(reason == 'step2done') {
-                                const collector3 = reply.createMessageComponentCollector({filter: int => int.user.id == interaction.user.id, time: 60000});
-                                
-                                collector3.on('collect', async int => {
-                                    question.answer = parseInt(int.values[0]);
-                                    embed.addField('Answer:', question.options[question.answer]).setDescription('This is the question builder.\n\nMake sure all the data below is correct! If so, you can press the "Done" button add the question will be added. You\'ve got 1 minute.').setTimestamp();
-                                    const row = new MessageActionRow().addComponents(new MessageButton().setCustomId('done').setLabel('Done!').setStyle('SUCCESS'), new MessageButton().setCustomId('cancel').setLabel('Cancel').setStyle('DANGER'));
-                                    await int.update({embeds: [embed], components: [row]});
-                                    return collector3.stop('step3done');
-                                });
-
-                                collector3.on('end', async (col, reason) => {
-                                    if(reason == 'step3done') {
-                                        const collector4 = reply.createMessageComponentCollector({filter: int => int.user.id == interaction.user.id, time: 60000});
-                                        
-                                        collector4.on('collect', async int => {
-                                            if(int.customId == 'done') {
-                                                embed.setDescription('Done! Here\'s the question you added. To avoid accidental corruption, the file before your question was added was included.');
-                                                let json = readJSON('json/clanbattle.json');
-                                                const attachment = new MessageAttachment(Buffer.from(JSON.stringify(json, null, 4)), 'clanbattle.json');
-                                                json.questions.push(question);
-                                                writeJSON('json/clanbattle.json', json);
-                                                await int.update({embeds: [embed], files: [attachment], components: []});
-                                                return collector4.stop('step4done');
-                                            };
-
-                                            if(int.customId == 'cancel') {
-                                                await int.update({embeds: [], components: [], content: 'Cancelled.'});
-                                                return collector4.stop('cancelled');
-                                            };
-                                        });
-
-                                        collector4.on('end', async (col, reason) => {
-                                            if(reason != 'step4done' && reason != 'cancelled')
-                                                await interaction.editReply({content: "Time's up!", embeds: [], components: []});
-                                        });
-                                    } else {
-                                        await interaction.editReply({content: "Time's up!", embeds: [], components: []});
-                                    };
-                                });
-                            } else {
-                                await interaction.editReply({content: "Time's up!", embeds: [], components: []});
-                            };
-                        });
-                    } else {
-                        await interaction.editReply({content: "Time's up!", embeds: [], components: []});
-                    };
-                });
-
+                return await interaction.showModal(modal);
             } else if(interaction.options.getSubcommand(false) == 'remove') {
-                return 'Will get to this later, probably!';
-            } else return 'How did you get here?';
+                return Locale.text(userdata.settings.locale, "TODO");
+            } else return Locale.text(userdata.settings.locale, "HOW_DID_WE_GET_HERE");
         };
 
-        return 'How did you get here?';
+        return Locale.text(userdata.settings.locale, "HOW_DID_WE_GET_HERE");
     }
 };
