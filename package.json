@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@vitalets/google-translate-api": "^8.0.0",
-    "canvas": "^2.8.0",
+    "canvas": "^2.9.1",
     "discord-rpc": "^4.0.1",
     "discord.js": "^13.7.0",
     "mongodb": "^4.2.0",

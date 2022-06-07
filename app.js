@@ -46,6 +46,7 @@ const readline = require('readline').createInterface({
 
 UsageLogger.init();
 StatusLogger.init();
+Locale.reloadLocale();
 
 let statusNum = 0;
 const statuses = [
@@ -174,10 +175,13 @@ client.on('interactionCreate', async (interaction) => {
             StatusLogger.logStatus({type: "autocomplete-error", detail: error});
         };
     } else if(interaction.isModalSubmit()) {
-        const modal = commands.modals.get(interaction.customId);
+        const args = interaction.customId.split("/");
+        const modalName = args.shift();
+        const modal = commands.modals.get(modalName);
         if(!modal) return await interaction.reply({content: Locale.text(interaction.locale, "COMMAND_NOT_FOUND"), ephemeral: true});
+        const userdata = await UserData.get(interaction.guildId, interaction.user.id);
         try {
-            const res = await modal.execute({interaction});
+            const res = await modal.execute({interaction, userdata, args});
             if(res) await interaction.reply(res);
         } catch(error){
             console.error(error);

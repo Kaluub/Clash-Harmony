@@ -345,12 +345,12 @@ module.exports = {
             ]
         }
     ],
-    execute: async ({interaction}) => {
+    execute: async ({interaction, userdata}) => {
         if(!interaction) return;
         const group = interaction.options.getSubcommandGroup(false);
         const subCommand = interaction.options.getSubcommand(false);
         const cmd = functions.get(`${group ? group + '/' : ''}${subCommand}`);
         if(!cmd) return `Something must have gone wrong, because this isn't a command!`;
-        return await cmd.execute({interaction}); // Make sure to return a valid message!
+        return await cmd.execute({interaction, userdata}); // Make sure to return a valid message!
     }
 };

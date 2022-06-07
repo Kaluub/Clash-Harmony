@@ -1,10 +1,17 @@
 const { randInt } = require('../functions.js');
+const { readdirSync } = require('fs');
+const { readJSON } = require('../json.js');
 
 class Locale {
-    static texts = {
-        "en-GB": require('../locale/en-GB.json'),
-        "fr": require('../locale/fr.json')
-    };
+    static texts = {};
+
+    static reloadLocale() {
+        const localeFiles = readdirSync("./locale").filter(file => file.endsWith('.json'));
+        for(const localeFile of localeFiles){
+            const locale = readJSON("./locale/" + localeFile);
+            this.texts[localeFile.split(".")[0]] = locale
+        };
+    }
 
     /**
      * Used for text retrieving, supports multiple languages.

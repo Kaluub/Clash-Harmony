@@ -1,5 +1,5 @@
-const {updateMembers} = require('../functions.js');
-const {readJSON} = require('../json.js');
+const { updateMembers } = require('../functions.js');
+const { readJSON } = require('../json.js');
 
 module.exports = {
     name: 'Toggle Clash',

@@ -61,7 +61,7 @@ module.exports = async (message, modMailChannelId) => {
 
     const sentMessage = await message.channel.send({embeds: [dmEmbed], components: [dmMainRow]});
 
-    const collector = sentMessage.createMessageComponentCollector({filter: (int) => int.user.id === message.author.id, time: 120000});
+    const collector = sentMessage.createMessageComponentCollector({filter: (int) => int.user.id === message.author.id, idle: 1200000});
     collector.on('collect', async interaction => {
         if(!interaction.isButton()) return;
         if(interaction.customId == 'confirm'){
@@ -96,6 +96,6 @@ module.exports = async (message, modMailChannelId) => {
         };
     });
     collector.on('stop', async (col, reason) => {
-        if(message.components.length) await message.edit({components: message.components.forEach(row => row.components.forEach(comp => comp.setDisabled()))});
+        if(message.components.length) await message.edit({components: [], content: "Message expired."});
     });
 };

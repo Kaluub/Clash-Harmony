@@ -1,5 +1,5 @@
-const {readdirSync} = require('fs');
-const {Collection} = require('discord.js');
+const { readdirSync } = require('fs');
+const { Collection } = require('discord.js');
 
 function dirToCollection(path) {
     const col = new Collection();

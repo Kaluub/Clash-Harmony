@@ -240,15 +240,19 @@
     "TRANSLATE_FAILED": "Failed to translate this message.",
     "CLANBATTLE_TEST_STARTED": "Started a test clan battle in {0}!",
     "CLANBATTLE_STARTED": "Started a clan battle in {0}!",
-    "CLANBATTLE_COOLDOWN": "`You can use this command again <t:{0}:R>.",
+    "CLANBATTLE_COOLDOWN": "You can use this command again <t:{0}:R>.",
     "CLANBATTLE_ADD_QUESTION_MODAL_TITLE": "Add a new question",
     "CLANBATTLE_ADD_QUESTION_MODAL_LABEL_1": "Title of the question:",
     "CLANBATTLE_ADD_QUESTION_MODAL_LABEL_2": "Options of the question:",
     "CLANBATTLE_ADD_QUESTION_MODAL_LABEL_3": "Which option was the correct answer?",
-    "CLANBATTLE_ADD_QUESTION_MODAL_PLACEHOLDER_1": "The question itself. Something great, please.",
+    "CLANBATTLE_ADD_QUESTION_MODAL_PLACEHOLDER_1": "The quiz question itself. Something great, please.",
     "CLANBATTLE_ADD_QUESTION_MODAL_PLACEHOLDER_2": "Split the options with a new line.",
     "CLANBATTLE_ADD_QUESTION_MODAL_PLACEHOLDER_3": "Type the line number of the correct answer.",
     "CLANBATTLE_ADD_QUESTION_RESPONSE_INVALID_ANSWER_NUMBER": "Invalid answer number (should be between 1 and the number of lines in your list).",
     "CLANBATTLE_ADD_QUESTION_RESPONSE_INVALID_OPTIONS_AMOUNT": "You need between 2 and 10 options.",
-    "CLANBATTLE_ADD_QUESTION_RESPONSE_SUCCESS": "New question added successfully: {0}"
+    "CLANBATTLE_ADD_QUESTION_RESPONSE_SUCCESS": "New question added successfully: {0}",
+    "EDIT_NOT_EDITABLE": "This message is not editable.",
+    "EDIT_MODAL_LABEL_1": "New content:",
+    "EDIT_MODAL_PLACEHOLDER_1": "The content of the message would go here.",
+    "EDIT_SUCCESS": "The message was edited successfully: {0}"
 }

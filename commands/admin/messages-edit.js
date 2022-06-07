@@ -1,18 +1,14 @@
-const { MessageEmbed } = require('discord.js');
+const Locale = require("../../classes/locale.js");
 
 module.exports = {
     name: 'messages/edit',
-    execute: async ({interaction}) => {
+    execute: async ({interaction, userdata}) => {
         const channel = interaction.options.getChannel('channel');
         const message = await channel.messages.fetch(interaction.options.getString('message-id'));
-        if(!message) return 'Invalid message ID.';
-        if(!message.editable) return 'Unable to edit this message!';
+        if(!message) return Locale.text(userdata.settings.locale, "INVALID_MESSAGE");
+        if(!message.editable) return Locale.text(userdata.settings.locale, "INVALID_MESSAGE");
         await message.edit({content: interaction.options.getString('content')});
 
-        const embed = new MessageEmbed()
-            .setDescription(`Successfully edited the message.\nClick [here](${message.url}) to jump to the updated message.`)
-            .setColor('#00AA33')
-            .setTimestamp();
-        return {embeds:[embed]};
+        return {content: Locale.text(userdata.settings.locale, "EDIT_SUCCESS", message.url)};
     }
 };
