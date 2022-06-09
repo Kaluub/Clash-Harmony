@@ -233,6 +233,18 @@ module.exports = {
                             "required": true
                         },
                         {
+                            "name": "reply",
+                            "description": "A message ID representing a message to reply to.",
+                            "type": "STRING",
+                            "required": false
+                        },
+                        {
+                            "name": "tts",
+                            "description": "Whether or not the message should use TTS.",
+                            "type": "BOOLEAN",
+                            "required": false
+                        },
+                        {
                             "name": "links",
                             "description": "Up to 5 links can be included as buttons. Format: 'title,url;title2,url2'.",
                             "type": "STRING",

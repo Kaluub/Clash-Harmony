@@ -10,6 +10,8 @@ module.exports = {
         const ephemeral = interaction.options.getBoolean('hide-response') ?? false;
 
         const content = interaction.options.getString('content', false);
+        const reply = interaction.options.getString('reply', false) ?? undefined;
+        const tts = interaction.options.getBoolean('tts', false) ?? undefined;
         const linkData = interaction.options.getString('links', false);
         const row = new MessageActionRow();
         if (linkData) {
@@ -29,6 +31,8 @@ module.exports = {
 
         let send = {content: content};
         if(row.components.length) send.components = [row];
+        if(reply) send.reply = {messageReference: reply, failIfNotExists: false};
+        if(tts) send.tts = tts;
         
         try{
             await channel.send(send);

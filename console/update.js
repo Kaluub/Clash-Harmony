@@ -5,7 +5,7 @@ module.exports = {
         if(!args[0]) {
             const {commands} = require('../commands.js');
             commands.forEach(command => {
-                if(!command) return console.log("\x1b[32m%s\x1b[0m",`No command found.`);
+                if(!command) return console.log("\x1b[32m%s\x1b[0m",`Command not found.`);
                 delete require.cache[require.resolve(`../commands/${command.name}.js`)];
                 try {
                     const newCommand = require(`../commands/${command.name}.js`);
