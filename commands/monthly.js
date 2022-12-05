@@ -22,9 +22,17 @@ module.exports = {
             return Locale.text(userdata.settings.locale, "MONTHLY_COOLDOWN", days, hours, minutes);
         };
 
-        userdata.monthlyCooldown = Date.now() + 2592000000;
-        if(userdata.unlocked.features.includes('MONTHLY_COOLDOWN_10')) userdata.monthlyCooldown -= 259200000;
-        if(userdata.unlocked.features.includes('DEBUG')) userdata.monthlyCooldown = 1;
+        
+        let multiplier = 1
+        for(const feature of userdata.unlocked.features) {
+            if(feature.startsWith("MONTHLY_COOLDOWN")) {
+                const amount = parseInt(feature.split("_")[2]) ?? 0;
+                multiplier -= amount/100
+            }
+        }
+        if(multiplier < 0) multiplier = 0;
+        userdata.monthlyCooldown = Date.now() + (2592000000 * multiplier);
+        
 
         let earnedPoints = 20;
         let msg = Locale.text(userdata.settings.locale, "MONTHLY_DEFAULT");

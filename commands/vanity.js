@@ -3,10 +3,19 @@ const { readJSON } = require('../json.js');
 const Locale = require('../classes/locale.js');
 const { UserData } = require("../classes/data.js");
 
+async function getVanityRoleText(userdata, guild, member, roles) {
+    let desc = Locale.text(userdata.settings.locale, "VANITY_DESC");
+    for(const id of userdata.unlocked.roles){
+        const role = await guild.roles.fetch(id);
+        desc += `\n${member.roles.cache.has(id) ? `🟢` : `🔴`} ${role.name}`;
+    };
+    return desc;
+}
+
 module.exports = {
-    name:'vanity',
-    desc:`Manage your vanity roles.`,
-    usage:'/vanity',
+    name: 'vanity',
+    desc: `Manage your vanity roles.`,
+    usage: '/vanity',
     execute: async ({interaction, message, userdata}) => {
         const guild = interaction?.guild || message?.guild;
         if(guild.id !== "636986136283185172") return Locale.text(userdata.settings.locale, "SERVER_ERROR");
@@ -20,12 +29,9 @@ module.exports = {
         });
         await UserData.set(guild.id, member.user.id, userdata);
         if(userdata.unlocked.roles.length < 1) return Locale.text(userdata.settings.locale, "NO_VANITY_ROLES");
+        userdata.unlocked.roles.sort((a, b) => roles.indexOf(a) - roles.indexOf(b));
 
-        let desc = Locale.text(userdata.settings.locale, "VANITY_DESC");
-        for(const id of userdata.unlocked.roles){
-            const role = await guild.roles.fetch(id);
-            desc += `\n${member.roles.cache.has(id) ? `🟢` : `🔴`} ${role.name}`;
-        };
+        let desc = await getVanityRoleText(userdata, guild, member, roles);
 
         let embed = new MessageEmbed()
             .setTitle(Locale.text(userdata.settings.locale, "VANITY_TITLE"))
@@ -82,11 +88,7 @@ module.exports = {
                 member = await member.fetch(true);
 
                 // Update desc:
-                desc = Locale.text(userdata.settings.locale, "VANITY_DESC");
-                for(const rid of userdata.unlocked.roles){
-                    const role = await guild.roles.fetch(rid);
-                    desc += `\n${member.roles.cache.has(rid) ? `🟢` : `🔴`} ${role.name}`;
-                };
+                desc = await getVanityRoleText(userdata, guild, member, roles);
                 embed.setDescription(desc);
             };
 

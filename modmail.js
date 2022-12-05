@@ -2,7 +2,7 @@ const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { UserData } = require('./classes/data.js');
 
 // Set to false if harmony is not required before applying for clash.
-const harmonyRequired = true;
+const harmonyRequired = false;
 const categories = {
     'category-harmony-application': 'Harmony Application',
     'category-clash-application': 'Clash Application',

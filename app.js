@@ -226,6 +226,45 @@ client.on('interactionCreate', async (interaction) => {
             await GuildData.set(interaction.guildId, data);
             await updateSuggestion(data.suggestions[interaction.message.id], interaction.message);
             await interaction.reply({content: 'Successfully voted!', ephemeral: true});
+        } else if(interaction.customId.startsWith("modmail")) {
+            let userdata = await UserData.get(interaction.guildId, interaction.user.id);
+            const modal = new Discord.Modal()
+                .setCustomId("modmail")
+                .setTitle(Locale.text(userdata.settings.locale, "MODMAIL_MODAL_TITLE"))
+            
+            const questionInput = new Discord.TextInputComponent()
+                .setCustomId("category")
+                .setLabel(Locale.text(userdata.settings.locale, "MODMAIL_MODAL_LABEL_1"))
+                .setPlaceholder(Locale.text(userdata.settings.locale, "MODMAIL_MODAL_PLACEHOLDER_1"))
+                .setMinLength(5)
+                .setMaxLength(50)
+                .setStyle("SHORT")
+                .setRequired(true)
+            
+            const optionsInput = new Discord.TextInputComponent()
+                .setCustomId("content")
+                .setLabel(Locale.text(userdata.settings.locale, "MODMAIL_MODAL_LABEL_2"))
+                .setPlaceholder(Locale.text(userdata.settings.locale, "MODMAIL_MODAL_PLACEHOLDER_2"))
+                .setMinLength(100)
+                .setMaxLength(1000)
+                .setStyle("PARAGRAPH")
+                .setRequired(true)
+            
+            const answerInput = new Discord.TextInputComponent()
+                .setCustomId("color")
+                .setLabel(Locale.text(userdata.settings.locale, "MODMAIL_MODAL_LABEL_3"))
+                .setPlaceholder(Locale.text(userdata.settings.locale, "MODMAIL_MODAL_PLACEHOLDER_3"))
+                .setMaxLength(10)
+                .setStyle("SHORT")
+                .setRequired(true)
+            
+            modal.addComponents(
+                new Discord.MessageActionRow().addComponents(questionInput),
+                new Discord.MessageActionRow().addComponents(optionsInput),
+                new Discord.MessageActionRow().addComponents(answerInput)
+            );
+
+            return await interaction.showModal(modal);
         };
     };
 });

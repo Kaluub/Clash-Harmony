@@ -222,7 +222,7 @@
     "DAILY_EVENT_NEW_YEARS": "\nIt's the new year! You got a special vanity role! You got the New Year Background and 10 points. Best wishes going forwards!",
     "DAILY_EVENT_VALENTINES": "\nIt's Valentines day. You got 5 points from me. 😘",
     "DAILY_EVENT_ST_PATRICKS": "\nIt's St Patrick's day! A special vanity role was awarded for the occasion.",
-    "DAILY_EVENT_HALLOWEEN": "\nIt's Halloween! You got a special vanity role! You also earned the seasonal Halloween Background and 10 points.",
+    "DAILY_EVENT_HALLOWEEN": "\nIt's Halloween! You got a spooky vanity role and 10 points.",
     "DAILY_EVENT_BOXING_DAY": "\nSales! You got 3 points and a 5% discount in the shop. Happy shopping!",
     "DAILY_EVENT_FULL_MOON": "\nThe full moon rises once again...",
     "DAILY_EVENT_ALDOPLE_BIRTHDAY": "\nHappy birthday to Aldople! You got their frame and background for free!",
@@ -254,5 +254,13 @@
     "EDIT_NOT_EDITABLE": "This message is not editable.",
     "EDIT_MODAL_LABEL_1": "New content:",
     "EDIT_MODAL_PLACEHOLDER_1": "The content of the message would go here.",
-    "EDIT_SUCCESS": "The message was edited successfully: {0}"
+    "EDIT_SUCCESS": "The message was edited successfully: {0}",
+    "MODMAIL_SUCCESS": "Your message has been sent!",
+    "MODMAIL_MODAL_TITLE": "Modmail",
+    "MODMAIL_MODAL_LABEL_1": "Category:",
+    "MODMAIL_MODAL_PLACEHOLDER_1": "What is your message about?",
+    "MODMAIL_MODAL_LABEL_2": "Message:",
+    "MODMAIL_MODAL_PLACEHOLDER_2": "Type your actual message here.",
+    "MODMAIL_MODAL_LABEL_3": "Got a favourite colour?",
+    "MODMAIL_MODAL_PLACEHOLDER_3": "Type any colour that you like. Just for fun."
 }
