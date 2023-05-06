@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb');
-const dbclient = new MongoClient('mongodb://localhost:27017');
+const config = require('../config.json');
+const dbclient = new MongoClient(config.mongoURL);
 
 (async () => {
     try {
