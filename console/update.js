@@ -2,15 +2,20 @@ module.exports = {
     name:'update',
     usage:'update [command name]',
     async execute({args}){
-        if(!args[0]) {
+        if (!args[0]) {
             const {commands} = require('../commands.js');
             commands.forEach(command => {
-                if(!command) return console.log("\x1b[32m%s\x1b[0m",`Command not found.`);
+                if (!command) {
+                    return console.log("\x1b[32m%s\x1b[0m",`Command not found.`);
+                }
+                if (command.noInteraction) {
+                    return;
+                }
                 delete require.cache[require.resolve(`../commands/${command.name}.js`)];
                 try {
                     const newCommand = require(`../commands/${command.name}.js`);
                     commands.set(newCommand.name, newCommand);
-                    console.log("\x1b[32m%s\x1b[0m",`Successfully updated updated the command ${command.name}.`);
+                    console.log("\x1b[32m%s\x1b[0m",`Successfully updated the command ${command.name}.`);
                 } catch (error) {
                     console.error(error);
                     return console.log("\x1b[32m%s\x1b[0m",`There was an error while reloading a command ${command.name}:\n${error}`);
